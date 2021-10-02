@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2020 Jordan Leppert -->
+<component type="desktop-application">
+  <id>io.github.jordanl2.ModularCalculator</id>
+  <metadata_license>FSFAP</metadata_license>
+  <project_license>LGPL-2.1</project_license>
+  <name>Modular Calculator</name>
+  <summary>A powerful, modular calculator written in Python</summary>
+
+  <description>
+    <p>A powerful, modular calculator written in Python</p>
+  </description>
+
+  <url type="homepage">https://github.com/JordanL2/ModularCalculator</url>
+
+  <content_rating type="oars-1.1" />
+
+  <launchable type="desktop-id">io.github.jordanl2.ModularCalculator.desktop</launchable>
+
+  <screenshots>
+    <screenshot>
+      <image>https://user-images.githubusercontent.com/42909496/76239734-fca3dd00-6229-11ea-8e2b-6b394d1ba13c.png</image>
+    </screenshot>
+  </screenshots>
+
+  <provides>
+    <id>io.github.jordanl2.ModularCalculator</id>
+  </provides>
+
+  <releases>
+    <release version="1.0.2-SNAPSHOT" date="2021-01-08"/>
+  </releases>
+</component>

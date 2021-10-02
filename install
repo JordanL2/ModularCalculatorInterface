@@ -1,0 +1,14 @@
+#!/bin/sh
+
+PREFIX=$1
+if [ $# -lt 1 ]; then
+	PREFIX=/usr
+fi
+
+pip3 install --prefix=${PREFIX} .
+for r in 16x16 24x24 48x48 64x64 128x128 256x256
+do
+	install -Dm644 icons/$r.png $PREFIX/share/icons/hicolor/$r/apps/io.github.jordanl2.ModularCalculator.png
+done
+install -D ModularCalculator.desktop $PREFIX/share/applications/io.github.jordanl2.ModularCalculator.desktop
+install -D io.github.jordanl2.ModularCalculator.appdata.xml $PREFIX/share/metainfo/io.github.jordanl2.ModularCalculator.metainfo.xml

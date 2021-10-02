@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Modular Calculator
+Exec=modularcalculator
+Type=Application
+Icon=io.github.jordanl2.ModularCalculator
+Categories=Office;
