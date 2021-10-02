@@ -17,15 +17,27 @@
         "pyqt.json",
         {
             "name": "modularcalculator",
+            "sources": [
+                {
+                  "type": "archive",
+                  "url": "https://github.com/JordanL2/ModularCalculator/archive/refs/tags/1.1.0.tar.gz",
+                  "sha256": "21f3835eb80d00ac0ff30632bd0b5ffd74107607eb4fa26cc91f78801e62e3d6"
+              }
+            ],
+            "buildsystem": "simple",
+            "build-commands": [
+                "pip3 install --no-deps --no-use-pep517 --prefix=${FLATPAK_DEST} ."
+            ]
+        },
+        {
+            "name": "modularcalculatorinterface",
+            "sources": [{
+                "type": "dir",
+                "path": "."
+            }],
             "buildsystem": "simple",
             "build-commands": [
                 "./install $FLATPAK_DEST"
-            ],
-            "sources": [
-                {
-                    "type": "dir",
-                    "path": "."
-                }
             ]
         }
     ]
