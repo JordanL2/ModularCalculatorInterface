@@ -1,6 +1,6 @@
 app-id: io.github.jordanl2.ModularCalculator
 runtime: org.kde.Platform
-runtime-version: 5.15
+runtime-version: '5.15'
 sdk: org.kde.Sdk
 default-branch: stable
 command: modularcalculator
@@ -12,7 +12,7 @@ finish-args:
   - --device=dri
   - --filesystem=home
 modules:
-  - pyqt.json
+  - pyqt.yml
 
   - name: modularcalculator
     sources:
