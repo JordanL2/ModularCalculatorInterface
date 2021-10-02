@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="modularcalculatorinterface",
-    version="1.1.0",
+    version="1.1.1-SNAPSHOT",
     author="Jordan Leppert",
     author_email="jordanleppert@gmail.com",
     description="A powerful, modular calculator written in Python.",
