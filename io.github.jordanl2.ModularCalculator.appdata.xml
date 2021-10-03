@@ -24,7 +24,7 @@
     </ul>
   </description>
 
-  <url type="homepage">https://github.com/JordanL2/ModularCalculator</url>
+  <url type="homepage">https://github.com/JordanL2/ModularCalculatorInterface</url>
   <developer_name>Jordan Leppert</developer_name>
 
   <content_rating type="oars-1.1" />
@@ -51,6 +51,6 @@
   </provides>
 
   <releases>
-    <release version="1.1.1" date="2021-10-03"/>
+    <release version="1.1.2-SNAPSHOT" date="2021-10-03"/>
   </releases>
 </component>
