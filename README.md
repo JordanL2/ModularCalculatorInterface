@@ -34,3 +34,5 @@ sudo ./uninstall
 "Modular Calculator" should be available in your desktop environment application menu.
 
 Alternatively, run "modularcalculator" in a terminal.
+
+For syntax and other topics, see the [modularcalculator wiki](https://github.com/JordanL2/ModularCalculator/wiki).
