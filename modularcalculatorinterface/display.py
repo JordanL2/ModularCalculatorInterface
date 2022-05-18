@@ -11,6 +11,7 @@ from PyQt5.QtWidgets import QTextEdit, QWidget, QGridLayout, QSizePolicy, QSpace
 import math
 
 
+
 class CalculatorDisplay(QWidget):
 
     def __init__(self, interface):
@@ -18,6 +19,7 @@ class CalculatorDisplay(QWidget):
         self.layout = DisplayLayout()
         self.layout.setSpacing(0)
         self.setLayout(self.layout)
+        self.max_denominator = 10 ** 12
 
         self.interface = interface
         self.options = {}
@@ -34,8 +36,8 @@ class CalculatorDisplay(QWidget):
         self.initOutput()
         self.refresh()
 
-    def addAnswer(self, question, answer, unit):
-        self.rawOutput.append(CalculatorDisplayAnswer(question, answer, unit))
+    def addAnswer(self, question, answer, fraction, unit):
+        self.rawOutput.append(CalculatorDisplayAnswer(question, answer, fraction, unit))
 
     def addError(self, err, i, question):
         self.rawOutput.append(CalculatorDisplayError(err, i, question))
@@ -59,10 +61,10 @@ class CalculatorDisplay(QWidget):
 
             if type(row.answer) == list:
                 answerHtml = '['
-                answerHtml += ', '.join([self.renderAnswerRow(r.value, r.unit) for r in row.answer])
+                answerHtml += ', '.join([self.renderAnswerRow(r.value, None, r.unit) for r in row.answer])
                 answerHtml += ']'
             else:
-                answerHtml = self.renderAnswerRow(row.answer, row.unit)
+                answerHtml = self.renderAnswerRow(row.answer, row.fraction, row.unit)
 
         elif isinstance(row, CalculatorDisplayError):
             questionHtml, _ = self.interface.entry.makeHtml([row.err.statements[-1]], row.question[row.i:])
@@ -73,7 +75,7 @@ class CalculatorDisplay(QWidget):
 
         return self.makeQuestionWidget(questionHtml, n), self.makeAnswerWidget(answerHtml, n)
 
-    def renderAnswerRow(self, answer, unit):
+    def renderAnswerRow(self, answer, fraction, unit):
         answer_rendered = None
         if isinstance(answer, UnitPowerList):
             if self.options['shortunits'] and answer.has_symbols():
@@ -93,7 +95,18 @@ class CalculatorDisplay(QWidget):
             unit = ''.join([makeSpan(htmlSafe(u[0]), u[1]) for u in unit_parts])
         else:
             unit = ''
-        return self.interface.entry.css + answer_rendered + unit
+        html = self.interface.entry.css + answer_rendered + unit
+
+        if fraction is not None and fraction[1] != 0 and fraction[2] < self.max_denominator:
+            html += "<br>"
+            if fraction[0] != 0:
+                html += makeSpan("{} ".format(fraction[0]), "literal", "font-size: 20px")
+                html += makeSpan("{}/{}".format(abs(fraction[1]), fraction[2]), "literal", "font-size: 16px")
+            else:
+                html += makeSpan("{}/{}".format(fraction[1], fraction[2]), "literal", "font-size: 20px")
+            html += makeSpan(unit, style="font-size: 20px")
+
+        return html
 
     def makeQuestionWidget(self, questionHtml, n):
         questionWidget = DisplayLabel(questionHtml, n, self)
@@ -132,11 +145,13 @@ class CalculatorDisplay(QWidget):
         if self.layout is not None:
             self.layout.doResize()
 
+
 class CalculatorDisplayAnswer():
 
-    def __init__(self, question, answer, unit):
+    def __init__(self, question, answer, fraction, unit):
         self.question = question
         self.answer = answer
+        self.fraction = fraction
         self.unit = unit
 
 

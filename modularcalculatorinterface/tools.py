@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 from modularcalculator.objects.items import OperandResult
+from modularcalculator.objects.number import *
 from modularcalculator.objects.units import UnitPowerList
 from modularcalculatorinterface.display import CalculatorDisplayAnswer, CalculatorDisplayError
 
@@ -34,8 +35,12 @@ class SetEncoder(json.JSONEncoder):
 			return {
 				'value': obj.singular(True, True),
 			}
+		if isinstance(obj, Number):
+			return {
+				'str': str(obj),
+			}
 		return json.JSONEncoder.default(self, obj)
- 
+
 
 def defaultState(state, defaults):
 	for k, v in defaults.items():

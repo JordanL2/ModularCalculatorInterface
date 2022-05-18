@@ -2,6 +2,7 @@
 
 from modularcalculator.modularcalculator import *
 from modularcalculator.objects.exceptions import *
+from modularcalculator.objects.number import *
 from modularcalculatorinterface.tools import *
 
 from PyQt5.QtWidgets import  QMessageBox
@@ -99,7 +100,7 @@ class CalculatorManager():
             for field, value in featuresOptions.items():
                 if field in self.calculator.feature_list[featureId].default_options():
                     self.calculator.feature_options[featureId][field] = value
-            
+
         self.setAutoExecute(state["viewSyntaxParsingAutoExecutes"], False)
 
         self.setShortUnits(state["viewShortUnits"], False)
@@ -115,7 +116,7 @@ class CalculatorManager():
         state["unitSystemsPreference"] = self.calculator.unit_normaliser.systems_preference
 
         state["calculatorFeatureOptions"] = self.calculator.feature_options
-        
+
         state["viewShortUnits"] = self.interface.viewShortUnits.isChecked()
         state["viewSyntaxParsingAutoExecutes"] = self.interface.viewSyntaxParsingAutoExecutes.isChecked()
 
@@ -139,8 +140,11 @@ class CalculatorManager():
             for i, result in enumerate(response.results):
                 if result.has_result():
                     result_value = result.value
-                    result_value = self.calculator.number_to_string(result_value)
-                    self.display.addAnswer(result.expression, result_value, result.unit)
+                    result_fraction = None
+                    if isinstance(result.value, Number):
+                        result_fraction = result_value.as_fraction()
+                        result_value = str(result_value)
+                    self.display.addAnswer(result.expression, result_value, result_fraction, result.unit)
         if err is not None:
             self.display.addError(err, pos, question)
         self.display.refresh()

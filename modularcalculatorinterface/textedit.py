@@ -130,7 +130,7 @@ class CalculatorTextEdit(QTextEdit):
         oldRedoAction = menu.actions()[1]
         menu.insertAction(oldRedoAction, self.redoAction)
         menu.removeAction(oldRedoAction)
-        
+
         menu.exec(e.globalPos())
 
     def checkSyntax(self, force=False, undo=False):
@@ -269,7 +269,7 @@ class CalculatorTextEdit(QTextEdit):
                 foundFunctional = True
 
         newhtml = self.css
-        
+
         highlightStatements = self.highlighter.highlight_statements(compactedStatements)
         alternate = True
         p = 0
@@ -439,7 +439,7 @@ class CalculatorUndoStack(QObject):
             self.parent.cached_response = None
 
             sliderpos = self.parent.verticalScrollBar().sliderPosition()
-            
+
             self.historyPos -= 1
             (expr, cursorpos) = self.history[self.historyPos - 1]
             if self.historyPos > 1:
@@ -447,7 +447,7 @@ class CalculatorUndoStack(QObject):
             else:
                 self.parent.oldText = None
             self.parent.setContents(expr, True)
-            
+
             if cursorpos is not None:
                 cursor = self.parent.textCursor()
                 cursor.setPosition(cursorpos)
@@ -461,12 +461,12 @@ class CalculatorUndoStack(QObject):
             self.parent.cached_response = None
 
             sliderpos = self.parent.verticalScrollBar().sliderPosition()
-            
+
             self.historyPos += 1
             (expr, cursorpos) = self.history[self.historyPos - 1]
             self.parent.oldText = self.history[self.historyPos - 2]
             self.parent.setContents(expr, True)
-            
+
             if cursorpos is not None:
                 cursor = self.parent.textCursor()
                 cursor.setPosition(cursorpos)
@@ -500,8 +500,8 @@ class SyntaxHighlighterWorker(QRunnable):
 
     def __init__(self, calculator, expr, response, i, ii, uuid):
         super(SyntaxHighlighterWorker, self).__init__()
-        
-        self.signals = SyntaxHighlighterSignals() 
+
+        self.signals = SyntaxHighlighterSignals()
 
         self.calculator = calculator
         self.expr = expr
