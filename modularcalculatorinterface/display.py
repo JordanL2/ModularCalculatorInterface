@@ -190,7 +190,7 @@ class DisplayLayout(QGridLayout):
             else:
                 pair[1].setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
-            pairHeight = min(max(height0, height1), self.maxHeight)
+            pairHeight = int(min(max(height0, height1), self.maxHeight))
             pair[0].setFixedHeight(pairHeight)
             pair[1].setFixedHeight(pairHeight)
 
@@ -208,7 +208,7 @@ class DisplayLabel(QTextEdit):
 
         self.setWordWrapMode(QTextOption.WrapAnywhere)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        
+
         colorRole = display.colours[n % len(display.colours)]
         backgroundColor = QGuiApplication.palette().color(colorRole)
         palette = self.palette()
@@ -242,7 +242,7 @@ class DisplayLabel(QTextEdit):
             line.setPosition(QPointF(0, height))
             height += line.height()
         textLayout.endLayout()
-        
+
         #TODO should this be generated from the font?
         verticalMargin = 10
 
