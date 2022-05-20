@@ -131,7 +131,7 @@ class CalculatorDisplay(QWidget):
             fractionHtml = self.interface.entry.css
             if row.fraction[0] != 0:
                 fractionHtml += makeSpan("{} ".format(row.fraction[0]), "literal")
-                fractionHtml += makeSpan("{}/{}".format(abs(row.fraction[1]), row.fraction[2]), "literal", "font-size: 16px")
+                fractionHtml += makeSpan("{}/{}".format(abs(row.fraction[1]), row.fraction[2]), "literal", "font-size: 14px")
             else:
                 fractionHtml += makeSpan("{}/{}".format(row.fraction[1], row.fraction[2]), "literal")
             unit = self.createUnitHtml(Number(row.fraction[0] + row.fraction[1] / row.fraction[2]), row.unit)
