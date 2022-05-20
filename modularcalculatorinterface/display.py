@@ -205,7 +205,7 @@ class DisplayLayout(QGridLayout):
             else:
                 pair[1].setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
-            pairHeight = int(min(max(height0, height1), self.maxHeight))
+            pairHeight = int(math.ceil(min(max(height0, height1), self.maxHeight)))
             pair[0].setFixedHeight(pairHeight)
             pair[1].setFixedHeight(pairHeight)
 
