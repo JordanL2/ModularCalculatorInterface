@@ -285,6 +285,8 @@ class DisplayLabel(QTextEdit):
         self.setFrameStyle(QFrame.NoFrame)
         self.setLineWidth(0)
 
+        self.cachedOptimumHeight = None
+
     def mouseReleaseEvent(self, e):
         if self.middleClickFunction is not None and e.button() == Qt.MiddleButton:
             self.middleClickFunction(self.display, self, e)
@@ -294,6 +296,9 @@ class DisplayLabel(QTextEdit):
     def optimumHeight(self):
         #TODO figure out why we need the -8 magic number
         lineWidth = self.contentsRect().width() - 8
+
+        if self.cachedOptimumHeight is not None and self.cachedOptimumHeight[0] == lineWidth:
+            return self.cachedOptimumHeight[1]
 
         textLayout = self.document().firstBlock().layout()
         textLayout.beginLayout()
@@ -312,5 +317,7 @@ class DisplayLabel(QTextEdit):
 
         #TODO should this be generated from the font?
         verticalMargin = 10
+
+        self.cachedOptimumHeight = (lineWidth, height + verticalMargin)
 
         return height + verticalMargin
