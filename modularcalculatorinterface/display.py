@@ -56,6 +56,7 @@ class CalculatorDisplay(QWidget):
 
     def renderAnswer(self, row, n):
         fractionHtml = None
+        (answerText, fractionText) = self.createInsertText(row)
         if isinstance(row, CalculatorDisplayAnswer):
             question = row.question.strip()
             questionHtml = self.questionHtml(question)
@@ -76,7 +77,51 @@ class CalculatorDisplay(QWidget):
         else:
             raise Exception("Unrecognised type in renderAnswer: {}".format(type(row)))
 
-        return self.makeQuestionWidget(questionHtml, n), self.makeAnswerWidget(answerHtml, fractionHtml, n)
+        return self.makeQuestionWidget(questionHtml, n), self.makeAnswerWidget(answerHtml, answerText, fractionHtml, fractionText, n)
+
+    def createInsertText(self, row):
+        if type(row.answer) == list:
+            answerText = '['
+            answerText += ', '.join([self.createAnswerText(r.value, r.unit) for r in row.answer])
+            answerText += ']'
+        else:
+            answerText = self.createAnswerText(row.answer, row.unit)
+
+        fractionText = None
+        if row.fraction is not None and row.fraction[1] != 0 and row.fraction[2] < self.max_denominator:
+            if row.fraction[0] != 0:
+                fractionText = "{} + {} / {}".format(row.fraction[0], row.fraction[1], row.fraction[2])
+            else:
+                fractionText = "{} / {}".format(row.fraction[1], row.fraction[2])
+            unit = self.createUnitText(row.answer, row.unit)
+            if unit != '':
+                fractionText = "({}){}".format(fractionText, unit)
+
+        return (answerText, fractionText)
+
+    def createAnswerText(self, answer, unit):
+        if isinstance(answer, UnitPowerList):
+            if self.options['shortunits'] and answer.has_symbols():
+                unit_parts = answer.symbol(False)
+            else:
+                unit_parts = answer.singular(False, False)
+            answer_rendered = ''.join([u[0] for u in unit_parts])
+        else:
+            answer_rendered = str(answer)
+        unit = self.createUnitText(answer, unit)
+        return answer_rendered + unit
+
+    def createUnitText(self, answer, unit):
+        if unit is not None:
+            if self.options['shortunits'] and unit.has_symbols():
+                unit_parts = unit.symbol(False)
+            else:
+                answer_number = self.interface.calculatormanager.calculator.number(answer)[0]
+                unit_parts = unit.get_name(answer_number, False)
+                unit_parts = [(' ', 'space')] + unit_parts
+            return ''.join([u[0] for u in unit_parts])
+        else:
+            return ''
 
     def renderAnswerRow(self, answer, unit):
         answer_rendered = None
@@ -131,18 +176,17 @@ class CalculatorDisplay(QWidget):
         questionWidget.setFont(questionFont)
         return questionWidget
 
-    def makeAnswerWidget(self, answerHtml, fractionHtml, n):
-        answerWidget = DisplayLabel(answerHtml, n, self, CalculatorDisplay.insertAnswer)
+    def makeAnswerWidget(self, answerHtml, answerText, fractionHtml, fractionText, n):
+        answerWidget = DisplayLabel(answerHtml, n, self, CalculatorDisplay.insertAnswer, answerText)
         answerFont = QFontDatabase.systemFont(QFontDatabase.FixedFont)
         answerFont.setPointSize(answerFont.pointSize() + 4)
         answerFont.setBold(True)
         answerWidget.setFont(answerFont)
 
         if fractionHtml is not None:
-            fractionWidget = DisplayLabel(fractionHtml, n, self, CalculatorDisplay.insertAnswer)
+            fractionWidget = DisplayLabel(fractionHtml, n, self, CalculatorDisplay.insertAnswer, fractionText)
             fractionFont = QFontDatabase.systemFont(QFontDatabase.FixedFont)
             fractionFont.setPointSize(fractionFont.pointSize() + 4)
-            fractionFont.setBold(True)
             fractionWidget.setFont(fractionFont)
 
             return DisplayAnswerFractionLabel(answerWidget, fractionWidget)
@@ -155,7 +199,7 @@ class CalculatorDisplay(QWidget):
         return html
 
     def insertAnswer(self, widget, e):
-        self.interface.entry.insert(widget.toPlainText())
+        self.interface.entry.insert(widget.insertText)
         self.interface.entry.setFocus()
 
     def restoreState(self, state):
@@ -264,11 +308,13 @@ class DisplayAnswerFractionLabel(QWidget):
 
 class DisplayLabel(QTextEdit):
 
-    def __init__(self, html, n, display, middleClickFunction=None):
+    def __init__(self, html, n, display, middleClickFunction=None, insertText=None):
         super().__init__()
         self.setHtml(html)
         self.display = display
+
         self.middleClickFunction = middleClickFunction
+        self.insertText = insertText
 
         self.setReadOnly(True)
         self.setTextInteractionFlags(Qt.TextSelectableByMouse | Qt.TextSelectableByKeyboard)
