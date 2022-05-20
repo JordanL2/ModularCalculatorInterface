@@ -6,7 +6,7 @@ from modularcalculator.objects.units import *
 
 from PyQt5.QtCore import Qt, QPointF
 from PyQt5.QtGui import QFontDatabase, QPalette, QTextOption, QGuiApplication
-from PyQt5.QtWidgets import QTextEdit, QWidget, QGridLayout, QSizePolicy, QSpacerItem, QFrame
+from PyQt5.QtWidgets import QTextEdit, QWidget, QGridLayout, QVBoxLayout, QSizePolicy, QSpacerItem, QFrame
 
 import math
 
@@ -55,16 +55,19 @@ class CalculatorDisplay(QWidget):
         self.layout.update()
 
     def renderAnswer(self, row, n):
+        fractionHtml = None
         if isinstance(row, CalculatorDisplayAnswer):
             question = row.question.strip()
             questionHtml = self.questionHtml(question)
 
             if type(row.answer) == list:
                 answerHtml = '['
-                answerHtml += ', '.join([self.renderAnswerRow(r.value, None, r.unit) for r in row.answer])
+                answerHtml += ', '.join([self.renderAnswerRow(r.value, r.unit) for r in row.answer])
                 answerHtml += ']'
             else:
-                answerHtml = self.renderAnswerRow(row.answer, row.fraction, row.unit)
+                answerHtml = self.renderAnswerRow(row.answer, row.unit)
+                if row.fraction is not None and row.fraction[1] != 0 and row.fraction[2] < self.max_denominator:
+                    fractionHtml = self.renderFractionRow(row.fraction, row.unit)
 
         elif isinstance(row, CalculatorDisplayError):
             questionHtml, _ = self.interface.entry.makeHtml([row.err.statements[-1]], row.question[row.i:])
@@ -73,9 +76,9 @@ class CalculatorDisplay(QWidget):
         else:
             raise Exception("Unrecognised type in renderAnswer: {}".format(type(row)))
 
-        return self.makeQuestionWidget(questionHtml, n), self.makeAnswerWidget(answerHtml, n)
+        return self.makeQuestionWidget(questionHtml, n), self.makeAnswerWidget(answerHtml, fractionHtml, n)
 
-    def renderAnswerRow(self, answer, fraction, unit):
+    def renderAnswerRow(self, answer, unit):
         answer_rendered = None
         if isinstance(answer, UnitPowerList):
             if self.options['shortunits'] and answer.has_symbols():
@@ -97,14 +100,28 @@ class CalculatorDisplay(QWidget):
             unit = ''
         html = self.interface.entry.css + answer_rendered + unit
 
-        if fraction is not None and fraction[1] != 0 and fraction[2] < self.max_denominator:
-            html += "<br>"
-            if fraction[0] != 0:
-                html += makeSpan("{} ".format(fraction[0]), "literal", "font-size: 20px")
-                html += makeSpan("{}/{}".format(abs(fraction[1]), fraction[2]), "literal", "font-size: 16px")
+        return html
+
+    def renderFractionRow(self, fraction, unit):
+        if unit is not None:
+            if self.options['shortunits'] and unit.has_symbols():
+                unit_parts = unit.symbol(False)
             else:
-                html += makeSpan("{}/{}".format(fraction[1], fraction[2]), "literal", "font-size: 20px")
-            html += makeSpan(unit, style="font-size: 20px")
+                answer_number = Number(fraction[0] + fraction[1] / fraction[2])
+                unit_parts = unit.get_name(answer_number, False)
+                unit_parts = [(' ', 'space')] + unit_parts
+            unit = ''.join([makeSpan(htmlSafe(u[0]), u[1]) for u in unit_parts])
+        else:
+            unit = ''
+
+        html = self.interface.entry.css
+        if fraction[0] != 0:
+            html += makeSpan("{} ".format(fraction[0]), "literal", "font-size: 20px")
+            html += makeSpan("{}/{}".format(abs(fraction[1]), fraction[2]), "literal", "font-size: 16px")
+        else:
+            html += makeSpan("{}/{}".format(fraction[1], fraction[2]), "literal", "font-size: 20px")
+
+        html += makeSpan(unit, style="font-size: 20px")
 
         return html
 
@@ -114,12 +131,22 @@ class CalculatorDisplay(QWidget):
         questionWidget.setFont(questionFont)
         return questionWidget
 
-    def makeAnswerWidget(self, answerHtml, n):
+    def makeAnswerWidget(self, answerHtml, fractionHtml, n):
         answerWidget = DisplayLabel(answerHtml, n, self, CalculatorDisplay.insertAnswer)
         answerFont = QFontDatabase.systemFont(QFontDatabase.FixedFont)
         answerFont.setPointSize(answerFont.pointSize() + 4)
         answerFont.setBold(True)
         answerWidget.setFont(answerFont)
+
+        if fractionHtml is not None:
+            fractionWidget = DisplayLabel(fractionHtml, n, self, CalculatorDisplay.insertAnswer)
+            fractionFont = QFontDatabase.systemFont(QFontDatabase.FixedFont)
+            fractionFont.setPointSize(fractionFont.pointSize() + 4)
+            fractionFont.setBold(True)
+            fractionWidget.setFont(fractionFont)
+
+            return DisplayAnswerFractionLabel(answerWidget, fractionWidget)
+
         return answerWidget
 
     def questionHtml(self, expr):
@@ -208,6 +235,31 @@ class DisplayLayout(QGridLayout):
             pairHeight = int(math.ceil(min(max(height0, height1), self.maxHeight)))
             pair[0].setFixedHeight(pairHeight)
             pair[1].setFixedHeight(pairHeight)
+
+
+class DisplayAnswerFractionLabel(QWidget):
+
+    def __init__(self, answerLabel, fractionLabel):
+        super().__init__()
+        self.answerLabel = answerLabel
+        self.fractionLabel = fractionLabel
+
+        self.layout = QVBoxLayout()
+        self.layout.addWidget(answerLabel)
+        self.layout.addWidget(fractionLabel)
+        self.layout.setSpacing(0)
+        self.layout.setContentsMargins(0, 0, 0, 0)
+        self.setLayout(self.layout)
+
+    def optimumHeight(self):
+        return self.answerLabel.optimumHeight() + self.fractionLabel.optimumHeight()
+
+    def setFixedHeight(self, height):
+        self.answerLabel.setFixedHeight(int(math.ceil(self.answerLabel.optimumHeight())))
+        self.fractionLabel.setFixedHeight(int(math.ceil(height - self.answerLabel.optimumHeight())))
+
+    def setVerticalScrollBarPolicy(self, policy):
+        self.answerLabel.setVerticalScrollBarPolicy(policy)
 
 
 class DisplayLabel(QTextEdit):
