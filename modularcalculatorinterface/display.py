@@ -55,31 +55,25 @@ class CalculatorDisplay(QWidget):
         self.layout.update()
 
     def renderAnswer(self, row, n):
-        fractionHtml = None
-        (answerText, fractionText) = self.createInsertText(row)
         if isinstance(row, CalculatorDisplayAnswer):
             question = row.question.strip()
             questionHtml = self.questionHtml(question)
-
-            if type(row.answer) == list:
-                answerHtml = '['
-                answerHtml += ', '.join([self.renderAnswerRow(r.value, r.unit) for r in row.answer])
-                answerHtml += ']'
-            else:
-                answerHtml = self.renderAnswerRow(row.answer, row.unit)
-                if row.fraction is not None and row.fraction[1] != 0 and row.fraction[2] < self.max_denominator:
-                    fractionHtml = self.renderFractionRow(row.fraction, row.unit)
+            (answerHtml, fractionHtml) = self.createAnswerFractionHtml(row)
+            (answerText, fractionText) = self.createAnswerFractionText(row)
 
         elif isinstance(row, CalculatorDisplayError):
             questionHtml, _ = self.interface.entry.makeHtml([row.err.statements[-1]], row.question[row.i:])
             answerHtml = makeSpan(htmlSafe(row.err.message), 'error')
+            answerText = None
+            fractionHtml = None
+            fractionText = None
 
         else:
             raise Exception("Unrecognised type in renderAnswer: {}".format(type(row)))
 
         return self.makeQuestionWidget(questionHtml, n), self.makeAnswerWidget(answerHtml, answerText, fractionHtml, fractionText, n)
 
-    def createInsertText(self, row):
+    def createAnswerFractionText(self, row):
         if type(row.answer) == list:
             answerText = '['
             answerText += ', '.join([self.createAnswerText(r.value, r.unit) for r in row.answer])
@@ -123,52 +117,53 @@ class CalculatorDisplay(QWidget):
         else:
             return ''
 
-    def renderAnswerRow(self, answer, unit):
-        answer_rendered = None
+    def createAnswerFractionHtml(self, row):
+        answerHtml = self.interface.entry.css
+        if type(row.answer) == list:
+            answerHtml += '['
+            answerHtml += ', '.join([self.createAnswerHtml(r.value, r.unit) for r in row.answer])
+            answerHtml += ']'
+        else:
+            answerHtml += self.createAnswerHtml(row.answer, row.unit)
+
+        fractionHtml = None
+        if row.fraction is not None and row.fraction[1] != 0 and row.fraction[2] < self.max_denominator:
+            fractionHtml = self.interface.entry.css
+            if row.fraction[0] != 0:
+                fractionHtml += makeSpan("{} ".format(row.fraction[0]), "literal")
+                fractionHtml += makeSpan("{}/{}".format(abs(row.fraction[1]), row.fraction[2]), "literal", "font-size: 16px")
+            else:
+                fractionHtml += makeSpan("{}/{}".format(row.fraction[1], row.fraction[2]), "literal")
+            unit = self.createUnitHtml(Number(row.fraction[0] + row.fraction[1] / row.fraction[2]), row.unit)
+            fractionHtml += unit
+
+        return (answerHtml, fractionHtml)
+
+    def createAnswerHtml(self, answer, unit):
+        answerHtml = None
         if isinstance(answer, UnitPowerList):
             if self.options['shortunits'] and answer.has_symbols():
                 unit_parts = answer.symbol(False)
             else:
                 unit_parts = answer.singular(False, False)
-            answer_rendered = ''.join([makeSpan(htmlSafe(u[0]), u[1]) for u in unit_parts])
+            answerHtml = ''.join([makeSpan(htmlSafe(u[0]), u[1]) for u in unit_parts])
         else:
-            answer_rendered = makeSpan(htmlSafe(answer), 'literal')
+            answerHtml = makeSpan(htmlSafe(answer), 'literal')
+        if unit is not None:
+            unit = self.createUnitHtml(self.interface.calculatormanager.calculator.number(answer)[0], unit)
+            answerHtml += unit
+        return answerHtml
+
+    def createUnitHtml(self, answer, unit):
         if unit is not None:
             if self.options['shortunits'] and unit.has_symbols():
                 unit_parts = unit.symbol(False)
             else:
-                answer_number = self.interface.calculatormanager.calculator.number(answer)[0]
-                unit_parts = unit.get_name(answer_number, False)
+                unit_parts = unit.get_name(answer, False)
                 unit_parts = [(' ', 'space')] + unit_parts
-            unit = ''.join([makeSpan(htmlSafe(u[0]), u[1]) for u in unit_parts])
+            return ''.join([makeSpan(htmlSafe(u[0]), u[1]) for u in unit_parts])
         else:
-            unit = ''
-        html = self.interface.entry.css + answer_rendered + unit
-
-        return html
-
-    def renderFractionRow(self, fraction, unit):
-        if unit is not None:
-            if self.options['shortunits'] and unit.has_symbols():
-                unit_parts = unit.symbol(False)
-            else:
-                answer_number = Number(fraction[0] + fraction[1] / fraction[2])
-                unit_parts = unit.get_name(answer_number, False)
-                unit_parts = [(' ', 'space')] + unit_parts
-            unit = ''.join([makeSpan(htmlSafe(u[0]), u[1]) for u in unit_parts])
-        else:
-            unit = ''
-
-        html = self.interface.entry.css
-        if fraction[0] != 0:
-            html += makeSpan("{} ".format(fraction[0]), "literal", "font-size: 20px")
-            html += makeSpan("{}/{}".format(abs(fraction[1]), fraction[2]), "literal", "font-size: 16px")
-        else:
-            html += makeSpan("{}/{}".format(fraction[1], fraction[2]), "literal", "font-size: 20px")
-
-        html += makeSpan(unit, style="font-size: 20px")
-
-        return html
+            return ''
 
     def makeQuestionWidget(self, questionHtml, n):
         questionWidget = DisplayLabel(questionHtml, n, self)
@@ -186,7 +181,7 @@ class CalculatorDisplay(QWidget):
         if fractionHtml is not None:
             fractionWidget = DisplayLabel(fractionHtml, n, self, CalculatorDisplay.insertAnswer, fractionText)
             fractionFont = QFontDatabase.systemFont(QFontDatabase.FixedFont)
-            fractionFont.setPointSize(fractionFont.pointSize() + 4)
+            fractionFont.setPointSize(fractionFont.pointSize())
             fractionWidget.setFont(fractionFont)
 
             return DisplayAnswerFractionLabel(answerWidget, fractionWidget)
