@@ -1,0 +1,17 @@
+# ModularCalculator example config file
+
+#entry:
+#  font: Hack
+#  fontsize_pt: 12
+#  bold: true
+
+#display:
+#  max_denominator: 100000
+#  font: Hack
+#  question_fontsize_pt: 10
+#  question_bold: false
+#  answer_fontsize_pt: 14
+#  answer_bold: true
+#  fraction_fontsize_pt: 10
+#  fraction_small_fontsize_pt: 8
+#  fraction_bold: false

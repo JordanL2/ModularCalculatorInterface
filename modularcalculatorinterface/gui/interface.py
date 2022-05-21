@@ -15,6 +15,7 @@ from PyQt5.QtCore import Qt, QThreadPool, QTimer
 from PyQt5.QtGui import QKeySequence, QCursor, QPalette, QIcon, QGuiApplication
 from PyQt5.QtWidgets import QWidget, QGridLayout, QSplitter, QAction, QFileDialog, QToolTip, QShortcut, QMessageBox, QScrollArea, QSizePolicy
 
+from functools import partial
 import os.path
 import string
 import traceback
@@ -22,8 +23,10 @@ import traceback
 
 class ModularCalculatorInterface(StatefulApplication):
 
-    def __init__(self, clear):
+    def __init__(self, flags, config):
         super().__init__()
+
+        self.config = config
 
         self.setIcon()
         QGuiApplication.setDesktopFileName('io.github.jordanl2.ModularCalculator')
@@ -42,7 +45,7 @@ class ModularCalculatorInterface(StatefulApplication):
         self.initMenu()
 
         self.stateHashes = {}
-        if not clear:
+        if not flags['clear']:
             self.restoreAllState()
         else:
             self.initEmptyState()
@@ -152,10 +155,21 @@ class ModularCalculatorInterface(StatefulApplication):
         self.viewLineHighlighting.triggered.connect(self.entry.setLineHighlighting)
         viewMenu.addAction(self.viewLineHighlighting)
 
+        self.viewThemesMenu = viewMenu.addMenu('Themes')
+        self.viewThemesActions = {}
+        for theme in self.htmlService.syntax.keys():
+            themeAction = QAction(theme, self, checkable=True)
+            if theme == self.htmlService.theme:
+                themeAction.setChecked(True)
+            themeAction.triggered.connect(partial(self.setTheme, theme))
+            self.viewThemesActions[theme] = themeAction
+            self.viewThemesMenu.addAction(themeAction)
+
         self.viewClearOutput = QAction('Clear Output', self)
         self.viewClearOutput.triggered.connect(self.display.clear)
         self.viewClearOutput.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_L))
         viewMenu.addAction(self.viewClearOutput)
+
 
         actionMenu = menubar.addMenu('Insert')
 
@@ -245,6 +259,8 @@ class ModularCalculatorInterface(StatefulApplication):
             self.calculatormanager.restoreState(self.fetchStateMap("calculatorManager"))
 
             self.tabmanager.restoreState(self.fetchStateMap("tabManager"))
+
+            self.htmlService.restoreState(self.fetchStateMap("htmlService"))
         except Exception as e:
             print("Exception when trying to restore state")
             print(traceback.format_exc())
@@ -280,6 +296,12 @@ class ModularCalculatorInterface(StatefulApplication):
             self.stateHashes['tabManager'] = tabManagerHash
             self.storeStateMap("tabManager", tabManager)
 
+        htmlService = self.htmlService.saveState()
+        htmlServiceHash = self.mapHash(htmlService)
+        if 'htmlService' not in self.stateHashes or htmlServiceHash != self.stateHashes['htmlService']:
+            self.stateHashes['htmlService'] = htmlServiceHash
+            self.storeStateMap("htmlService", htmlService)
+
 
     def getOpenFileName(self, title, filterFiles):
         filePath, _ =  QFileDialog.getOpenFileName(self, title, "", filterFiles)
@@ -297,6 +319,11 @@ class ModularCalculatorInterface(StatefulApplication):
             return False
         return None
 
+
+    def setTheme(self, theme):
+        self.htmlService.setTheme(theme)
+        for themeActionTheme, themeAction in self.viewThemesActions.items():
+            themeAction.setChecked(theme == themeActionTheme)
 
     def insertConstant(self):
         constants = sorted(self.calculatormanager.calculator.constants.keys(), key=str)

@@ -186,7 +186,6 @@ class CalculatorEntry(QTextEdit):
         self.interface.filemanager.setCurrentFileAndModified(self.interface.filemanager.currentFile(), self.isModified())
 
     def refresh(self):
-        self.htmlService.initStyling()
         self.checkSyntax(True)
 
     def updateHtml(self, html):

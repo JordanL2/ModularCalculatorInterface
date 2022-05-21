@@ -11,59 +11,37 @@ class HtmlService():
     def __init__(self, interface):
         self.interface = interface
         self.highlighter = SyntaxHighlighter()
-        self.setTheme()
+        self.loadConfig()
         self.initStyling()
 
-    def setTheme(self):
-        self.syntax = {
-            'Light': {
-                'error': "color: '#bc0000'",
-                'default': "color: '#bc0000'",
-                'literal': "color: '#097e00'",
-                'unit': "color: '#805f00'",
-                'unitsystem': "color: '#805f00'",
-                'op': "color: '#0c0c0c'",
-                'terminator': "color: '#0c0c0c'",
-                'inner_expr_start': "color: '#0c0c0c'",
-                'inner_expr_end': "color: '#0c0c0c'",
-                'function_name': "color: '#00297f'",
-                'function_start': "color: '#0c0c0c'",
-                'function_param': "color: '#0c0c0c'",
-                'function_end': "color: '#0c0c0c'",
-                'ext_function_name': "color: '#00297f'",
-                'variable': "color: '#480081'",
-                'constant': "color: '#812500'",
-                'comment': "color: '#007d80'",
-            },
-            'Dark': {
-                'error': "color: '#cd0d0d'",
-                'default': "color: '#cd2727'",
-                'literal': "color: '#3ae42d'",
-                'unit': "color: '#d7a40e'",
-                'unitsystem': "color: '#d7a40e'",
-                'op': "color: '#f2f2f2'",
-                'terminator': "color: '#f2f2f2'",
-                'inner_expr_start': "color: '#f2f2f2'",
-                'inner_expr_end': "color: '#f2f2f2'",
-                'function_name': "color: '#3577ff'",
-                'function_start': "color: '#f2f2f2'",
-                'function_param': "color: '#f2f2f2'",
-                'function_end': "color: '#f2f2f2'",
-                'ext_function_name': "color: '#3577ff'",
-                'variable': "color: '#a839ff'",
-                'constant': "color: '#ff6629'",
-                'comment': "color: '#2ee5e9'",
-            },
-        }
+    def restoreState(self, state):
+        if isinstance(state, dict):
+            if 'theme' in state.keys() and state['theme'] in self.syntax.keys():
+                self.interface.setTheme(state['theme'])
+
+    def saveState(self):
+        return {'theme': self.theme}
+
+    def loadConfig(self):
+        self.syntax = {}
+        self.theme = 'Default'
         value = (self.interface.palette().base().color().value())
-        if value < 128:
-            self.theme = 'Dark'
-        else:
-            self.theme = 'Light'
+        self.darkTheme = value < 128
+        for themeFile, theme in self.interface.config.themes.items():
+            self.syntax[theme['name']] = {
+                False: theme['light'],
+                True: theme['dark'],
+            }
+
+    def setTheme(self, theme):
+        self.theme = theme
+        self.initStyling()
+        self.interface.entry.refresh()
+        self.interface.display.refresh()
 
     def initStyling(self):
         self.css = "<style>"
-        for itemtype, css in self.syntax[self.theme].items():
+        for itemtype, css in self.syntax[self.theme][self.darkTheme].items():
             self.css += "span.{0} {{ {1} }}".format(itemtype, css)
         self.css += '</style>'
 

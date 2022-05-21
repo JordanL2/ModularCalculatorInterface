@@ -16,6 +16,7 @@ setuptools.setup(
     install_requires=[
         'modularcalculator',
         'PyQt5',
+        'pyyaml',
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

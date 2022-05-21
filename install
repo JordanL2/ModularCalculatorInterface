@@ -1,5 +1,7 @@
 #!/bin/sh
 
+cd "$(dirname "$0/")"
+
 PREFIX=$1
 if [ $# -lt 1 ]; then
 	PREFIX=/usr
@@ -12,3 +14,5 @@ do
 done
 install -D ModularCalculator.desktop $PREFIX/share/applications/io.github.jordanl2.ModularCalculator.desktop
 install -D io.github.jordanl2.ModularCalculator.appdata.xml $PREFIX/share/metainfo/io.github.jordanl2.ModularCalculator.metainfo.xml
+
+cp -r config/ModularCalculator ${PREFIX}/share/ModularCalculator
