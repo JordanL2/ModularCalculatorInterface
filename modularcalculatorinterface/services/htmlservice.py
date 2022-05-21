@@ -232,3 +232,6 @@ class HtmlService():
             unit_parts = unit.get_name(answer, False)
             unit_parts = [(' ', 'space')] + unit_parts
         return ''.join([self.makeSpan(self.htmlSafe(u[0]), u[1]) for u in unit_parts])
+
+    def createErrorHtml(self, error):
+        return self.css + self.makeSpan(self.htmlSafe(error), 'error')

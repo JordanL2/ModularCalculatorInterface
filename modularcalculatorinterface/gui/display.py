@@ -64,7 +64,7 @@ class CalculatorDisplay(QWidget):
 
         elif isinstance(row, CalculatorDisplayError):
             questionHtml, _ = self.htmlService.createStatementsHtml([row.err.statements[-1]], row.question[row.i:], False)
-            answerHtml = self.htmlService.makeSpan(self.htmlService.htmlSafe(row.err.message), 'error')
+            answerHtml = self.htmlService.createErrorHtml(row.err.message)
             answerText = None
             fractionHtml = None
             fractionText = None
