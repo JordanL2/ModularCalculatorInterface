@@ -3,7 +3,6 @@
 from modularcalculator.modularcalculator import *
 from modularcalculator.objects.exceptions import *
 from modularcalculator.objects.number import *
-from modularcalculatorinterface.services.tools import *
 
 
 class CalculatorManager():
@@ -58,7 +57,7 @@ class CalculatorManager():
         self.setShortUnits(False)
 
     def restoreState(self, state):
-        defaultState(state, {
+        self.interface.defaultState(state, {
                 "importedFeatures": [],
                 "calculatorFeatures": None,
                 "precision": 30,

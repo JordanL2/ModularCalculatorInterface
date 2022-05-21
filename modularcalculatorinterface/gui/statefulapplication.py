@@ -1,8 +1,14 @@
 #!/usr/bin/python3
 
+from modularcalculator.objects.items import OperandResult
+from modularcalculator.objects.number import *
+from modularcalculator.objects.units import UnitPowerList
+from modularcalculatorinterface.gui.display import CalculatorDisplayAnswer, CalculatorDisplayError
+
 from PyQt5.QtCore import QSettings
 from PyQt5.QtWidgets import QMainWindow
 
+import json
 import pickle
 
 
@@ -79,3 +85,47 @@ class StatefulApplication(QMainWindow):
 
     def storeStateMap(self, name, value):
         self.storeState(name, pickle.dumps(value))
+
+    def defaultState(self, state, defaults):
+    	for k, v in defaults.items():
+    		if k not in state:
+    			state[k] = v
+
+    def mapHash(self, mapToHash):
+    	string = json.dumps(mapToHash, cls=SetEncoder, sort_keys=True)
+    	return hash(string)
+
+
+class SetEncoder(json.JSONEncoder):
+
+	def default(self, obj):
+		if isinstance(obj, set):
+			return sorted(list(obj))
+		if isinstance(obj, list):
+			return sorted(obj)
+		if isinstance(obj, CalculatorDisplayAnswer):
+			return {
+				'question': obj.question,
+				'answer': obj.answer,
+				'unit': str(obj.unit),
+			}
+		if isinstance(obj, CalculatorDisplayError):
+			return {
+				'err': obj.err.message,
+				'i': obj.i,
+				'question': obj.question,
+			}
+		if isinstance(obj, OperandResult):
+			return {
+				'value': str(obj.value),
+				'unit': str(obj.unit),
+			}
+		if isinstance(obj, UnitPowerList):
+			return {
+				'value': obj.singular(True, True),
+			}
+		if isinstance(obj, Number):
+			return {
+				'str': str(obj),
+			}
+		return json.JSONEncoder.default(self, obj)

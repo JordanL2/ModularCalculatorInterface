@@ -1,7 +1,5 @@
 #!/usr/bin/python3
 
-from modularcalculatorinterface.services.tools import *
-
 
 class TabManager():
 
@@ -23,7 +21,7 @@ class TabManager():
         self.interface.tabbar.tabMoved.connect(self.moveTab)
 
     def restoreState(self, state):
-        defaultState(state, {
+        self.interface.defaultState(state, {
                 "tabs": [],
                 "selectedTab": None,
             })

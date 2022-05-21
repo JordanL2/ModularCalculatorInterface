@@ -9,4 +9,3 @@ def screenRelativeSize(width, height):
     size.setWidth(int(round(QApplication.desktop().screenGeometry().width() * width)))
     size.setHeight(int(round(QApplication.desktop().screenGeometry().height() * height)))
     return size
-

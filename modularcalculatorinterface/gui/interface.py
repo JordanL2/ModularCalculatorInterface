@@ -10,7 +10,6 @@ from modularcalculatorinterface.services.calculatormanager import *
 from modularcalculatorinterface.services.filemanager import *
 from modularcalculatorinterface.services.htmlservice import *
 from modularcalculatorinterface.services.tabmanager import *
-from modularcalculatorinterface.services.tools import *
 
 from PyQt5.QtCore import Qt, QThreadPool, QTimer
 from PyQt5.QtGui import QKeySequence, QCursor, QPalette, QIcon, QGuiApplication
@@ -270,13 +269,13 @@ class ModularCalculatorInterface(StatefulApplication):
             self.storeState("splitterSizes", splitterSizes)
 
         calculatorManager = self.calculatormanager.saveState()
-        calculatorManagerHash = maphash(calculatorManager)
+        calculatorManagerHash = self.mapHash(calculatorManager)
         if 'calculatorManager' not in self.stateHashes or calculatorManagerHash != self.stateHashes['calculatorManager']:
             self.stateHashes['calculatorManager'] = calculatorManagerHash
             self.storeStateMap("calculatorManager", calculatorManager)
 
         tabManager = self.tabmanager.saveState()
-        tabManagerHash = maphash(tabManager)
+        tabManagerHash = self.mapHash(tabManager)
         if 'tabManager' not in self.stateHashes or tabManagerHash != self.stateHashes['tabManager']:
             self.stateHashes['tabManager'] = tabManagerHash
             self.storeStateMap("tabManager", tabManager)
