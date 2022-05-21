@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="modularcalculatorinterface",
-    version="1.2.1",
+    version="1.2.999",
     author="Jordan Leppert",
     author_email="jordanleppert@gmail.com",
     description="A powerful, modular calculator written in Python.",
@@ -22,6 +22,6 @@ setuptools.setup(
         "License :: OSI Approved :: LGPL-2.1 License",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.6',
+    python_requires='>=3.4',
     entry_points = {'console_scripts': ['modularcalculator = modularcalculatorinterface.main:main',], },
 )
