@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 
-from modularcalculatorinterface.gui.guitools import *
 from modularcalculatorinterface.gui.guiwidgets import *
 
 from PyQt5.QtCore import Qt, QPointF
