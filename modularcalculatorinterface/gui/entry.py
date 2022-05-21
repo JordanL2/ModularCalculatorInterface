@@ -11,7 +11,7 @@ import time
 import uuid
 
 
-class CalculatorTextEdit(QTextEdit):
+class CalculatorEntry(QTextEdit):
 
     def __init__(self, interface):
         super().__init__()
@@ -111,7 +111,7 @@ class CalculatorTextEdit(QTextEdit):
                     expr_truncated = expr[0:len(expr) - later_results_length]
 
             self.last_uuid = uuid.uuid4()
-            self.doSyntaxHighlighting(CalculatorTextEdit.doSyntaxParsing(self.calculator, expr_truncated, response.copy(), later_results, i, ii, self.last_uuid, True))
+            self.doSyntaxHighlighting(CalculatorEntry.doSyntaxParsing(self.calculator, expr_truncated, response.copy(), later_results, i, ii, self.last_uuid, True))
 
             if self.autoExecute:
                 worker = SyntaxHighlighterWorker(self.calculator, expr, response, i, ii, self.last_uuid)
@@ -407,4 +407,4 @@ class SyntaxHighlighterWorker(QRunnable):
     def run(self):
         self.calculator.update_engine_prec()
 
-        self.signals.result.emit(CalculatorTextEdit.doSyntaxParsing(self.calculator, self.expr, self.response, [], self.i, self.ii, self.uuid, False))
+        self.signals.result.emit(CalculatorEntry.doSyntaxParsing(self.calculator, self.expr, self.response, [], self.i, self.ii, self.uuid, False))

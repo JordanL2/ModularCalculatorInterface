@@ -1,11 +1,11 @@
 #!/usr/bin/python3
 
 from modularcalculatorinterface.gui.display import *
+from modularcalculatorinterface.gui.entry import *
 from modularcalculatorinterface.gui.featureconfig import *
 from modularcalculatorinterface.gui.featureoptions import *
 from modularcalculatorinterface.gui.guiwidgets import *
 from modularcalculatorinterface.gui.statefulapplication import *
-from modularcalculatorinterface.gui.textedit import *
 from modularcalculatorinterface.services.calculatormanager import *
 from modularcalculatorinterface.services.filemanager import *
 from modularcalculatorinterface.services.htmlservice import *
@@ -70,7 +70,7 @@ class ModularCalculatorInterface(StatefulApplication):
     def initUI(self):
         self.tabbar = MiddleClickCloseableTabBar(self)
 
-        self.entry = CalculatorTextEdit(self)
+        self.entry = CalculatorEntry(self)
 
         self.display = CalculatorDisplay(self)
         self.displayScroll = QScrollArea()
