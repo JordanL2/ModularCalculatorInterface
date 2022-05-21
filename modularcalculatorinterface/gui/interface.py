@@ -8,6 +8,7 @@ from modularcalculatorinterface.gui.statefulapplication import *
 from modularcalculatorinterface.gui.textedit import *
 from modularcalculatorinterface.services.calculatormanager import *
 from modularcalculatorinterface.services.filemanager import *
+from modularcalculatorinterface.services.htmlservice import *
 from modularcalculatorinterface.services.tabmanager import *
 from modularcalculatorinterface.services.tools import *
 
@@ -31,6 +32,7 @@ class ModularCalculatorInterface(StatefulApplication):
         self.threadpool = QThreadPool()
         self.threadpool.setMaxThreadCount(1)
 
+        self.htmlService = HtmlService(self)
         self.initUI()
 
         self.calculatormanager = CalculatorManager(self)

@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 from modularcalculator.objects.api import *
-from modularcalculator.services.syntaxhighlighter import *
+from modularcalculator.objects.exceptions import *
 from modularcalculatorinterface.gui.guitools import *
 
 from PyQt5.QtCore import Qt, QObject, pyqtSignal, pyqtSlot, QRunnable
@@ -25,9 +25,7 @@ class CalculatorTextEdit(QTextEdit):
         self.setFont(editFont)
 
         self.interface = interface
-        self.highlighter = SyntaxHighlighter()
-        self.setTheme()
-        self.initStyling()
+        self.htmlService = interface.htmlService
         self.oldText = None
 
         self.autoExecute = True
@@ -41,59 +39,6 @@ class CalculatorTextEdit(QTextEdit):
 
     def setCalculator(self, calculator):
         self.calculator = calculator
-
-    def setTheme(self):
-        self.syntax = {
-            'Light': {
-                'error': "color: '#bc0000'",
-                'default': "color: '#bc0000'",
-                'literal': "color: '#097e00'",
-                'unit': "color: '#805f00'",
-                'unitsystem': "color: '#805f00'",
-                'op': "color: '#0c0c0c'",
-                'terminator': "color: '#0c0c0c'",
-                'inner_expr_start': "color: '#0c0c0c'",
-                'inner_expr_end': "color: '#0c0c0c'",
-                'function_name': "color: '#00297f'",
-                'function_start': "color: '#0c0c0c'",
-                'function_param': "color: '#0c0c0c'",
-                'function_end': "color: '#0c0c0c'",
-                'ext_function_name': "color: '#00297f'",
-                'variable': "color: '#480081'",
-                'constant': "color: '#812500'",
-                'comment': "color: '#007d80'",
-            },
-            'Dark': {
-                'error': "color: '#cd0d0d'",
-                'default': "color: '#cd2727'",
-                'literal': "color: '#3ae42d'",
-                'unit': "color: '#d7a40e'",
-                'unitsystem': "color: '#d7a40e'",
-                'op': "color: '#f2f2f2'",
-                'terminator': "color: '#f2f2f2'",
-                'inner_expr_start': "color: '#f2f2f2'",
-                'inner_expr_end': "color: '#f2f2f2'",
-                'function_name': "color: '#3577ff'",
-                'function_start': "color: '#f2f2f2'",
-                'function_param': "color: '#f2f2f2'",
-                'function_end': "color: '#f2f2f2'",
-                'ext_function_name': "color: '#3577ff'",
-                'variable': "color: '#a839ff'",
-                'constant': "color: '#ff6629'",
-                'comment': "color: '#2ee5e9'",
-            },
-        }
-        value = (self.interface.palette().base().color().value())
-        if value < 128:
-            self.theme = 'Dark'
-        else:
-            self.theme = 'Light'
-
-    def initStyling(self):
-        self.css = "<style>"
-        for itemtype, css in self.syntax[self.theme].items():
-            self.css += "span.{0} {{ {1} }}".format(itemtype, css)
-        self.css += '</style>'
 
     def keyPressEvent(self, e):
         self.undoStack.keyPressed()
@@ -221,7 +166,7 @@ class CalculatorTextEdit(QTextEdit):
 
         statements = [r.items for r in response.results] + error_statements
         errorExpr = expr[ii:]
-        newhtml, highlightPositions = self.makeHtml(statements, errorExpr)
+        newhtml, highlightPositions = self.htmlService.createStatementsHtml(statements, errorExpr, self.lineHighlighting)
         self.updateHtml(newhtml)
 
         extraSelections = []
@@ -241,65 +186,14 @@ class CalculatorTextEdit(QTextEdit):
 
         self.interface.filemanager.setCurrentFileAndModified(self.interface.filemanager.currentFile(), self.isModified())
 
-    def makeHtml(self, statements, errorExpr):
-        splitStatements = []
-        for items in statements:
-            funcItems = [i for i, item in enumerate(items) if item.functional() and not item.text.strip() == '']
-            if len(funcItems) == 0:
-                splitStatements.append(items)
-            else:
-                nonEmptyItems = [i for i, item in enumerate(items) if not item.text.strip() == '']
-                firstNonEmptyItem = min(nonEmptyItems)
-                if firstNonEmptyItem > 0:
-                    splitStatements.append(items[0:firstNonEmptyItem])
-                splitStatements.append(items[firstNonEmptyItem:])
-
-        compactedStatements = []
-        foundFunctional = False
-        for items in splitStatements:
-            functional = len(functional_items(items)) > 0
-            isEmpty = len([i for i in items if i.text.strip() != '']) == 0
-            if not isEmpty and foundFunctional:
-                foundFunctional = False
-                compactedStatements.append([])
-            if len(compactedStatements) == 0:
-                compactedStatements.append([])
-            compactedStatements[-1].extend(items)
-            if functional:
-                foundFunctional = True
-
-        newhtml = self.css
-
-        highlightStatements = self.highlighter.highlight_statements(compactedStatements)
-        alternate = True
-        p = 0
-        highlightPositions = []
-        for highlightItems in highlightStatements:
-            alternate = not alternate
-            p0 = p
-
-            for item in highlightItems:
-                style = item[0]
-                text = item[1]
-                newhtml += makeSpan(htmlSafe(text), style)
-                p += len(text)
-
-            if alternate and self.lineHighlighting:
-                highlightPositions.append((p0, p))
-
-        if errorExpr != '':
-            newhtml += makeSpan(htmlSafe(errorExpr), 'error')
-
-        return newhtml, highlightPositions
-
     def refresh(self):
-        self.initStyling()
+        self.htmlService.initStyling()
         self.checkSyntax(True)
 
     def updateHtml(self, html):
         cursorpos = self.textCursor().position()
         sliderpos = self.verticalScrollBar().sliderPosition()
-        self.setHtml(self.css + html)
+        self.setHtml(html)
         cursor = self.textCursor()
         cursor.setPosition(cursorpos)
         self.setTextCursor(cursor)
