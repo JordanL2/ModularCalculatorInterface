@@ -281,6 +281,24 @@ class ModularCalculatorInterface(StatefulApplication):
             self.stateHashes['tabManager'] = tabManagerHash
             self.storeStateMap("tabManager", tabManager)
 
+
+    def getOpenFileName(self, title, filterFiles):
+        filePath, _ =  QFileDialog.getOpenFileName(self, title, "", filterFiles)
+        return filePath
+
+    def getSaveFileName(self, title, filterFiles):
+        filePath, _ =  QFileDialog.getSaveFileName(self, title, "", filterFiles)
+        return filePath
+
+    def questionYesNoCancel(self, title, question):
+        response = QMessageBox.question(self, title, question, QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel, QMessageBox.Cancel)
+        if response == QMessageBox.Yes:
+            return True
+        elif response == QMessageBox.No:
+            return False
+        return None
+
+
     def insertConstant(self):
         constants = sorted(self.calculatormanager.calculator.constants.keys(), key=str)
         SelectionDialog(self, 'Insert Constant', 'Select constant to insert', constants, self.selectConstant)

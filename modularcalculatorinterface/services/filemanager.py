@@ -1,7 +1,5 @@
 #!/usr/bin/python3
 
-from PyQt5.QtWidgets import QFileDialog, QMessageBox
-
 
 class FileManager():
 
@@ -56,7 +54,7 @@ class FileManager():
                 self.setTabText(fileName, self.selectedTab())
 
     def open(self):
-        filePath, _ = QFileDialog.getOpenFileName(self.interface, "Open File", "", "All Files (*)")
+        filePath = self.interface.getOpenFileName("Open File", "All Files (*)")
         if filePath:
             for i in range(0, len(self.tabmanager.tabs)):
                 if self.currentFile(i) == filePath:
@@ -81,7 +79,7 @@ class FileManager():
     def saveAs(self, i=None):
         if i == False:
             i = None
-        filePath, _ = QFileDialog.getSaveFileName(self.interface, "Save File", "", "All Files (*)")
+        filePath = self.interface.getSaveFileName("Save File", "All Files (*)")
         if filePath:
             fh = open(filePath, 'w')
             fh.write(self.getEntryContents(i))
@@ -89,10 +87,10 @@ class FileManager():
 
     def checkIfNeedToSave(self, i=None):
         if self.currentFile(i) is not None and self.currentFileModified(i):
-            response = QMessageBox.question(self.interface, 'Unsaved File', "Save changes to {} before closing?".format(self.currentFile()), QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel, QMessageBox.Cancel)
-            if response == QMessageBox.Yes:
+            response = self.interface.questionYesNoCancel('Unsaved File', "Save changes to {} before closing?".format(self.currentFile()))
+            if response == True:
                 self.save(i)
-            elif response == QMessageBox.Cancel:
+            elif response is None:
                 return True
         return False
 
