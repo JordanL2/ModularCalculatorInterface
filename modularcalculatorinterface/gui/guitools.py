@@ -15,8 +15,8 @@ def htmlSafe(text):
 
 def screenRelativeSize(width, height):
     size = QSize()
-    size.setWidth(QApplication.desktop().screenGeometry().width() * width)
-    size.setHeight(QApplication.desktop().screenGeometry().height() * height)
+    size.setWidth(int(round(QApplication.desktop().screenGeometry().width() * width)))
+    size.setHeight(int(round(QApplication.desktop().screenGeometry().height() * height)))
     return size
 
 def makeSpan(text, clas=None, style=None):

@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 
 from modularcalculator.modularcalculator import *
-from modularcalculatorinterface.guiwidgets import ExpandedListWidget
-from modularcalculatorinterface.guitools import *
+from modularcalculatorinterface.gui.guitools import *
+from modularcalculatorinterface.gui.guiwidgets import ExpandedListWidget
 
 from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import QFontDatabase
@@ -10,7 +10,7 @@ from PyQt5.QtWidgets import QDialog, QVBoxLayout, QListWidget, QListWidgetItem, 
 
 
 class FeatureOptionsDialog(QDialog):
-    
+
     def __init__(self, parent):
         super().__init__(parent)
 
@@ -129,5 +129,5 @@ class ConfigureFeatureDialog(QDialog):
 
     def sizeHint(self):
         size = super().sizeHint()
-        size.setWidth(QApplication.desktop().screenGeometry().width() * 0.3)
+        size.setWidth(int(round(QApplication.desktop().screenGeometry().width() * 0.3)))
         return size

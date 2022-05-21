@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from modularcalculatorinterface.tools import *
+from modularcalculatorinterface.services.tools import *
 
 
 class TabManager():
@@ -66,9 +66,9 @@ class TabManager():
 
     def addTab(self):
         self.tabs.append({
-            'entry': {}, 
-            'display': {'rawOutput': []}, 
-            'currentFile': None, 
+            'entry': {},
+            'display': {'rawOutput': []},
+            'currentFile': None,
             'currentFileModified': False
         })
         self.tabbar.addTab(self.getTabName(None, None))
@@ -96,7 +96,7 @@ class TabManager():
     def closeTab(self, i):
         if self.filemanager.checkIfNeedToSave(i):
             return
-        
+
         self.storeSelectedTab()
         self.tabbar.blockSignals(True)
 

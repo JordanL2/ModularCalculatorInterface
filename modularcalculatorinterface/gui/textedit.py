@@ -2,7 +2,7 @@
 
 from modularcalculator.objects.api import *
 from modularcalculator.services.syntaxhighlighter import *
-from modularcalculatorinterface.guitools import *
+from modularcalculatorinterface.gui.guitools import *
 
 from PyQt5.QtCore import Qt, QObject, pyqtSignal, pyqtSlot, QRunnable
 from PyQt5.QtWidgets import QTextEdit, QAction

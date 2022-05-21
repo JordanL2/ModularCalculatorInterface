@@ -3,7 +3,7 @@
 from modularcalculator.modularcalculator import *
 from modularcalculator.objects.exceptions import *
 from modularcalculator.objects.number import *
-from modularcalculatorinterface.tools import *
+from modularcalculatorinterface.services.tools import *
 
 from PyQt5.QtWidgets import  QMessageBox
 

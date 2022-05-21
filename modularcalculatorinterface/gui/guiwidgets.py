@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from modularcalculatorinterface.guitools import *
+from modularcalculatorinterface.gui.guitools import *
 
 from PyQt5.QtCore import Qt, QStringListModel, QSize
 from PyQt5.QtWidgets import QListWidget, QListWidgetItem, QWidgetAction, QSpinBox, QLabel, QHBoxLayout, QVBoxLayout, QWidget, QListView, QDialog, QAbstractItemView, QPushButton, QCalendarWidget, QTimeEdit, QComboBox, QTabBar

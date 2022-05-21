@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 
-from modularcalculatorinterface.guitools import *
-from modularcalculatorinterface.guiwidgets import *
 from modularcalculator.objects.units import *
+from modularcalculatorinterface.gui.guitools import *
+from modularcalculatorinterface.gui.guiwidgets import *
 
 from PyQt5.QtCore import Qt, QPointF
 from PyQt5.QtGui import QFontDatabase, QPalette, QTextOption, QGuiApplication

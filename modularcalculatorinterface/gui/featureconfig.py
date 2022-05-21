@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 from modularcalculator.modularcalculator import *
-from modularcalculatorinterface.guitools import *
+from modularcalculatorinterface.gui.guitools import *
 
 from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import QFontDatabase
@@ -74,7 +74,7 @@ class FeatureConfigDialog(QDialog):
             if featureCategory not in featuresByCategory:
                 featuresByCategory[featureCategory] = []
             featuresByCategory[featureCategory].append(feature)
-        
+
         self.featureItems = {}
         self.featureList.clear()
         for featureCategory, features in sorted(featuresByCategory.items(), key=lambda c: c[0].lower()):
@@ -159,7 +159,7 @@ class FeatureConfigDialog(QDialog):
                     checkFeatureItem = self.featureItems[checkFeatureId]
                     if checkFeatureItem.checkState() == Qt.Checked:
                         checkFeatureItem.setCheckState(0)
-                
+
     def selectPreset(self, text):
         if text == 'Select All':
             for item in self.featureItems.values():

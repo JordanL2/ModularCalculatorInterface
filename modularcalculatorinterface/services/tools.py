@@ -3,7 +3,7 @@
 from modularcalculator.objects.items import OperandResult
 from modularcalculator.objects.number import *
 from modularcalculator.objects.units import UnitPowerList
-from modularcalculatorinterface.display import CalculatorDisplayAnswer, CalculatorDisplayError
+from modularcalculatorinterface.gui.display import CalculatorDisplayAnswer, CalculatorDisplayError
 
 import json
 

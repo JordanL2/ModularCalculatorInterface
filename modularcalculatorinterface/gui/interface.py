@@ -1,23 +1,22 @@
 #!/usr/bin/python3
 
-from modularcalculatorinterface.calculatormanager import *
-from modularcalculatorinterface.display import *
-from modularcalculatorinterface.featureconfig import *
-from modularcalculatorinterface.featureoptions import *
-from modularcalculatorinterface.filemanager import *
-from modularcalculatorinterface.guiwidgets import *
-from modularcalculatorinterface.statefulapplication import *
-from modularcalculatorinterface.tabmanager import *
-from modularcalculatorinterface.textedit import *
-from modularcalculatorinterface.tools import *
+from modularcalculatorinterface.gui.display import *
+from modularcalculatorinterface.gui.featureconfig import *
+from modularcalculatorinterface.gui.featureoptions import *
+from modularcalculatorinterface.gui.guiwidgets import *
+from modularcalculatorinterface.gui.statefulapplication import *
+from modularcalculatorinterface.gui.textedit import *
+from modularcalculatorinterface.services.calculatormanager import *
+from modularcalculatorinterface.services.filemanager import *
+from modularcalculatorinterface.services.tabmanager import *
+from modularcalculatorinterface.services.tools import *
 
 from PyQt5.QtCore import Qt, QThreadPool, QTimer
 from PyQt5.QtGui import QKeySequence, QCursor, QPalette, QIcon, QGuiApplication
-from PyQt5.QtWidgets import QApplication, QWidget, QGridLayout, QSplitter, QAction, QFileDialog, QToolTip, QShortcut, QMessageBox, QScrollArea, QSizePolicy
+from PyQt5.QtWidgets import QWidget, QGridLayout, QSplitter, QAction, QFileDialog, QToolTip, QShortcut, QMessageBox, QScrollArea, QSizePolicy
 
 import os.path
 import string
-import sys
 import traceback
 
 
@@ -90,7 +89,7 @@ class ModularCalculatorInterface(StatefulApplication):
         layout.setSpacing(0)
         layout.addWidget(self.tabbar, 0, 0, 1, 1)
         layout.addWidget(self.splitter, 1, 0, 1, 1)
-        
+
         mainWidget = QWidget()
         mainWidget.setLayout(layout)
         self.setCentralWidget(mainWidget)
@@ -110,14 +109,14 @@ class ModularCalculatorInterface(StatefulApplication):
 
     def initMenu(self):
         menubar = self.menuBar()
-        
+
         self.fileMenu = menubar.addMenu('File')
-        
+
         fileNew = QAction('New Tab', self)
         fileNew.triggered.connect(self.tabmanager.addTab)
         fileNew.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_N))
         self.fileMenu.addAction(fileNew)
-        
+
         fileClose = QAction('Close Tab', self)
         fileClose.triggered.connect(self.tabmanager.closeCurrentTab)
         fileClose.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_W))
@@ -127,12 +126,12 @@ class ModularCalculatorInterface(StatefulApplication):
         fileOpen.triggered.connect(self.filemanager.open)
         fileOpen.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_O))
         self.fileMenu.addAction(fileOpen)
-        
+
         self.fileSave = QAction('Save', self)
         self.fileSave.triggered.connect(self.filemanager.save)
         self.fileSave.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_S))
         self.fileMenu.addAction(self.fileSave)
-        
+
         fileSaveAs = QAction('Save As...', self)
         fileSaveAs.triggered.connect(self.filemanager.saveAs)
         fileSaveAs.setShortcut(QKeySequence(Qt.CTRL + Qt.SHIFT + Qt.Key_S))
@@ -158,44 +157,44 @@ class ModularCalculatorInterface(StatefulApplication):
         viewMenu.addAction(self.viewClearOutput)
 
         actionMenu = menubar.addMenu('Insert')
-        
+
         self.insertConstantAction = QAction('Constant', self)
         self.insertConstantAction.triggered.connect(self.insertConstant)
         self.insertConstantAction.setShortcut(QKeySequence(Qt.CTRL + Qt.SHIFT + Qt.Key_C))
         actionMenu.addAction(self.insertConstantAction)
-        
+
         self.insertDateAction = QAction('Date && Time', self)
         self.insertDateAction.triggered.connect(self.insertDate)
         self.insertDateAction.setShortcut(QKeySequence(Qt.CTRL + Qt.SHIFT + Qt.Key_D))
         actionMenu.addAction(self.insertDateAction)
-        
+
         self.insertUnitAction = QAction('Unit', self)
         self.insertUnitAction.triggered.connect(self.insertUnit)
         self.insertUnitAction.setShortcut(QKeySequence(Qt.CTRL + Qt.SHIFT + Qt.Key_U))
         actionMenu.addAction(self.insertUnitAction)
-        
+
         self.insertUnitSystemAction = QAction('Unit System', self)
         self.insertUnitSystemAction.triggered.connect(self.insertUnitSystem)
         self.insertUnitSystemAction.setShortcut(QKeySequence(Qt.CTRL + Qt.SHIFT + Qt.Key_Y))
         actionMenu.addAction(self.insertUnitSystemAction)
-        
+
         self.insertOperatorAction = QAction('Operator', self)
         self.insertOperatorAction.triggered.connect(self.insertOperator)
         self.insertOperatorAction.setShortcut(QKeySequence(Qt.CTRL + Qt.SHIFT + Qt.Key_O))
         actionMenu.addAction(self.insertOperatorAction)
-        
+
         self.insertFunctionAction = QAction('Function', self)
         self.insertFunctionAction.triggered.connect(self.insertFunction)
         self.insertFunctionAction.setShortcut(QKeySequence(Qt.CTRL + Qt.SHIFT + Qt.Key_F))
         actionMenu.addAction(self.insertFunctionAction)
-        
+
         self.insertUserDefinedFunctionAction = QAction('User-Defined Function', self)
         self.insertUserDefinedFunctionAction.triggered.connect(self.insertUserDefinedFunction)
         self.insertUserDefinedFunctionAction.setShortcut(QKeySequence(Qt.CTRL + Qt.SHIFT + Qt.Key_E))
         actionMenu.addAction(self.insertUserDefinedFunctionAction)
 
         optionsMenu = menubar.addMenu('Options')
-        
+
         self.precisionSpinBox = MenuSpinBox(self, 'Precision', 1, 50)
         self.precisionSpinBox.spinbox.valueChanged.connect(self.calculatormanager.setPrecision)
         optionsMenu.addAction(self.precisionSpinBox)
@@ -380,11 +379,11 @@ class ModularCalculatorInterface(StatefulApplication):
         self.entry.insert(operator)
 
     def openUnitSystemPreference(self):
-        SortableListDialog(self, 
-            'Unit System Preference', 
-            'Order unit systems by preference, most prefered at top', 
+        SortableListDialog(self,
+            'Unit System Preference',
+            'Order unit systems by preference, most prefered at top',
             [self.calculatormanager.calculator.unit_normaliser.systems[s].name for s in self.calculatormanager.calculator.unit_normaliser.systems_preference if s in self.calculatormanager.calculator.unit_normaliser.systems]
-            + [self.calculatormanager.calculator.unit_normaliser.systems[s].name for s in self.calculatormanager.calculator.unit_normaliser.systems if s not in self.calculatormanager.calculator.unit_normaliser.systems_preference], 
+            + [self.calculatormanager.calculator.unit_normaliser.systems[s].name for s in self.calculatormanager.calculator.unit_normaliser.systems if s not in self.calculatormanager.calculator.unit_normaliser.systems_preference],
             self.calculatormanager.updateUnitSystemPreference)
 
     def openFeatureConfig(self):
@@ -392,16 +391,3 @@ class ModularCalculatorInterface(StatefulApplication):
 
     def openFeatureOptions(self):
         FeatureOptionsDialog(self)
-
-
-def main():
-    clear = False
-    if len(sys.argv) >= 2 and sys.argv[1] == '--clear':
-        print("Will not restore state due to --clear flag")
-        clear = True
-    app = QApplication(sys.argv)
-    calc = ModularCalculatorInterface(clear)
-    sys.exit(app.exec_())
-
-if __name__ == '__main__':
-    main()
