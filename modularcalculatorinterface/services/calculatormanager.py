@@ -5,8 +5,6 @@ from modularcalculator.objects.exceptions import *
 from modularcalculator.objects.number import *
 from modularcalculatorinterface.services.tools import *
 
-from PyQt5.QtWidgets import  QMessageBox
-
 
 class CalculatorManager():
 
@@ -174,12 +172,5 @@ class CalculatorManager():
         self.calculator.unit_normaliser.systems_preference = [s for n in systemNames for s in [s for s in self.calculator.unit_normaliser.systems if self.calculator.unit_normaliser.systems[s].name == n]]
 
     def commitFeatureConfig(self, calculator, importedFeatures):
-        try:
-            self.replaceCalculator(calculator)
-            self.importedFeatures = importedFeatures
-        except Exception:
-            errorMessage = QMessageBox(self.interface)
-            errorMessage.setText("Could not instantiate calculator with selected features")
-            errorMessage.exec()
-            print(traceback.format_exc())
-        self.entry.refresh()
+        self.replaceCalculator(calculator)
+        self.importedFeatures = importedFeatures

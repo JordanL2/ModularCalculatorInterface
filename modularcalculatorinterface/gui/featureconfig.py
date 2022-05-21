@@ -5,16 +5,16 @@ from modularcalculatorinterface.gui.guitools import *
 
 from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import QFontDatabase
-from PyQt5.QtWidgets import  QDialog, QWidget, QPushButton, QListWidget, QListWidgetItem, QComboBox, QFileDialog, QGridLayout, QLabel
+from PyQt5.QtWidgets import QDialog, QWidget, QPushButton, QListWidget, QListWidgetItem, QComboBox, QFileDialog, QGridLayout, QLabel, QMessageBox
 
 
 class FeatureConfigDialog(QDialog):
 
-    def __init__(self, parent):
-        super().__init__(parent)
+    def __init__(self, interface):
+        super().__init__(interface)
 
-        self.parent = parent
-        self.calculatormanager = self.parent.calculatormanager
+        self.interface = interface
+        self.calculatormanager = self.interface.calculatormanager
 
         self.importedFeatures = self.calculatormanager.importedFeatures
         self.calculator = self.buildCalculator(self.importedFeatures, [])
@@ -121,7 +121,14 @@ class FeatureConfigDialog(QDialog):
             if item.checkState() == Qt.Checked:
                 featuresToInstall.append(featureId)
         calculator = self.buildCalculator(self.importedFeatures, featuresToInstall)
-        self.calculatormanager.commitFeatureConfig(calculator, self.importedFeatures)
+        try:
+            self.calculatormanager.commitFeatureConfig(calculator, self.importedFeatures)
+        except Exception:
+            errorMessage = QMessageBox(self.interface)
+            errorMessage.setText("Could not instantiate calculator with selected features")
+            errorMessage.exec()
+            print(traceback.format_exc())
+        self.interface.entry.refresh()
         self.close()
 
     def itemClicked(self, item):
