@@ -30,6 +30,7 @@ class Config:
         self.locations = [l for l in self.locations if l.is_dir()]
 
         # Load config
+        self.loadMainConfig()
         self.loadThemes()
 
     def load(self, glob):
@@ -41,6 +42,13 @@ class Config:
                     with open(f, 'r') as fh:
                         found[file_id] = yaml.load(fh, Loader=yaml.CLoader)
         return found
+
+    def loadMainConfig(self):
+        main = self.load('config.yml')
+        if len(main.keys()) > 0:
+            self.main = list(main.values())[0]
+        else:
+            self.main = None
 
     def loadThemes(self):
         self.themes = self.load('themes/*.yml')

@@ -5,7 +5,7 @@ from modularcalculator.objects.exceptions import *
 
 from PyQt5.QtCore import Qt, QObject, pyqtSignal, pyqtSlot, QRunnable
 from PyQt5.QtWidgets import QTextEdit, QAction
-from PyQt5.QtGui import QFontDatabase, QTextCursor, QTextCharFormat, QGuiApplication, QTextFormat, QKeySequence
+from PyQt5.QtGui import QFont, QFontDatabase, QTextCursor, QTextCharFormat, QGuiApplication, QTextFormat, QKeySequence
 
 import time
 import uuid
@@ -16,14 +16,13 @@ class CalculatorEntry(QTextEdit):
     def __init__(self, interface):
         super().__init__()
 
+        self.interface = interface
         self.calculator = None
 
-        editFont = QFontDatabase.systemFont(QFontDatabase.FixedFont)
-        editFont.setBold(True)
-        editFont.setPointSize(editFont.pointSize() + 2)
-        self.setFont(editFont)
+        self.defaultConfig()
+        self.loadConfig()
+        self.initStyling()
 
-        self.interface = interface
         self.htmlService = interface.htmlService
         self.oldText = None
 
@@ -35,6 +34,31 @@ class CalculatorEntry(QTextEdit):
         self.lineHighlighting = True
 
         self.undoStack = CalculatorUndoStack(self)
+
+    def defaultConfig(self):
+        defaultFont = QFontDatabase.systemFont(QFontDatabase.FixedFont)
+        defaultFontSize = defaultFont.pointSize()
+        self.options = {
+            'font': defaultFont.family(),
+            'fontsize_pt': defaultFontSize + 2,
+            'bold': True,
+        }
+
+    def loadConfig(self):
+        config = self.interface.config.main
+        if config is not None:
+            if 'entry' in config:
+                config = config['entry']
+                if config is not None:
+                    for o in self.options.keys():
+                        if o in config:
+                            self.options[o] = config[o]
+
+    def initStyling(self):
+        editFont = QFont(self.options['font'])
+        editFont.setPointSize(self.options['fontsize_pt'])
+        editFont.setBold(self.options['bold'])
+        self.setFont(editFont)
 
     def setCalculator(self, calculator):
         self.calculator = calculator

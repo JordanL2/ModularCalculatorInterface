@@ -195,7 +195,7 @@ class HtmlService():
         fractionHtml = self.css
         if fraction[0] != 0:
             fractionHtml += self.makeSpan("{} ".format(fraction[0]), "literal")
-            fractionHtml += self.makeSpan("{}/{}".format(abs(fraction[1]), fraction[2]), "literal", "font-size: 14px")
+            fractionHtml += self.makeSpan("{}/{}".format(abs(fraction[1]), fraction[2]), "literal", "font-size: {}pt".format(options['fraction_small_fontsize_pt']))
         else:
             fractionHtml += self.makeSpan("{}/{}".format(fraction[1], fraction[2]), "literal")
         if unit is not None:

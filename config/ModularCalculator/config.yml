@@ -6,7 +6,7 @@
 #  bold: true
 
 #display:
-#  max_denominator: 100000
+#  max_denominator: 1000000000000
 #  font: Hack
 #  question_fontsize_pt: 10
 #  question_bold: false

@@ -3,7 +3,7 @@
 from modularcalculatorinterface.gui.guiwidgets import *
 
 from PyQt5.QtCore import Qt, QPointF
-from PyQt5.QtGui import QFontDatabase, QPalette, QTextOption, QGuiApplication
+from PyQt5.QtGui import QFont, QFontDatabase, QPalette, QTextOption, QGuiApplication
 from PyQt5.QtWidgets import QTextEdit, QWidget, QGridLayout, QVBoxLayout, QSizePolicy, QSpacerItem, QFrame
 
 import math
@@ -19,12 +19,41 @@ class CalculatorDisplay(QWidget):
 
         self.interface = interface
         self.htmlService = interface.htmlService
-        self.options = {
-            'max_denominator': 10 ** 12,
-        }
+
+        self.defaultConfig()
+        self.loadConfig()
 
         self.defaultStyling()
         self.initOutput()
+
+    def defaultConfig(self):
+        defaultFont = QFontDatabase.systemFont(QFontDatabase.FixedFont)
+        defaultFontSize = defaultFont.pointSize()
+        self.options = {
+            'max_denominator': 10 ** 12,
+
+            'font': defaultFont.family(),
+
+            'question_fontsize_pt': defaultFontSize + 0,
+            'question_bold': False,
+
+            'answer_fontsize_pt': defaultFontSize + 4,
+            'answer_bold': True,
+
+            'fraction_fontsize_pt': defaultFontSize + 0,
+            'fraction_small_fontsize_pt': defaultFontSize - 2,
+            'fraction_bold': False,
+        }
+
+    def loadConfig(self):
+        config = self.interface.config.main
+        if config is not None:
+            if 'display' in config:
+                config = config['display']
+                if config is not None:
+                    for o in self.options.keys():
+                        if o in config:
+                            self.options[o] = config[o]
 
     def defaultStyling(self):
         self.colours = [ QPalette.Base, QPalette.AlternateBase ]
@@ -73,24 +102,25 @@ class CalculatorDisplay(QWidget):
 
         return self.makeQuestionWidget(questionHtml, n), self.makeAnswerWidget(answerHtml, answerText, fractionHtml, fractionText, n)
 
+    def makeFont(self, size, bold):
+        font = QFont(self.options['font'])
+        font.setPointSize(size)
+        font.setBold(bold)
+        return font
+
     def makeQuestionWidget(self, questionHtml, n):
         questionWidget = DisplayLabel(questionHtml, n, self)
-        questionFont = QFontDatabase.systemFont(QFontDatabase.FixedFont)
-        questionWidget.setFont(questionFont)
+        questionWidget.setFont(self.makeFont(self.options['question_fontsize_pt'], self.options['question_bold']))
         return questionWidget
 
     def makeAnswerWidget(self, answerHtml, answerText, fractionHtml, fractionText, n):
         answerWidget = DisplayLabel(answerHtml, n, self, CalculatorDisplay.insertAnswer, answerText)
-        answerFont = QFontDatabase.systemFont(QFontDatabase.FixedFont)
-        answerFont.setPointSize(answerFont.pointSize() + 4)
-        answerFont.setBold(True)
-        answerWidget.setFont(answerFont)
+
+        answerWidget.setFont(self.makeFont(self.options['answer_fontsize_pt'], self.options['answer_bold']))
 
         if fractionHtml is not None:
             fractionWidget = DisplayLabel(fractionHtml, n, self, CalculatorDisplay.insertAnswer, fractionText)
-            fractionFont = QFontDatabase.systemFont(QFontDatabase.FixedFont)
-            fractionFont.setPointSize(fractionFont.pointSize())
-            fractionWidget.setFont(fractionFont)
+            fractionWidget.setFont(self.makeFont(self.options['fraction_fontsize_pt'], self.options['fraction_bold']))
 
             return DisplayAnswerFractionLabel(answerWidget, fractionWidget)
 
