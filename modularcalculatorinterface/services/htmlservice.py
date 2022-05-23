@@ -117,9 +117,11 @@ class HtmlService():
 
     def createAnswerFractionText(self, row, options):
         if type(row.answer) == list:
-            answerText = '['
-            answerText += ', '.join([self.createAnswerText(r.value, r.unit, options) for r in row.answer])
-            answerText += ']'
+            answerText = self.interface.calculatormanager.calculator.feature_options['arrays.arrays']['Open']
+            answerText += (
+                self.interface.calculatormanager.calculator.feature_options['arrays.arrays']['Param'] + ' '
+            ).join([self.createAnswerText(r.value, r.unit, options) for r in row.answer])
+            answerText += self.interface.calculatormanager.calculator.feature_options['arrays.arrays']['Close']
         else:
             answerText = self.createAnswerText(row.answer, row.unit, options)
 
@@ -162,16 +164,28 @@ class HtmlService():
         return ''.join([u[0] for u in unit_parts])
 
     def createQuestionHtml(self, expr, options):
-        statements, _, _ = self.interface.calculatormanager.calculator.parse(expr, {})
+        try:
+            statements, _, _ = self.interface.calculatormanager.calculator.parse(expr, {})
+        except ParsingException:
+            return expr
         html, _ = self.createStatementsHtml(statements, '', False)
         return html
 
     def createAnswerFractionHtml(self, row, options):
         answerHtml = self.css
         if type(row.answer) == list:
-            answerHtml += '['
-            answerHtml += ', '.join([self.createAnswerHtml(r.value, r.unit, options) for r in row.answer])
-            answerHtml += ']'
+            answerHtml += self.makeSpan(
+                self.interface.calculatormanager.calculator.feature_options['arrays.arrays']['Open'],
+                'array_start')
+            answerHtml += "{}{}".format(
+                    self.makeSpan(
+                        self.interface.calculatormanager.calculator.feature_options['arrays.arrays']['Param'],
+                        'array_param'),
+                    self.makeSpan(' ', 'space')
+                ).join([self.createAnswerHtml(r.value, r.unit, options) for r in row.answer])
+            answerHtml += self.makeSpan(
+                self.interface.calculatormanager.calculator.feature_options['arrays.arrays']['Close'],
+                'array_end')
         else:
             answerHtml += self.createAnswerHtml(row.answer, row.unit, options)
 
@@ -200,10 +214,16 @@ class HtmlService():
     def createFractionHtml(self, fraction, unit, options):
         fractionHtml = self.css
         if fraction[0] != 0:
-            fractionHtml += self.makeSpan("{} ".format(fraction[0]), "literal")
-            fractionHtml += self.makeSpan("{}/{}".format(abs(fraction[1]), fraction[2]), "literal", "font-size: {}pt".format(options['fraction_small_fontsize_pt']))
+            fractionStyle = "font-size: {}pt".format(options['fraction_small_fontsize_pt'])
+            fractionHtml += self.makeSpan("{}".format(fraction[0]), "literal")
+            fractionHtml += self.makeSpan(' ', "space")
+            fractionHtml += self.makeSpan(abs(fraction[1]), 'literal', fractionStyle)
+            fractionHtml += self.makeSpan('/', 'op', fractionStyle)
+            fractionHtml += self.makeSpan(abs(fraction[2]), 'literal', fractionStyle)
         else:
-            fractionHtml += self.makeSpan("{}/{}".format(fraction[1], fraction[2]), "literal")
+            fractionHtml += self.makeSpan(abs(fraction[1]), 'literal')
+            fractionHtml += self.makeSpan('/', 'op')
+            fractionHtml += self.makeSpan(abs(fraction[2]), 'literal')
         if unit is not None:
             unit = self.createUnitHtml(Number(fraction[0] + fraction[1] / fraction[2]), unit, options)
             fractionHtml += unit

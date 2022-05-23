@@ -124,6 +124,7 @@ class ConfigureFeatureDialog(QDialog):
             value = lineEdit.text()
             self.featureOptions[field] = self.decode(value)
         self.parent.parent.entry.refresh()
+        self.parent.parent.display.refresh()
         self.close()
 
     def sizeHint(self):
