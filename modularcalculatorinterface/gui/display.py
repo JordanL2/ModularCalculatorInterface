@@ -3,7 +3,7 @@
 from modularcalculatorinterface.gui.guiwidgets import *
 
 from PyQt5.QtCore import Qt, QPointF
-from PyQt5.QtGui import QFont, QFontDatabase, QPalette, QTextOption, QGuiApplication
+from PyQt5.QtGui import QPalette, QFont, QFontDatabase, QTextOption
 from PyQt5.QtWidgets import QTextEdit, QWidget, QGridLayout, QVBoxLayout, QSizePolicy, QSpacerItem, QFrame
 
 import math
@@ -22,8 +22,8 @@ class CalculatorDisplay(QWidget):
 
         self.defaultConfig()
         self.loadConfig()
+        self.initStyling()
 
-        self.defaultStyling()
         self.initOutput()
 
     def defaultConfig(self):
@@ -55,8 +55,11 @@ class CalculatorDisplay(QWidget):
                         if o in config:
                             self.options[o] = config[o]
 
-    def defaultStyling(self):
-        self.colours = [ QPalette.Base, QPalette.AlternateBase ]
+    def initStyling(self):
+        self.colours = self.htmlService.background
+        displayScrollPalette = self.interface.displayScroll.palette()
+        displayScrollPalette.setColor(QPalette.Base, self.colours[0])
+        self.interface.displayScroll.setPalette(displayScrollPalette)
 
     def initOutput(self):
         self.rawOutput = []
@@ -72,6 +75,7 @@ class CalculatorDisplay(QWidget):
         self.rawOutput.append(CalculatorDisplayError(err, i, question))
 
     def refresh(self):
+        self.initStyling()
         self.layout.reset()
 
         for n, row in enumerate(self.rawOutput):
@@ -250,8 +254,7 @@ class DisplayLabel(QTextEdit):
         self.setWordWrapMode(QTextOption.WrapAnywhere)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
-        colorRole = display.colours[n % len(display.colours)]
-        backgroundColor = QGuiApplication.palette().color(colorRole)
+        backgroundColor = display.colours[n % 2]
         palette = self.palette()
         palette.setColor(QPalette.Base, backgroundColor)
         self.setPalette(palette)

@@ -1,0 +1,26 @@
+name: Darker
+style:
+  background: '#101010'
+  background_alt: '#181818'
+  error: "color: '#e03838'"
+  default: "color: '#e03030'"
+  literal: "color: '#ffffff'"
+  unit: "color: '#00b8b8'"
+  unitsystem: "color: '#00b8b8'"
+  op: "color: '#c04070'"
+  terminator: "color: '#c04070'"
+  inner_expr_start: "color: '#c04070'"
+  inner_expr_end: "color: '#c04070'"
+  function_name: "color: '#e07830'"
+  function_start: "color: '#c04070'"
+  function_param: "color: '#c04070'"
+  function_end: "color: '#c04070'"
+  array_start: "color: '#c04070'"
+  array_range: "color: '#c04070'"
+  array_step: "color: '#c04070'"
+  array_param: "color: '#c04070'"
+  array_end: "color: '#c04070'"
+  ext_function_name: "color: '#e07830'"
+  variable: "color: '#3898ff'"
+  constant: "color: '#a870e8'"
+  comment: "color: '#909090'"

@@ -5,7 +5,7 @@ from modularcalculator.objects.exceptions import *
 
 from PyQt5.QtCore import Qt, QObject, pyqtSignal, pyqtSlot, QRunnable
 from PyQt5.QtWidgets import QTextEdit, QAction
-from PyQt5.QtGui import QFont, QFontDatabase, QTextCursor, QTextCharFormat, QGuiApplication, QTextFormat, QKeySequence
+from PyQt5.QtGui import QFont, QFontDatabase, QTextCursor, QTextCharFormat, QGuiApplication, QTextFormat, QKeySequence, QPalette
 
 import time
 import uuid
@@ -21,9 +21,9 @@ class CalculatorEntry(QTextEdit):
 
         self.defaultConfig()
         self.loadConfig()
+        self.htmlService = interface.htmlService
         self.initStyling()
 
-        self.htmlService = interface.htmlService
         self.oldText = None
 
         self.autoExecute = True
@@ -59,6 +59,11 @@ class CalculatorEntry(QTextEdit):
         editFont.setPointSize(self.options['fontsize_pt'])
         editFont.setBold(self.options['bold'])
         self.setFont(editFont)
+
+        self.colours = self.htmlService.background
+        palette = self.palette()
+        palette.setColor(QPalette.Base, self.colours[0])
+        self.setPalette(palette)
 
     def setCalculator(self, calculator):
         self.calculator = calculator
@@ -200,7 +205,7 @@ class CalculatorEntry(QTextEdit):
             selection.cursor.setPosition(pos[0])
             selection.cursor.setPosition(pos[1], QTextCursor.KeepAnchor)
 
-            background = QGuiApplication.palette().alternateBase().color()
+            background = self.colours[1]
             selection.format.setBackground(background)
             selection.format.setProperty(QTextFormat.FullWidthSelection, True)
 
@@ -210,6 +215,7 @@ class CalculatorEntry(QTextEdit):
         self.interface.filemanager.setCurrentFileAndModified(self.interface.filemanager.currentFile(), self.isModified())
 
     def refresh(self):
+        self.initStyling()
         self.checkSyntax(True)
 
     def updateHtml(self, html):

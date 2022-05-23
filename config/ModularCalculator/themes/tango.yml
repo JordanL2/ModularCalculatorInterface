@@ -1,0 +1,26 @@
+name: Tango
+style:
+  background: '#000000'
+  background_alt: '#101010'
+  error: "color: '#ef2929'"
+  default: "color: '#ef2929'"
+  literal: "color: '#eeeeec'"
+  unit: "color: '#8ae234'"
+  unitsystem: "color: '#8ae234'"
+  op: "color: '#729fcf'"
+  terminator: "color: '#729fcf'"
+  inner_expr_start: "color: '#729fcf'"
+  inner_expr_end: "color: '#729fcf'"
+  function_name: "color: '#729fcf'"
+  function_start: "color: '#729fcf'"
+  function_param: "color: '#729fcf'"
+  function_end: "color: '#729fcf'"
+  array_start: "color: '#729fcf'"
+  array_range: "color: '#729fcf'"
+  array_step: "color: '#729fcf'"
+  array_param: "color: '#729fcf'"
+  array_end: "color: '#729fcf'"
+  ext_function_name: "color: '#729fcf'"
+  variable: "color: '#ad7fa8'"
+  constant: "color: '#fce94f'"
+  comment: "color: '#34e2e2'"

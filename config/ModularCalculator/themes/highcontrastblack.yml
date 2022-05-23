@@ -1,0 +1,26 @@
+name: High Contrast Black
+style:
+  background: '#000000'
+  background_alt: '#181818'
+  error: "color: '#ff3838'"
+  default: "color: '#ff3838'"
+  literal: "color: '#ffffff'"
+  unit: "color: '#ffff00'"
+  unitsystem: "color: '#ffff00'"
+  op: "color: '#ff00ff'"
+  terminator: "color: '#ffffff'"
+  inner_expr_start: "color: '#ff00ff'"
+  inner_expr_end: "color: '#ff00ff'"
+  function_name: "color: '#ffff00'"
+  function_start: "color: '#ff00ff'"
+  function_param: "color: '#ff00ff'"
+  function_end: "color: '#ff00ff'"
+  array_start: "color: '#ff00ff'"
+  array_range: "color: '#ff00ff'"
+  array_step: "color: '#ff00ff'"
+  array_param: "color: '#ff00ff'"
+  array_end: "color: '#ff00ff'"
+  ext_function_name: "color: '#ffff00'"
+  variable: "color: '#ffff00'"
+  constant: "color: '#ffff00'"
+  comment: "color: '#00ffff'"

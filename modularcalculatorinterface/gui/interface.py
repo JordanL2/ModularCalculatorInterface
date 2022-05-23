@@ -12,7 +12,7 @@ from modularcalculatorinterface.services.htmlservice import *
 from modularcalculatorinterface.services.tabmanager import *
 
 from PyQt5.QtCore import Qt, QThreadPool, QTimer
-from PyQt5.QtGui import QKeySequence, QCursor, QPalette, QIcon, QGuiApplication
+from PyQt5.QtGui import QKeySequence, QCursor, QIcon, QGuiApplication
 from PyQt5.QtWidgets import QWidget, QGridLayout, QSplitter, QAction, QFileDialog, QToolTip, QShortcut, QMessageBox, QScrollArea, QSizePolicy
 
 from functools import partial
@@ -75,9 +75,9 @@ class ModularCalculatorInterface(StatefulApplication):
 
         self.entry = CalculatorEntry(self)
 
-        self.display = CalculatorDisplay(self)
         self.displayScroll = QScrollArea()
-        self.displayScroll.setBackgroundRole(self.display.colours[0])
+        self.display = CalculatorDisplay(self)
+
         self.displayScroll.setWidgetResizable(True)
         self.displayScroll.setWidget(self.display)
         self.displayScroll.widget().setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Maximum)
@@ -157,7 +157,7 @@ class ModularCalculatorInterface(StatefulApplication):
 
         self.viewThemesMenu = viewMenu.addMenu('Themes')
         self.viewThemesActions = {}
-        for theme in self.htmlService.syntax.keys():
+        for theme in sorted(self.htmlService.syntax.keys()):
             themeAction = QAction(theme, self, checkable=True)
             if theme == self.htmlService.theme:
                 themeAction.setChecked(True)

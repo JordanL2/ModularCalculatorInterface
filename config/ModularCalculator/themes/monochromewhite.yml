@@ -1,0 +1,26 @@
+name: Monochrome White
+style:
+  background: '#ffffff'
+  background_alt: '#e8e8e8'
+  error: "color: '#606060'"
+  default: "color: '#000000'"
+  literal: "color: '#000000'"
+  unit: "color: '#000000'"
+  unitsystem: "color: '#000000'"
+  op: "color: '#000000'"
+  terminator: "color: '#000000'"
+  inner_expr_start: "color: '#000000'"
+  inner_expr_end: "color: '#000000'"
+  function_name: "color: '#000000'"
+  function_start: "color: '#000000'"
+  function_param: "color: '#000000'"
+  function_end: "color: '#000000'"
+  array_start: "color: '#000000'"
+  array_range: "color: '#000000'"
+  array_step: "color: '#000000'"
+  array_param: "color: '#000000'"
+  array_end: "color: '#000000'"
+  ext_function_name: "color: '#000000'"
+  variable: "color: '#000000'"
+  constant: "color: '#000000'"
+  comment: "color: '#000000'"

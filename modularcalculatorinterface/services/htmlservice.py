@@ -3,6 +3,8 @@
 from modularcalculator.objects.units import *
 from modularcalculator.services.syntaxhighlighter import *
 
+from PyQt5.QtGui import QColor, QPalette, QGuiApplication
+
 import html
 
 
@@ -25,13 +27,8 @@ class HtmlService():
     def loadConfig(self):
         self.syntax = {}
         self.theme = 'Default'
-        value = (self.interface.palette().base().color().value())
-        self.darkTheme = value < 128
         for themeFile, theme in self.interface.config.themes.items():
-            self.syntax[theme['name']] = {
-                False: theme['light'],
-                True: theme['dark'],
-            }
+            self.syntax[theme['name']] = theme['style']
 
     def setTheme(self, theme):
         self.theme = theme
@@ -40,9 +37,18 @@ class HtmlService():
         self.interface.display.refresh()
 
     def initStyling(self):
+        self.background = [
+            QGuiApplication.palette().color(QPalette.Base),
+            QGuiApplication.palette().color(QPalette.AlternateBase),
+        ]
         self.css = "<style>"
-        for itemtype, css in self.syntax[self.theme][self.darkTheme].items():
-            self.css += "span.{0} {{ {1} }}".format(itemtype, css)
+        for itemtype, css in self.syntax[self.theme].items():
+            if itemtype == 'background':
+                self.background[0] = QColor(css)
+            elif itemtype == 'background_alt':
+                self.background[1] = QColor(css)
+            else:
+                self.css += "span.{0} {{ {1} }}".format(itemtype, css)
         self.css += '</style>'
 
     def htmlSafe(self, text):
