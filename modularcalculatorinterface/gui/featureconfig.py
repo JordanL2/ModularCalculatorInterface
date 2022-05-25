@@ -187,9 +187,7 @@ class FeatureConfigDialog(QDialog):
         self.presetList.setCurrentIndex(0)
 
     def addFile(self):
-        self.setVisible(False)
         filePath, _ = QFileDialog.getOpenFileName(self, "Select Feature File", "", "All Files (*)")
-        self.setVisible(True)
         if filePath:
             self.importedFeatures.append(filePath)
             self.refreshImportedFiles()
