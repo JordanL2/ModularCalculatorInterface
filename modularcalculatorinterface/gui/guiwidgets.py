@@ -1,7 +1,9 @@
 #!/usr/bin/python3
 
 from PyQt5.QtCore import Qt, QStringListModel, QSize
-from PyQt5.QtWidgets import QApplication, QListWidget, QListWidgetItem, QWidgetAction, QSpinBox, QLabel, QHBoxLayout, QVBoxLayout, QWidget, QListView, QDialog, QAbstractItemView, QPushButton, QCalendarWidget, QTimeEdit, QComboBox, QTabBar
+from PyQt5.QtWidgets import QApplication, QListWidget, QListWidgetItem, QWidgetAction, QSpinBox, QLabel, \
+                            QHBoxLayout, QVBoxLayout, QWidget, QListView, QDialog, QAbstractItemView,    \
+                            QPushButton, QCalendarWidget, QTimeEdit, QComboBox, QTabBar
 
 
 def screenRelativeSize(width, height):

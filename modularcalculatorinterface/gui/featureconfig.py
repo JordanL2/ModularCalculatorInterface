@@ -3,9 +3,9 @@
 from modularcalculator.modularcalculator import *
 from modularcalculatorinterface.gui.guiwidgets import *
 
-from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFontDatabase
-from PyQt5.QtWidgets import QDialog, QWidget, QPushButton, QListWidget, QListWidgetItem, QComboBox, QFileDialog, QGridLayout, QLabel, QMessageBox
+from PyQt5.QtWidgets import QDialog, QPushButton, QListWidget, QListWidgetItem, QComboBox, QFileDialog, QGridLayout, QLabel, QMessageBox
 
 
 class FeatureConfigDialog(QDialog):

@@ -5,7 +5,7 @@ from modularcalculator.objects.exceptions import *
 
 from PyQt5.QtCore import Qt, QObject, pyqtSignal, pyqtSlot, QRunnable
 from PyQt5.QtWidgets import QTextEdit, QAction
-from PyQt5.QtGui import QFont, QFontDatabase, QTextCursor, QTextCharFormat, QGuiApplication, QTextFormat, QKeySequence, QPalette
+from PyQt5.QtGui import QFont, QFontDatabase, QTextCursor, QTextFormat, QKeySequence, QPalette
 
 import time
 import uuid
