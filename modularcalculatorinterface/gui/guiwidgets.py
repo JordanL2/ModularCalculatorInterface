@@ -34,6 +34,7 @@ class SelectionDialog(QDialog):
                 item.setData(Qt.UserRole, itemId)
         else:
             raise Exception("Invalid type of items")
+        self.list.itemDoubleClicked.connect(self.ok)
         layout.addWidget(self.list)
 
         button = QPushButton("OK", self)
@@ -72,6 +73,7 @@ class CategorisedSelectionDialog(QDialog):
         layout.addWidget(self.category)
 
         self.list = QListWidget(self)
+        self.list.itemDoubleClicked.connect(self.ok)
         layout.addWidget(self.list)
         self.setList()
         self.category.currentTextChanged.connect(self.setList)
