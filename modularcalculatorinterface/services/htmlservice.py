@@ -33,6 +33,7 @@ class HtmlService():
     def setTheme(self, theme):
         self.theme = theme
         self.initStyling()
+        self.interface.tabmanager.forceRefreshAllTabs()
         self.interface.entry.refresh()
         self.interface.display.refresh()
 

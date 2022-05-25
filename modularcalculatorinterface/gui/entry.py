@@ -186,7 +186,7 @@ class CalculatorEntry(QTextEdit):
         error_statements = result['error_statements']
         ii = result['ii']
 
-        if result['uuid'] != self.last_uuid:
+        if self.last_uuid is None or result['uuid'] != self.last_uuid:
             return
 
         if not result['parse_only']:
@@ -194,11 +194,15 @@ class CalculatorEntry(QTextEdit):
 
         statements = [r.items for r in response.results] + error_statements
         errorExpr = expr[ii:]
-        newhtml, highlightPositions = self.htmlService.createStatementsHtml(statements, errorExpr, self.lineHighlighting)
+        newhtml, self.highlightPositions = self.htmlService.createStatementsHtml(statements, errorExpr, self.lineHighlighting)
         self.updateHtml(newhtml)
+        self.addLineHighlights()
 
+        self.interface.filemanager.setCurrentFileAndModified(self.interface.filemanager.currentFile(), self.isModified())
+
+    def addLineHighlights(self):
         extraSelections = []
-        for pos in highlightPositions:
+        for pos in self.highlightPositions:
             selection = QTextEdit.ExtraSelection()
 
             selection.cursor = QTextCursor(self.document())
@@ -211,8 +215,6 @@ class CalculatorEntry(QTextEdit):
 
             extraSelections.append(selection)
         self.setExtraSelections(extraSelections)
-
-        self.interface.filemanager.setCurrentFileAndModified(self.interface.filemanager.currentFile(), self.isModified())
 
     def refresh(self):
         self.initStyling()
@@ -263,6 +265,7 @@ class CalculatorEntry(QTextEdit):
 
     def saveState(self):
         return {
+            'html': self.toHtml(),
             'text': self.getContents(),
             'original': self.original,
             'cursorSelectionStart': self.textCursor().selectionStart(),
@@ -271,13 +274,22 @@ class CalculatorEntry(QTextEdit):
             'history': self.undoStack.history,
             'historyPos': self.undoStack.historyPos,
             'lineHighlighting': self.lineHighlighting,
+            'highlightPositions': self.highlightPositions,
         }
 
-    def restoreState(self, state):
-        if 'text' in state:
-            self.setPlainText(state['text'])
+    def restoreState(self, state, refresh=True):
+        self.last_uuid = None
+        if 'html' in state:
+            self.setHtml(state['html'])
+            if 'highlightPositions' in state:
+                self.highlightPositions = state['highlightPositions']
+                self.addLineHighlights()
         else:
-            self.setPlainText('')
+            refresh = True
+            if 'text' in state:
+                self.setPlainText(state['text'])
+            else:
+                self.setPlainText('')
         if 'original' in state:
             self.setOriginal(state['original'])
         else:
@@ -298,7 +310,7 @@ class CalculatorEntry(QTextEdit):
             if 'historyPos' in state:
                 self.undoStack.historyPos = state['historyPos']
             else:
-                raise 'history is in state but historyPos isn\'t'
+                raise Exception('history is in state but historyPos isn\'t')
         else:
             self.undoStack.history = []
             self.undoStack.historyPos = 0
@@ -313,7 +325,10 @@ class CalculatorEntry(QTextEdit):
         self.cached_response = None
         self.oldText = None
 
-        self.refresh()
+        if refresh:
+            self.refresh()
+        else:
+            self.oldText = self.getContents()
 
 
 class CalculatorUndoStack(QObject):

@@ -53,6 +53,11 @@ class TabManager():
 
         return state
 
+    def forceRefreshAllTabs(self):
+        for tab in self.tabs:
+            if 'entry' in tab and 'html' in tab['entry']:
+                del tab['entry']['html']
+
 
     def getTabName(self, currentFile, currentFileModified):
         if currentFile is None:
@@ -84,7 +89,7 @@ class TabManager():
 
     def loadTab(self, i):
         self.selectedTab = i
-        self.entry.restoreState(self.tabs[i]['entry'])
+        self.entry.restoreState(self.tabs[i]['entry'], refresh=('html' not in self.tabs[i]['entry']))
         self.display.restoreState(self.tabs[i]['display'])
         self.display.refresh()
         self.filemanager.setCurrentFileAndModified(self.tabs[i]['currentFile'], self.tabs[i]['currentFileModified'])
