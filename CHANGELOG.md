@@ -16,6 +16,7 @@
 - Double clicking an item in an Insert dialogue will now choose the item and insert it.
 - Install/Remove Features window is no longer hidden when opening the file picker.
 - Switching a tab is now faster, no longer automatically re-executes the input when you switch tab.
+- Fixed bug when opening a file and being able to undo, resulting in blank page.
 
 ## 1.2.1
 - Middle clicking an answer now pastes either the normal or draction version, depending on which you middle clicked.

@@ -427,6 +427,10 @@ class CalculatorUndoStack(QObject):
         if len(self.history) > 0:
             self.history[self.historyPos - 1][1] = self.parent.textCursor().position()
 
+    def clearHistory(self):
+        self.history = [self.history[-1]]
+        self.historyPos = 1
+
 
 class SyntaxHighlighterSignals(QObject):
 
