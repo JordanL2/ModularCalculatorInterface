@@ -34,15 +34,19 @@
   <screenshots>
     <screenshot>
       <caption>Complex, multi-stage calculations can be performed</caption>
-      <image>https://raw.githubusercontent.com/JordanL2/ModularCalculatorInterface/master/screenshots/orbit.png</image>
+      <image>https://raw.githubusercontent.com/JordanL2/ModularCalculatorInterface/master/screenshots/minecraft.png</image>
     </screenshot>
     <screenshot>
       <caption>Many functions are available</caption>
       <image>https://raw.githubusercontent.com/JordanL2/ModularCalculatorInterface/master/screenshots/functions.png</image>
     </screenshot>
     <screenshot>
-      <caption>Users can write their own reusable functions</caption>
-      <image>https://raw.githubusercontent.com/JordanL2/ModularCalculatorInterface/master/screenshots/minecraft.png</image>
+      <caption>Users can write their own functions...</caption>
+      <image>https://raw.githubusercontent.com/JordanL2/ModularCalculatorInterface/master/screenshots/userfunction.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>... and use those functions in their calculations</caption>
+      <image>https://raw.githubusercontent.com/JordanL2/ModularCalculatorInterface/master/screenshots/orbit.png</image>
     </screenshot>
     <screenshot>
       <caption>Features can be added, removed, and configured</caption>
