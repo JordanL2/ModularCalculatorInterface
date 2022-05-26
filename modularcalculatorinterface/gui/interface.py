@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+from modularcalculatorinterface.gui.about import *
 from modularcalculatorinterface.gui.display import *
 from modularcalculatorinterface.gui.entry import *
 from modularcalculatorinterface.gui.featureconfig import *
@@ -11,8 +12,8 @@ from modularcalculatorinterface.services.filemanager import *
 from modularcalculatorinterface.services.htmlservice import *
 from modularcalculatorinterface.services.tabmanager import *
 
-from PyQt5.QtCore import Qt, QThreadPool, QTimer
-from PyQt5.QtGui import QKeySequence, QCursor, QIcon, QGuiApplication
+from PyQt5.QtCore import Qt, QThreadPool, QTimer, QUrl
+from PyQt5.QtGui import QKeySequence, QCursor, QIcon, QGuiApplication, QDesktopServices
 from PyQt5.QtWidgets import QWidget, QGridLayout, QSplitter, QAction, QFileDialog, QToolTip, QShortcut, QMessageBox, QScrollArea, QSizePolicy
 
 from functools import partial
@@ -230,6 +231,16 @@ class ModularCalculatorInterface(StatefulApplication):
         self.optionsFeatureOptions.triggered.connect(self.openFeatureOptions)
         optionsMenu.addAction(self.optionsFeatureOptions)
 
+        helpMenu = menubar.addMenu('Help')
+
+        self.helpHelpAction = QAction('Calculator Reference', self)
+        self.helpHelpAction.triggered.connect(self.openHelp)
+        helpMenu.addAction(self.helpHelpAction)
+
+        self.helpAboutAction = QAction('About', self)
+        self.helpAboutAction.triggered.connect(self.openHelpAbout)
+        helpMenu.addAction(self.helpAboutAction)
+
         self.executeAction = QAction('Execute', self)
         self.executeAction.triggered.connect(self.calculatormanager.calc)
         self.executeAction.hovered.connect(self.showExecuteToolTip)
@@ -437,3 +448,9 @@ class ModularCalculatorInterface(StatefulApplication):
 
     def openFeatureOptions(self):
         FeatureOptionsDialog(self)
+
+    def openHelp(self):
+        QDesktopServices.openUrl(QUrl('https://github.com/JordanL2/ModularCalculator/wiki'))
+
+    def openHelpAbout(self):
+        AboutDialog(self)

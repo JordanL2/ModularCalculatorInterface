@@ -11,6 +11,7 @@
 	- Monochrome (Black)
 	- Monochrome (White)
 	- Tango
+- Added Help menu, with link to Calculator Reference pages, and About dialog.
 - Missing styling in certain elements in the output pane have been fixed.
 - Double clicking an item in an Insert dialogue will now choose the item and insert it.
 - Install/Remove Features window is no longer hidden when opening the file picker.
