@@ -9,8 +9,10 @@ from PyQt5.QtWidgets import QDialog, QLabel, QPushButton, QVBoxLayout
 
 class AboutDialog(QDialog):
 
-    def __init__(self, parent):
-        super().__init__(parent)
+    def __init__(self, interface):
+        super().__init__(interface)
+
+        self.interface = interface
 
         self.layout = QVBoxLayout()
         self.layout.setAlignment(Qt.AlignHCenter)
@@ -36,8 +38,9 @@ class AboutDialog(QDialog):
         ))
 
         # Version
+        version = self.interface.config.version
         self.layout.addWidget(FormattedLabel(
-            "Version 1.3.0",
+            "Version {} {} ({})".format('.'.join([str(v) for v in version['version']]), version['lifecycle'], version['buildtype']),
             10,
             False,
             Qt.AlignHCenter,
@@ -69,9 +72,18 @@ class AboutDialog(QDialog):
             10,
             False,
             Qt.AlignHCenter,
-            0, 0, 0, 50
+            0, 0, 0, 0
         ))
 
+        # License
+        self.layout.addWidget(UrlFormattedLabel(
+            "GNU General Public Licence version 3",
+            "https://www.gnu.org/licenses/gpl-3.0.html",
+            10,
+            False,
+            Qt.AlignHCenter,
+            0, 0, 0, 50
+        ))
 
     def ok(self):
         self.close()
@@ -95,8 +107,9 @@ class FormattedLabel(QLabel):
 class UrlFormattedLabel(FormattedLabel):
 
     def __init__(self, content, url, fontSize, fontBold, alignment, marginsLeft, marginsTop, marginsRight, marginsBottom):
-        htmlContent = "<a href=\"{0}\">{1}</a>".format(url, content)
-        super().__init__(htmlContent, fontSize, fontBold, alignment, marginsLeft, marginsTop, marginsRight, marginsBottom)
+        if url is not None:
+            content = "<a href=\"{0}\">{1}</a>".format(url, content)
+        super().__init__(content, fontSize, fontBold, alignment, marginsLeft, marginsTop, marginsRight, marginsBottom)
 
         self.setOpenExternalLinks(True)
         self.setTextInteractionFlags(Qt.LinksAccessibleByMouse)

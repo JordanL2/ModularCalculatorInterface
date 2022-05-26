@@ -16,26 +16,29 @@ class Config:
         # Possible locations
         self.locations = []
         if 'XDG_CONFIG_HOME' in os.environ:
-            self.locations.append(PosixPath(os.environ['XDG_CONFIG_HOME'], self.config_dir_name))
+            self.locations.append((PosixPath(os.environ['XDG_CONFIG_HOME'], self.config_dir_name), True))
         else:
-            self.locations.append(PosixPath(os.environ['HOME'], '.config', self.config_dir_name))
+            self.locations.append((PosixPath(os.environ['HOME'], '.config', self.config_dir_name), True))
         if 'XDG_CONFIG_DIRS' in os.environ:
-            self.locations.extend([PosixPath(d, self.config_dir_name) for d in os.environ['XDG_CONFIG_DIRS'].split(':')])
-        self.locations.append(PosixPath('/etc', self.config_dir_name))
-        self.locations.append(PosixPath('/app', 'share', self.config_dir_name))
-        self.locations.append(PosixPath('/usr', 'share', self.config_dir_name))
-        self.locations.append(PosixPath(initDir.parent, 'config', self.config_dir_name))
+            self.locations.extend([(PosixPath(d, self.config_dir_name), True) for d in os.environ['XDG_CONFIG_DIRS'].split(':')])
+        self.locations.append((PosixPath('/etc', self.config_dir_name), True))
+        self.locations.append((PosixPath('/app', 'share', self.config_dir_name), False))
+        self.locations.append((PosixPath('/usr', 'share', self.config_dir_name), False))
+        self.locations.append((PosixPath(initDir.parent, 'config', self.config_dir_name), False))
 
         # Filter for locations that exist
-        self.locations = [l for l in self.locations if l.is_dir()]
+        self.locations = [l for l in self.locations if l[0].is_dir()]
 
         # Load config
         self.loadMainConfig()
         self.loadThemes()
+        self.loadVersion()
 
-    def load(self, glob):
+    def load(self, glob, allowUser=True):
         found = {}
-        for location in self.locations:
+        for location, isUser in self.locations:
+            if isUser and not allowUser:
+                continue
             for f in location.glob(glob):
                 file_id = f.relative_to(location)
                 if not file_id in found:
@@ -52,3 +55,6 @@ class Config:
 
     def loadThemes(self):
         self.themes = self.load('themes/*.yml')
+
+    def loadVersion(self):
+        self.version = list(self.load('version.yml', allowUser=False).values())[0]
