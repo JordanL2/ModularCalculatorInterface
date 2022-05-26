@@ -12,3 +12,5 @@ do
 done
 rm $PREFIX/share/applications/io.github.jordanl2.ModularCalculator.desktop
 rm $PREFIX/share/metainfo/io.github.jordanl2.ModularCalculator.metainfo.xml
+
+rm -rf ${PREFIX}/share/ModularCalculator
