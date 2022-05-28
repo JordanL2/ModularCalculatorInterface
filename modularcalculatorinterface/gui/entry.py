@@ -31,7 +31,6 @@ class CalculatorEntry(QTextEdit):
         self.cached_response = None
 
         self.tabSpaces = 4
-        self.lineHighlighting = True
 
         self.undoStack = CalculatorUndoStack(self)
 
@@ -194,7 +193,7 @@ class CalculatorEntry(QTextEdit):
 
         statements = [r.items for r in response.results] + error_statements
         errorExpr = expr[ii:]
-        newhtml, self.highlightPositions = self.htmlService.createStatementsHtml(statements, errorExpr, self.lineHighlighting)
+        newhtml, self.highlightPositions = self.htmlService.createStatementsHtml(statements, errorExpr, self.interface.lineHighlighting)
         self.updateHtml(newhtml)
         self.addLineHighlights()
 
@@ -254,12 +253,6 @@ class CalculatorEntry(QTextEdit):
             original = self.getContents()
         self.original = original
 
-    def setLineHighlighting(self, lineHighlighting, refresh=True):
-        self.lineHighlighting = lineHighlighting
-        self.interface.viewLineHighlighting.setChecked(lineHighlighting)
-        if refresh:
-            self.refresh()
-
     def isModified(self):
         return self.getContents() != self.original
 
@@ -273,7 +266,6 @@ class CalculatorEntry(QTextEdit):
             'sliderPosition': self.verticalScrollBar().sliderPosition(),
             'history': self.undoStack.history,
             'historyPos': self.undoStack.historyPos,
-            'lineHighlighting': self.lineHighlighting,
             'highlightPositions': self.highlightPositions,
         }
 
@@ -314,11 +306,6 @@ class CalculatorEntry(QTextEdit):
         else:
             self.undoStack.history = []
             self.undoStack.historyPos = 0
-
-        if 'lineHighlighting' in state:
-            self.setLineHighlighting(state['lineHighlighting'], False)
-        else:
-            self.setLineHighlighting(True, False)
 
         self.undoStack.stateChanged(force=True)
 

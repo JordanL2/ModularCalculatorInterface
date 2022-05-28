@@ -153,7 +153,7 @@ class ModularCalculatorInterface(StatefulApplication):
         viewMenu.addAction(self.viewSyntaxParsingAutoExecutes)
 
         self.viewLineHighlighting = QAction('Line Highlighting', self, checkable=True)
-        self.viewLineHighlighting.triggered.connect(self.entry.setLineHighlighting)
+        self.viewLineHighlighting.triggered.connect(self.setLineHighlighting)
         viewMenu.addAction(self.viewLineHighlighting)
 
         self.viewThemesMenu = viewMenu.addMenu('Themes')
@@ -266,6 +266,7 @@ class ModularCalculatorInterface(StatefulApplication):
             self.restoreGeometry(self.fetchState("mainWindowGeometry"))
             self.restoreState(self.fetchState("mainWindowState"))
             self.splitter.restoreState(self.fetchState("splitterSizes"))
+            self.setLineHighlighting(self.fetchStateBoolean('viewLineHighlighting', True), False)
 
             self.calculatormanager.restoreState(self.fetchStateMap("calculatorManager"))
 
@@ -294,6 +295,8 @@ class ModularCalculatorInterface(StatefulApplication):
         if 'splitterSizes' not in self.stateHashes or splitterSizesHash != self.stateHashes['splitterSizes']:
             self.stateHashes['splitterSizes'] = splitterSizesHash
             self.storeState("splitterSizes", splitterSizes)
+
+        self.storeStateBoolean('viewLineHighlighting', self.lineHighlighting)
 
         calculatorManager = self.calculatormanager.saveState()
         calculatorManagerHash = self.mapHash(calculatorManager)
@@ -330,6 +333,13 @@ class ModularCalculatorInterface(StatefulApplication):
             return False
         return None
 
+
+    def setLineHighlighting(self, lineHighlighting, refresh=True):
+        self.lineHighlighting = lineHighlighting
+        self.viewLineHighlighting.setChecked(lineHighlighting)
+        if refresh:
+            self.tabmanager.forceRefreshAllTabs()
+            self.entry.refresh()
 
     def setTheme(self, theme):
         self.htmlService.setTheme(theme)
