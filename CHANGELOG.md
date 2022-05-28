@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.1
+- Fixed "Line Highlighting" option.
+- Using modularcalculator version 1.2.2.
+
 ## 1.3.0
 - Added the ability to configure the font (family, size, boldness) for the input and output panes.
 - Added the ability to change the theme, and add new themes.
