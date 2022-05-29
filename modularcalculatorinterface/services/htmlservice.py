@@ -12,26 +12,20 @@ class HtmlService():
 
     def __init__(self, interface):
         self.interface = interface
+        self.config = self.interface.config
         self.highlighter = SyntaxHighlighter()
         self.loadConfig()
         self.initStyling()
 
-    def restoreState(self, state):
-        if isinstance(state, dict):
-            if 'theme' in state.keys() and state['theme'] in self.syntax.keys():
-                self.interface.menu.setTheme(state['theme'])
-
-    def saveState(self):
-        return {'theme': self.theme}
 
     def loadConfig(self):
         self.syntax = {}
-        self.theme = 'Default'
         for themeFile, theme in self.interface.config.themes.items():
             self.syntax[theme['name']] = theme['style']
 
     def setTheme(self, theme):
-        self.theme = theme
+        self.config.main['appearance']['theme'] = theme
+        self.config.saveMainConfig()
         self.initStyling()
         self.interface.tabmanager.forceRefreshAllTabs()
         self.interface.entry.refresh()
@@ -43,7 +37,7 @@ class HtmlService():
             QGuiApplication.palette().color(QPalette.AlternateBase),
         ]
         self.css = "<style>"
-        for itemtype, css in self.syntax[self.theme].items():
+        for itemtype, css in self.syntax[self.config.main['appearance']['theme']].items():
             if itemtype == 'background':
                 self.background[0] = QColor(css)
             elif itemtype == 'background_alt':
@@ -134,7 +128,7 @@ class HtmlService():
 
     def createAnswerText(self, answer, unit, options):
         if isinstance(answer, UnitPowerList):
-            if options['shortunits'] and answer.has_symbols():
+            if options['short_units'] and answer.has_symbols():
                 unit_parts = answer.symbol(False)
             else:
                 unit_parts = answer.singular(False, False)
@@ -157,7 +151,7 @@ class HtmlService():
         return fractionText
 
     def createUnitText(self, answer, unit, options):
-        if options['shortunits'] and unit.has_symbols():
+        if options['short_units'] and unit.has_symbols():
             unit_parts = unit.symbol(False)
         else:
             unit_parts = unit.get_name(answer, False)
@@ -200,7 +194,7 @@ class HtmlService():
     def createAnswerHtml(self, answer, unit, options):
         answerHtml = None
         if isinstance(answer, UnitPowerList):
-            if options['shortunits'] and answer.has_symbols():
+            if options['short_units'] and answer.has_symbols():
                 unit_parts = answer.symbol(False)
             else:
                 unit_parts = answer.singular(False, False)
@@ -231,7 +225,7 @@ class HtmlService():
         return fractionHtml
 
     def createUnitHtml(self, answer, unit, options):
-        if options['shortunits'] and unit.has_symbols():
+        if options['short_units'] and unit.has_symbols():
             unit_parts = unit.symbol(False)
         else:
             unit_parts = unit.get_name(answer, False)

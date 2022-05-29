@@ -18,6 +18,7 @@ class CalculatorMenu():
 
     def __init__(self, interface):
         self.interface = interface
+        self.config = self.interface.config
         self.initMenu()
 
     def initMenu(self):
@@ -52,15 +53,18 @@ class CalculatorMenu():
 
         viewMenu = menubar.addMenu('View')
 
-        self.viewShortUnits = QAction('Units in Short Form', self.interface, checkable=True)
-        self.viewShortUnits.triggered.connect(self.interface.calculatormanager.setShortUnits)
+        self.viewShortUnits = QAction('Units in Short Form', self.interface, checkable=True,
+            checked=self.config.main['display']['short_units'])
+        self.viewShortUnits.triggered.connect(self.setShortUnits)
         viewMenu.addAction(self.viewShortUnits)
 
-        self.viewSyntaxParsingAutoExecutes = QAction('Show Execution Errors', self.interface, checkable=True)
-        self.viewSyntaxParsingAutoExecutes.triggered.connect(self.interface.calculatormanager.setAutoExecute)
+        self.viewSyntaxParsingAutoExecutes = QAction('Show Execution Errors', self.interface, checkable=True,
+            checked=self.config.main['entry']['show_execution_errors'])
+        self.viewSyntaxParsingAutoExecutes.triggered.connect(self.setShowExecutionErrors)
         viewMenu.addAction(self.viewSyntaxParsingAutoExecutes)
 
-        self.viewLineHighlighting = QAction('Line Highlighting', self.interface, checkable=True)
+        self.viewLineHighlighting = QAction('Line Highlighting', self.interface, checkable=True,
+            checked=self.config.main['entry']['view_line_highlighting'])
         self.viewLineHighlighting.triggered.connect(self.setLineHighlighting)
         viewMenu.addAction(self.viewLineHighlighting)
 
@@ -68,7 +72,7 @@ class CalculatorMenu():
         self.viewThemesActions = {}
         for theme in sorted(self.interface.htmlService.syntax.keys()):
             themeAction = QAction(theme, self.interface, checkable=True)
-            if theme == self.interface.htmlService.theme:
+            if theme == self.config.main['appearance']['theme']:
                 themeAction.setChecked(True)
             themeAction.triggered.connect(partial(self.setTheme, theme))
             self.viewThemesActions[theme] = themeAction
@@ -120,10 +124,12 @@ class CalculatorMenu():
         optionsMenu = menubar.addMenu('Options')
 
         self.precisionSpinBox = MenuSpinBox(self.interface, 'Precision', 1, 50)
+        self.precisionSpinBox.spinbox.setValue(self.config.main['execution']['precision'])
         self.precisionSpinBox.spinbox.valueChanged.connect(self.interface.calculatormanager.setPrecision)
         optionsMenu.addAction(self.precisionSpinBox)
 
-        self.optionsSimplifyUnits = QAction('Simplify Units', self.interface, checkable=True)
+        self.optionsSimplifyUnits = QAction('Simplify Units', self.interface, checkable=True,
+            checked=self.config.main['execution']['simplify_units'])
         self.optionsSimplifyUnits.triggered.connect(self.interface.calculatormanager.setUnitSimplification)
         optionsMenu.addAction(self.optionsSimplifyUnits)
 
@@ -158,12 +164,25 @@ class CalculatorMenu():
     def showExecuteToolTip(self):
         QToolTip.showText(QCursor.pos(), "Ctrl+Enter", self.interface)
 
-    def setLineHighlighting(self, lineHighlighting, refresh=True):
-        self.interface.lineHighlighting = lineHighlighting
+    def setShortUnits(self, value):
+        self.config.main['display']['short_units'] = value
+        self.config.saveMainConfig()
+        self.viewShortUnits.setChecked(value)
+        self.interface.display.refresh()
+
+    def setShowExecutionErrors(self, value):
+        self.config.main['entry']['show_execution_errors'] = value
+        self.config.saveMainConfig()
+        self.viewSyntaxParsingAutoExecutes.setChecked(value)
+        self.interface.tabmanager.forceRefreshAllTabs()
+        self.interface.entry.refresh()
+
+    def setLineHighlighting(self, lineHighlighting):
+        self.config.main['entry']['view_line_highlighting'] = lineHighlighting
+        self.config.saveMainConfig()
         self.viewLineHighlighting.setChecked(lineHighlighting)
-        if refresh:
-            self.interface.tabmanager.forceRefreshAllTabs()
-            self.interface.entry.refresh()
+        self.interface.tabmanager.forceRefreshAllTabs()
+        self.interface.entry.refresh()
 
     def setTheme(self, theme):
         self.interface.htmlService.setTheme(theme)
@@ -276,7 +295,7 @@ class CalculatorMenu():
             'Order unit systems by preference, most prefered at top',
             [calculator.unit_normaliser.systems[s].name for s in calculator.unit_normaliser.systems_preference if s in calculator.unit_normaliser.systems]
             + [calculator.unit_normaliser.systems[s].name for s in calculator.unit_normaliser.systems if s not in calculator.unit_normaliser.systems_preference],
-            self.interface.calculatormanager.updateUnitSystemPreference)
+            self.interface.calculatormanager.setUnitSystemPreference)
 
     def openFeatureConfig(self):
         FeatureConfigDialog(self.interface)

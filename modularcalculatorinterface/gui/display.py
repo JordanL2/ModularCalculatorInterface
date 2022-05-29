@@ -18,42 +18,12 @@ class CalculatorDisplay(QWidget):
         self.setLayout(self.layout)
 
         self.interface = interface
+        self.config = self.interface.config
         self.htmlService = interface.htmlService
 
-        self.defaultConfig()
-        self.loadConfig()
         self.initStyling()
 
         self.initOutput()
-
-    def defaultConfig(self):
-        defaultFont = QFontDatabase.systemFont(QFontDatabase.FixedFont)
-        defaultFontSize = defaultFont.pointSize()
-        self.options = {
-            'max_denominator': 10 ** 12,
-
-            'font': defaultFont.family(),
-
-            'question_fontsize_pt': defaultFontSize + 0,
-            'question_bold': False,
-
-            'answer_fontsize_pt': defaultFontSize + 4,
-            'answer_bold': True,
-
-            'fraction_fontsize_pt': defaultFontSize + 0,
-            'fraction_small_fontsize_pt': defaultFontSize - 2,
-            'fraction_bold': False,
-        }
-
-    def loadConfig(self):
-        config = self.interface.config.main
-        if config is not None:
-            if 'display' in config:
-                config = config['display']
-                if config is not None:
-                    for o in self.options.keys():
-                        if o in config:
-                            self.options[o] = config[o]
 
     def initStyling(self):
         self.colours = self.htmlService.background
@@ -90,9 +60,9 @@ class CalculatorDisplay(QWidget):
     def renderAnswer(self, row, n):
         if isinstance(row, CalculatorDisplayAnswer):
             question = row.question.strip()
-            questionHtml = self.htmlService.createQuestionHtml(question, self.options)
-            (answerHtml, fractionHtml) = self.htmlService.createAnswerFractionHtml(row, self.options)
-            (answerText, fractionText) = self.htmlService.createAnswerFractionText(row, self.options)
+            questionHtml = self.htmlService.createQuestionHtml(question, self.config.main['display'])
+            (answerHtml, fractionHtml) = self.htmlService.createAnswerFractionHtml(row, self.config.main['display'])
+            (answerText, fractionText) = self.htmlService.createAnswerFractionText(row, self.config.main['display'])
 
         elif isinstance(row, CalculatorDisplayError):
             questionHtml, _ = self.htmlService.createStatementsHtml([row.err.statements[-1]], row.question[row.i:], False)
@@ -107,24 +77,24 @@ class CalculatorDisplay(QWidget):
         return self.makeQuestionWidget(questionHtml, n), self.makeAnswerWidget(answerHtml, answerText, fractionHtml, fractionText, n)
 
     def makeFont(self, size, bold):
-        font = QFont(self.options['font'])
+        font = QFont(self.config.main['display']['font'])
         font.setPointSize(size)
         font.setBold(bold)
         return font
 
     def makeQuestionWidget(self, questionHtml, n):
         questionWidget = DisplayLabel(questionHtml, n, self)
-        questionWidget.setFont(self.makeFont(self.options['question_fontsize_pt'], self.options['question_bold']))
+        questionWidget.setFont(self.makeFont(self.config.main['display']['question_fontsize_pt'], self.config.main['display']['question_bold']))
         return questionWidget
 
     def makeAnswerWidget(self, answerHtml, answerText, fractionHtml, fractionText, n):
         answerWidget = DisplayLabel(answerHtml, n, self, CalculatorDisplay.insertAnswer, answerText)
 
-        answerWidget.setFont(self.makeFont(self.options['answer_fontsize_pt'], self.options['answer_bold']))
+        answerWidget.setFont(self.makeFont(self.config.main['display']['answer_fontsize_pt'], self.config.main['display']['answer_bold']))
 
         if fractionHtml is not None:
             fractionWidget = DisplayLabel(fractionHtml, n, self, CalculatorDisplay.insertAnswer, fractionText)
-            fractionWidget.setFont(self.makeFont(self.options['fraction_fontsize_pt'], self.options['fraction_bold']))
+            fractionWidget.setFont(self.makeFont(self.config.main['display']['fraction_fontsize_pt'], self.config.main['display']['fraction_bold']))
 
             return DisplayAnswerFractionLabel(answerWidget, fractionWidget)
 

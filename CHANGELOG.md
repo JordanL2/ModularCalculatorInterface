@@ -2,6 +2,7 @@
 
 ## 1.4.0
 - Added modularcalculator repository into this repository as a submodule, to make manual installation easier.
+- All application configuration is now stored in the config.yml file.
 
 ## 1.3.1
 - Fixed "Line Highlighting" option.

@@ -14,9 +14,12 @@ class FeatureConfigDialog(QDialog):
         super().__init__(interface)
 
         self.interface = interface
+        self.config = self.interface.config
         self.calculatormanager = self.interface.calculatormanager
 
-        self.importedFeatures = self.calculatormanager.importedFeatures
+        self.importedFeatures = []
+        if 'features' in self.config.main and 'external' in self.config.main['features']:
+            self.importedFeatures = self.config.main['features']['external']
         self.calculator = self.buildCalculator(self.importedFeatures, [])
         self.selectedFeatures = self.calculatormanager.calculator.installed_features
 
@@ -122,7 +125,7 @@ class FeatureConfigDialog(QDialog):
                 featuresToInstall.append(featureId)
         calculator = self.buildCalculator(self.importedFeatures, featuresToInstall)
         try:
-            self.calculatormanager.commitFeatureConfig(calculator, self.importedFeatures)
+            self.calculatormanager.setInstalledFeatures(calculator, self.importedFeatures)
         except Exception:
             errorMessage = QMessageBox(self.interface)
             errorMessage.setText("Could not instantiate calculator with selected features")

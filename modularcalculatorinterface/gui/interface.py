@@ -38,6 +38,7 @@ class ModularCalculatorInterface(StatefulApplication):
         self.tabmanager = TabManager(self)
         self.filemanager.tabmanager = self.tabmanager
         self.menu = CalculatorMenu(self)
+        self.calculatormanager.updateInsertOptions()
 
         self.stateHashes = {}
         if not flags['clear']:
@@ -48,10 +49,11 @@ class ModularCalculatorInterface(StatefulApplication):
         self.saveStateTimer.start(15000)
         self.saveStateTimer.timeout.connect(self.storeAllState)
 
-        self.calculatormanager.updateInsertOptions()
         self.initShortcuts()
 
         self.entry.setFocus()
+        self.tabmanager.forceRefreshAllTabs()
+        self.entry.refresh()
         self.show()
 
     def setIcon(self):
@@ -114,7 +116,6 @@ class ModularCalculatorInterface(StatefulApplication):
 
 
     def initEmptyState(self):
-        self.calculatormanager.initEmptyState()
         self.tabmanager.initEmptyState()
 
     def restoreAllState(self):
@@ -122,13 +123,8 @@ class ModularCalculatorInterface(StatefulApplication):
             self.restoreGeometry(self.fetchState("mainWindowGeometry"))
             self.restoreState(self.fetchState("mainWindowState"))
             self.splitter.restoreState(self.fetchState("splitterSizes"))
-            self.menu.setLineHighlighting(self.fetchStateBoolean('viewLineHighlighting', True), False)
-
-            self.calculatormanager.restoreState(self.fetchStateMap("calculatorManager"))
 
             self.tabmanager.restoreState(self.fetchStateMap("tabManager"))
-
-            self.htmlService.restoreState(self.fetchStateMap("htmlService"))
         except Exception as e:
             print("Exception when trying to restore state")
             print(traceback.format_exc())
@@ -152,25 +148,11 @@ class ModularCalculatorInterface(StatefulApplication):
             self.stateHashes['splitterSizes'] = splitterSizesHash
             self.storeState("splitterSizes", splitterSizes)
 
-        self.storeStateBoolean('viewLineHighlighting', self.lineHighlighting)
-
-        calculatorManager = self.calculatormanager.saveState()
-        calculatorManagerHash = self.mapHash(calculatorManager)
-        if 'calculatorManager' not in self.stateHashes or calculatorManagerHash != self.stateHashes['calculatorManager']:
-            self.stateHashes['calculatorManager'] = calculatorManagerHash
-            self.storeStateMap("calculatorManager", calculatorManager)
-
         tabManager = self.tabmanager.saveState()
         tabManagerHash = self.mapHash(tabManager)
         if 'tabManager' not in self.stateHashes or tabManagerHash != self.stateHashes['tabManager']:
             self.stateHashes['tabManager'] = tabManagerHash
             self.storeStateMap("tabManager", tabManager)
-
-        htmlService = self.htmlService.saveState()
-        htmlServiceHash = self.mapHash(htmlService)
-        if 'htmlService' not in self.stateHashes or htmlServiceHash != self.stateHashes['htmlService']:
-            self.stateHashes['htmlService'] = htmlServiceHash
-            self.storeStateMap("htmlService", htmlService)
 
 
     def getOpenFileName(self, title, filterFiles):

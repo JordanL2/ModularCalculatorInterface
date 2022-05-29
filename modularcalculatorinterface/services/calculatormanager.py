@@ -9,36 +9,39 @@ class CalculatorManager():
 
     def __init__(self, interface):
         self.interface = interface
+        self.config = self.interface.config
         self.entry = self.interface.entry
         self.display = self.interface.display
         self.initCalculator()
 
-
     def initCalculator(self):
-        calculator = ModularCalculator()
-        calculator.enable_units()
-        self.setCalculator(calculator)
+        self.setCalculator(ModularCalculator())
+        self.calculator.enable_units()
+        self.calculator.number_prec_set(self.config.main['execution']['precision'])
+        self.calculator.unit_simplification_set(self.config.main['execution']['simplify_units'])
+
+        if 'features' in self.config.main and 'external' in self.config.main['features']:
+            for featureFile in self.config.main['features']['external']:
+                try:
+                    self.calculator.import_feature_file(featureFile)
+                except Exception as err:
+                    print("!!! Couldn't import {} - {} !!!".format(featureFile, err))
+
+        if 'features' in self.config.main and 'installed' in self.config.main['features']:
+            self.calculator.install_features(self.config.main['features']['installed'], False, True)
+        else:
+            self.calculator.load_preset('Computing')
+
+        if 'feature_options' in self.config.main:
+            for featureId, featureOptions in self.config.main['feature_options'].items():
+                self.calculator.feature_options[featureId] = featureOptions
+
+        if 'unit_system_preference' in self.config.main['execution']:
+            self.calculator.unit_normaliser.systems_preference = self.config.main['execution']['unit_system_preference']
 
     def setCalculator(self, calculator):
         self.calculator = calculator
         self.entry.setCalculator(self.calculator)
-
-    def importFeature(self, filePath):
-        try:
-            featureIds = self.calculator.import_feature_file(filePath)
-            self.importedFeatures.append(filePath)
-        except Exception as err:
-            return e
-
-    def replaceCalculator(self, calculator):
-        calculator.number_prec_set(self.calculator.number_prec_get())
-        calculator.unit_simplification_set(self.calculator.unit_simplification_get())
-        calculator.unit_normaliser.systems_preference = self.calculator.unit_normaliser.systems_preference
-        for featureId, featureOptions in self.calculator.feature_options.items():
-            if featureId in calculator.feature_options:
-                calculator.feature_options[featureId] = featureOptions
-        self.setCalculator(calculator)
-        self.updateInsertOptions()
 
     def updateInsertOptions(self):
         self.interface.menu.insertConstantAction.setVisible('state.constants' in self.calculator.installed_features)
@@ -47,78 +50,6 @@ class CalculatorManager():
         self.interface.menu.insertOperatorAction.setVisible('structure.operators' in self.calculator.installed_features)
         self.interface.menu.insertFunctionAction.setVisible('structure.functions' in self.calculator.installed_features)
         self.interface.menu.insertUserDefinedFunctionAction.setVisible('structure.externalfunctions' in self.calculator.installed_features)
-
-    def initEmptyState(self):
-        self.importedFeatures = []
-        self.calculator.load_preset('Computing')
-        self.setPrecision(30)
-        self.setUnitSimplification(True)
-        self.setAutoExecute(True, False)
-        self.setShortUnits(False)
-
-    def restoreState(self, state):
-        self.interface.defaultState(state, {
-                "importedFeatures": [],
-                "calculatorFeatures": None,
-                "precision": 30,
-                "simplifyUnits": True,
-                "unitSystemsPreference": None,
-                "calculatorFeatureOptions": {},
-                "viewSyntaxParsingAutoExecutes": True,
-                "viewShortUnits": False,
-            })
-
-        self.importedFeatures = state["importedFeatures"]
-        foundImportedFeatures = []
-        for featureFile in self.importedFeatures:
-            try:
-                self.calculator.import_feature_file(featureFile)
-                foundImportedFeatures.append(featureFile)
-            except Exception as err:
-                print("!!! Couldn't import {} - {} !!!".format(featureFile, err))
-        self.importedFeatures = foundImportedFeatures
-
-        features = state["calculatorFeatures"]
-        if features is not None:
-            self.calculator.install_features(features, False, True)
-        else:
-            self.calculator.load_preset('Computing')
-
-        self.setPrecision(state["precision"])
-
-        self.setUnitSimplification(state["simplifyUnits"])
-
-        unitSystems = state["unitSystemsPreference"]
-        if unitSystems is not None:
-            self.calculator.unit_normaliser.systems_preference = unitSystems
-
-        featureOptions = state["calculatorFeatureOptions"]
-        for featureId, featuresOptions in featureOptions.items():
-            for field, value in featuresOptions.items():
-                if field in self.calculator.feature_list[featureId].default_options():
-                    self.calculator.feature_options[featureId][field] = value
-
-        self.setAutoExecute(state["viewSyntaxParsingAutoExecutes"], False)
-
-        self.setShortUnits(state["viewShortUnits"], False)
-
-    def saveState(self):
-        state = {}
-
-        state["importedFeatures"] = list(set(self.importedFeatures))
-
-        state["calculatorFeatures"] = self.calculator.installed_features
-        state["precision"] = self.interface.menu.precisionSpinBox.spinbox.value()
-        state["simplifyUnits"] = self.interface.menu.optionsSimplifyUnits.isChecked()
-        state["unitSystemsPreference"] = self.calculator.unit_normaliser.systems_preference
-
-        state["calculatorFeatureOptions"] = self.calculator.feature_options
-
-        state["viewShortUnits"] = self.interface.menu.viewShortUnits.isChecked()
-        state["viewSyntaxParsingAutoExecutes"] = self.interface.menu.viewSyntaxParsingAutoExecutes.isChecked()
-
-        return state
-
 
     def calc(self):
         question = self.entry.getContents().rstrip()
@@ -147,30 +78,46 @@ class CalculatorManager():
         self.display.refresh()
 
 
-    def setUnitSimplification(self, value):
-        self.interface.menu.optionsSimplifyUnits.setChecked(value)
-        self.calculator.unit_simplification_set(value)
-
     def setPrecision(self, value):
         self.interface.menu.precisionSpinBox.spinbox.setValue(value)
-        self.calculator.number_prec_set(value)
+        self.config.main['execution']['precision'] = value
+        self.config.saveMainConfig()
+        self.calculator.number_prec_set(self.config.main['execution']['precision'])
+        self.refresh()
 
-    def setShortUnits(self, value, refresh=True):
-        self.interface.menu.viewShortUnits.setChecked(value)
-        self.display.options['shortunits'] = value
-        if refresh:
-            self.display.refresh()
+    def setUnitSimplification(self, value):
+        self.interface.menu.optionsSimplifyUnits.setChecked(value)
+        self.config.main['execution']['simplify_units'] = value
+        self.config.saveMainConfig()
+        self.calculator.unit_simplification_set(self.config.main['execution']['simplify_units'])
+        self.refresh()
 
-    def setAutoExecute(self, value, refresh=True):
-        self.interface.menu.viewSyntaxParsingAutoExecutes.setChecked(value)
-        self.entry.autoExecute = value
-        if refresh:
-            self.interface.tabmanager.forceRefreshAllTabs()
-            self.entry.refresh()
+    def setUnitSystemPreference(self, systemNames):
+        names = [s for n in systemNames for s in [s for s in self.calculator.unit_normaliser.systems if self.calculator.unit_normaliser.systems[s].name == n]]
+        self.config.main['execution']['unit_system_preference'] = names
+        self.config.saveMainConfig()
+        self.calculator.unit_normaliser.systems_preference = names
+        self.refresh()
 
-    def updateUnitSystemPreference(self, systemNames):
-        self.calculator.unit_normaliser.systems_preference = [s for n in systemNames for s in [s for s in self.calculator.unit_normaliser.systems if self.calculator.unit_normaliser.systems[s].name == n]]
+    def setInstalledFeatures(self, calculator, importedFeatures):
+        if 'features' not in self.config.main:
+            self.config.main['features'] = {}
+        self.config.main['features']['installed'] = list(calculator.installed_features)
+        self.config.main['features']['external'] = importedFeatures
+        self.config.saveMainConfig()
+        self.initCalculator()
+        self.refresh()
+        self.updateInsertOptions()
 
-    def commitFeatureConfig(self, calculator, importedFeatures):
-        self.replaceCalculator(calculator)
-        self.importedFeatures = importedFeatures
+    def setFeatureOptions(self, featureId, featureOptions):
+        if 'feature_options' not in self.config.main:
+            self.config.main['feature_options'] = {}
+        self.config.main['feature_options'][featureId] = featureOptions
+        self.config.saveMainConfig()
+        self.initCalculator()
+        self.refresh()
+
+    def refresh(self):
+        self.interface.tabmanager.forceRefreshAllTabs()
+        self.interface.entry.refresh()
+        self.interface.display.refresh()

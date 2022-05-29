@@ -17,6 +17,7 @@ class CalculatorEntry(QTextEdit):
         super().__init__()
 
         self.interface = interface
+        self.config = self.interface.config
         self.calculator = None
 
         self.defaultConfig()
@@ -44,14 +45,13 @@ class CalculatorEntry(QTextEdit):
         }
 
     def loadConfig(self):
-        config = self.interface.config.main
-        if config is not None:
-            if 'entry' in config:
-                config = config['entry']
-                if config is not None:
+        if self.config.main is not None:
+            if 'entry' in self.config.main:
+                entry_config = self.config.main['entry']
+                if entry_config is not None:
                     for o in self.options.keys():
-                        if o in config:
-                            self.options[o] = config[o]
+                        if o in entry_config:
+                            self.options[o] = entry_config[o]
 
     def initStyling(self):
         editFont = QFont(self.options['font'])
@@ -141,7 +141,7 @@ class CalculatorEntry(QTextEdit):
             self.last_uuid = uuid.uuid4()
             self.doSyntaxHighlighting(CalculatorEntry.doSyntaxParsing(self.calculator, expr_truncated, response.copy(), later_results, i, ii, self.last_uuid, True))
 
-            if self.autoExecute:
+            if self.config.main['entry']['show_execution_errors']:
                 worker = SyntaxHighlighterWorker(self.calculator, expr, response, i, ii, self.last_uuid)
                 worker.signals.result.connect(self.doSyntaxHighlighting)
                 worker.setAutoDelete(True)
@@ -193,7 +193,7 @@ class CalculatorEntry(QTextEdit):
 
         statements = [r.items for r in response.results] + error_statements
         errorExpr = expr[ii:]
-        newhtml, self.highlightPositions = self.htmlService.createStatementsHtml(statements, errorExpr, self.interface.lineHighlighting)
+        newhtml, self.highlightPositions = self.htmlService.createStatementsHtml(statements, errorExpr, self.config.main['entry']['view_line_highlighting'])
         self.updateHtml(newhtml)
         self.addLineHighlights()
 

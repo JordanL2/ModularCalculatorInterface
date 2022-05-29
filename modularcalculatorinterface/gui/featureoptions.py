@@ -9,11 +9,11 @@ from PyQt5.QtWidgets import QDialog, QVBoxLayout, QListWidgetItem, QGridLayout, 
 
 class FeatureOptionsDialog(QDialog):
 
-    def __init__(self, parent):
-        super().__init__(parent)
+    def __init__(self, interface):
+        super().__init__(interface)
 
-        self.parent = parent
-        self.calculatormanager = self.parent.calculatormanager
+        self.interface = interface
+        self.calculatormanager = self.interface.calculatormanager
 
         layout = QVBoxLayout()
 
@@ -50,15 +50,15 @@ class ConfigureFeatureDialog(QDialog):
         super().__init__(parent)
 
         self.parent = parent
+        self.calculatormanager = self.parent.calculatormanager
         self.calculator = self.parent.calculatormanager.calculator
         self.feature = self.calculator.feature_list[featureId]
-        self.featureOptions = self.calculator.feature_options[featureId]
 
         grid = QGridLayout()
 
         maxI = 0
         self.fieldEditBoxes = {}
-        for i, fieldAndValue in enumerate(self.featureOptions.items()):
+        for i, fieldAndValue in enumerate(self.calculator.feature_options[featureId].items()):
             fieldName = fieldAndValue[0]
             fieldValue = self.encode(fieldAndValue[1])
             lineEdit = QLineEdit(fieldValue, self)
@@ -119,11 +119,11 @@ class ConfigureFeatureDialog(QDialog):
             self.fieldEditBoxes[field].setText(self.encode(value))
 
     def ok(self):
+        fields = {}
         for field, lineEdit in self.fieldEditBoxes.items():
             value = lineEdit.text()
-            self.featureOptions[field] = self.decode(value)
-        self.parent.parent.entry.refresh()
-        self.parent.parent.display.refresh()
+            fields[field] = self.decode(value)
+        self.calculatormanager.setFeatureOptions(self.feature.id(), fields)
         self.close()
 
     def sizeHint(self):

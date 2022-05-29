@@ -64,32 +64,23 @@ The right-hand pane labelled "Output" will be cleared, and the results of all th
 
 ## Configuration
 
-A lot of configuration options are available inside the application. It's possible to configure some more things with config files.
+The application stores all configuration options inside its config file: `config.yml`.
 
-The application looks in these locations for config files, in this order:
+The config files can be found in any of the below locations.
 
 1. `$XDG_CONFIG_HOME/ModularCalculator` (or `$HOME/.config/ModularCalculator`)
 2. Each directory in `$XDG_CONFIG_DIRS`, followed by `/ModularCalculator`
 3. `/etc/ModularCalculator`
-4. `/app/share/ModularCalculator`
+4. `/app/share/ModularCalculator` (this is where the flatpak's config files are installed to, inside the flatpak)
 5. `/usr/share/ModularCalculator` (this is where the manual installation installs the default files to)
 6. `../config/ModularCalculator` (relative to `main.py`)
 
-To configure the flatpak, you'll need to add config files to `$HOME/.var/app/io.github.jordanl2.ModularCalculator/config/ModularCalculator`.
-
-Otherwise, it's usually best to add them to `$HOME/.config/ModularCalculator`.
-
-Look in [config/ModularCalculator] for the application's default config files.
+All found config files are merged together, with the top locations being highest precedence.
 
 
-### config.yml
+### Themes
 
-This file can configure various aspects for how the application looks, such as font, font size and boldness.
-
-An example can be found at [config/ModularCalculator/config.yml](config/ModularCalculator/config.yml)
-
-
-### themes/*.yml
+Themes are stored inside the config directory, inside `themes/*.yml`.
 
 These files contain themes to change the colours of the input and output contents.
 
