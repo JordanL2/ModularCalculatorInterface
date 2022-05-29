@@ -19,7 +19,7 @@ class HtmlService():
     def restoreState(self, state):
         if isinstance(state, dict):
             if 'theme' in state.keys() and state['theme'] in self.syntax.keys():
-                self.interface.setTheme(state['theme'])
+                self.interface.menu.setTheme(state['theme'])
 
     def saveState(self):
         return {'theme': self.theme}

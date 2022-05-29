@@ -41,12 +41,12 @@ class CalculatorManager():
         self.updateInsertOptions()
 
     def updateInsertOptions(self):
-        self.interface.insertConstantAction.setVisible('state.constants' in self.calculator.installed_features)
-        self.interface.insertDateAction.setVisible('dates.dates' in self.calculator.installed_features)
-        self.interface.insertUnitAction.setVisible('units.units' in self.calculator.installed_features)
-        self.interface.insertOperatorAction.setVisible('structure.operators' in self.calculator.installed_features)
-        self.interface.insertFunctionAction.setVisible('structure.functions' in self.calculator.installed_features)
-        self.interface.insertUserDefinedFunctionAction.setVisible('structure.externalfunctions' in self.calculator.installed_features)
+        self.interface.menu.insertConstantAction.setVisible('state.constants' in self.calculator.installed_features)
+        self.interface.menu.insertDateAction.setVisible('dates.dates' in self.calculator.installed_features)
+        self.interface.menu.insertUnitAction.setVisible('units.units' in self.calculator.installed_features)
+        self.interface.menu.insertOperatorAction.setVisible('structure.operators' in self.calculator.installed_features)
+        self.interface.menu.insertFunctionAction.setVisible('structure.functions' in self.calculator.installed_features)
+        self.interface.menu.insertUserDefinedFunctionAction.setVisible('structure.externalfunctions' in self.calculator.installed_features)
 
     def initEmptyState(self):
         self.importedFeatures = []
@@ -108,14 +108,14 @@ class CalculatorManager():
         state["importedFeatures"] = list(set(self.importedFeatures))
 
         state["calculatorFeatures"] = self.calculator.installed_features
-        state["precision"] = self.interface.precisionSpinBox.spinbox.value()
-        state["simplifyUnits"] = self.interface.optionsSimplifyUnits.isChecked()
+        state["precision"] = self.interface.menu.precisionSpinBox.spinbox.value()
+        state["simplifyUnits"] = self.interface.menu.optionsSimplifyUnits.isChecked()
         state["unitSystemsPreference"] = self.calculator.unit_normaliser.systems_preference
 
         state["calculatorFeatureOptions"] = self.calculator.feature_options
 
-        state["viewShortUnits"] = self.interface.viewShortUnits.isChecked()
-        state["viewSyntaxParsingAutoExecutes"] = self.interface.viewSyntaxParsingAutoExecutes.isChecked()
+        state["viewShortUnits"] = self.interface.menu.viewShortUnits.isChecked()
+        state["viewSyntaxParsingAutoExecutes"] = self.interface.menu.viewSyntaxParsingAutoExecutes.isChecked()
 
         return state
 
@@ -148,21 +148,21 @@ class CalculatorManager():
 
 
     def setUnitSimplification(self, value):
-        self.interface.optionsSimplifyUnits.setChecked(value)
+        self.interface.menu.optionsSimplifyUnits.setChecked(value)
         self.calculator.unit_simplification_set(value)
 
     def setPrecision(self, value):
-        self.interface.precisionSpinBox.spinbox.setValue(value)
+        self.interface.menu.precisionSpinBox.spinbox.setValue(value)
         self.calculator.number_prec_set(value)
 
     def setShortUnits(self, value, refresh=True):
-        self.interface.viewShortUnits.setChecked(value)
+        self.interface.menu.viewShortUnits.setChecked(value)
         self.display.options['shortunits'] = value
         if refresh:
             self.display.refresh()
 
     def setAutoExecute(self, value, refresh=True):
-        self.interface.viewSyntaxParsingAutoExecutes.setChecked(value)
+        self.interface.menu.viewSyntaxParsingAutoExecutes.setChecked(value)
         self.entry.autoExecute = value
         if refresh:
             self.interface.tabmanager.forceRefreshAllTabs()
