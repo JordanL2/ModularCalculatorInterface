@@ -165,6 +165,7 @@ class CalculatorManager():
         self.interface.viewSyntaxParsingAutoExecutes.setChecked(value)
         self.entry.autoExecute = value
         if refresh:
+            self.interface.tabmanager.forceRefreshAllTabs()
             self.entry.refresh()
 
     def updateUnitSystemPreference(self, systemNames):
