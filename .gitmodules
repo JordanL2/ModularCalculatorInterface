@@ -1,0 +1,3 @@
+[submodule "ModularCalculator"]
+	path = ModularCalculator
+	url = git@github.com:JordanL2/ModularCalculator.git

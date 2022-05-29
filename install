@@ -7,6 +7,7 @@ if [ $# -lt 1 ]; then
 	PREFIX=/usr
 fi
 
+pip3 install --prefix=${PREFIX} ModularCalculator/
 pip3 install --prefix=${PREFIX} .
 for r in 16x16 24x24 48x48 64x64 128x128 256x256
 do

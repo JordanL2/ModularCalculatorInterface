@@ -23,9 +23,6 @@ There is a flatpak available on [Flathub](https://flathub.org/apps/details/io.gi
 
 ## Manually
 
-First, install the [modularcalculator](https://github.com/JordanL2/ModularCalculator) python library.
-
-Then:
 ```
 sudo ./install
 ```
