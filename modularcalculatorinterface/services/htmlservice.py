@@ -134,7 +134,7 @@ class HtmlService():
 
     def createAnswerText(self, answer, unit, options):
         if isinstance(answer, UnitPowerList):
-            if self.options['shortunits'] and answer.has_symbols():
+            if options['shortunits'] and answer.has_symbols():
                 unit_parts = answer.symbol(False)
             else:
                 unit_parts = answer.singular(False, False)
@@ -200,7 +200,7 @@ class HtmlService():
     def createAnswerHtml(self, answer, unit, options):
         answerHtml = None
         if isinstance(answer, UnitPowerList):
-            if self.options['shortunits'] and answer.has_symbols():
+            if options['shortunits'] and answer.has_symbols():
                 unit_parts = answer.symbol(False)
             else:
                 unit_parts = answer.singular(False, False)

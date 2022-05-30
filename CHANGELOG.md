@@ -2,6 +2,7 @@
 
 ## 1.3.1
 - Fixed "Line Highlighting" option.
+- Fixed displaying an answer which is just a unit.
 - Using modularcalculator version 1.2.2.
 
 ## 1.3.0
