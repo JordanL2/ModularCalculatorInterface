@@ -170,3 +170,12 @@ class ModularCalculatorInterface(StatefulApplication):
         elif response == QMessageBox.No:
             return False
         return None
+
+
+    def applyConfig(self):
+        self.calculatormanager.initCalculator()
+        self.tabmanager.forceRefreshAllTabs()
+        self.htmlService.initStyling()
+        self.entry.refresh()
+        self.display.refresh()
+        self.config.saveMainConfig()

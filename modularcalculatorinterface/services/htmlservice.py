@@ -17,19 +17,10 @@ class HtmlService():
         self.loadConfig()
         self.initStyling()
 
-
     def loadConfig(self):
         self.syntax = {}
         for themeFile, theme in self.interface.config.themes.items():
             self.syntax[theme['name']] = theme['style']
-
-    def setTheme(self, theme):
-        self.config.main['appearance']['theme'] = theme
-        self.config.saveMainConfig()
-        self.initStyling()
-        self.interface.tabmanager.forceRefreshAllTabs()
-        self.interface.entry.refresh()
-        self.interface.display.refresh()
 
     def initStyling(self):
         self.background = [
@@ -121,7 +112,7 @@ class HtmlService():
             answerText = self.createAnswerText(row.answer, row.unit, options)
 
         fractionText = None
-        if row.fraction is not None and row.fraction[1] != 0 and row.fraction[2] < options['max_denominator']:
+        if row.fraction is not None and row.fraction[1] != 0 and row.fraction[2] < 10**options['max_denominator_digits']:
             fractionText = self.createFractionText(row.fraction, row.unit, options)
 
         return (answerText, fractionText)
@@ -185,7 +176,7 @@ class HtmlService():
             answerHtml += self.createAnswerHtml(row.answer, row.unit, options)
 
         fractionHtml = None
-        if row.fraction is not None and row.fraction[1] != 0 and row.fraction[2] < options['max_denominator']:
+        if row.fraction is not None and row.fraction[1] != 0 and row.fraction[2] < 10**options['max_denominator_digits']:
             fractionHtml = self.css
             fractionHtml += self.createFractionHtml(row.fraction, row.unit, options)
 

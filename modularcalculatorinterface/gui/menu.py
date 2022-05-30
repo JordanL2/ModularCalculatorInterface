@@ -1,15 +1,13 @@
 #!/usr/bin/python3
 
 from modularcalculatorinterface.gui.about import *
-from modularcalculatorinterface.gui.featureconfig import *
-from modularcalculatorinterface.gui.featureoptions import *
 from modularcalculatorinterface.gui.guiwidgets import *
+from modularcalculatorinterface.gui.options.options import *
 
 from PyQt5.QtCore import Qt, QUrl
 from PyQt5.QtGui import QKeySequence, QCursor, QDesktopServices
 from PyQt5.QtWidgets import QAction, QFileDialog, QToolTip
 
-from functools import partial
 import os.path
 import string
 
@@ -51,32 +49,12 @@ class CalculatorMenu():
         fileSaveAs.setShortcut(QKeySequence(Qt.CTRL + Qt.SHIFT + Qt.Key_S))
         self.fileMenu.addAction(fileSaveAs)
 
+
         viewMenu = menubar.addMenu('View')
 
-        self.viewShortUnits = QAction('Units in Short Form', self.interface, checkable=True,
-            checked=self.config.main['display']['short_units'])
-        self.viewShortUnits.triggered.connect(self.setShortUnits)
-        viewMenu.addAction(self.viewShortUnits)
-
-        self.viewSyntaxParsingAutoExecutes = QAction('Show Execution Errors', self.interface, checkable=True,
-            checked=self.config.main['entry']['show_execution_errors'])
-        self.viewSyntaxParsingAutoExecutes.triggered.connect(self.setShowExecutionErrors)
-        viewMenu.addAction(self.viewSyntaxParsingAutoExecutes)
-
-        self.viewLineHighlighting = QAction('Line Highlighting', self.interface, checkable=True,
-            checked=self.config.main['entry']['view_line_highlighting'])
-        self.viewLineHighlighting.triggered.connect(self.setLineHighlighting)
-        viewMenu.addAction(self.viewLineHighlighting)
-
-        self.viewThemesMenu = viewMenu.addMenu('Themes')
-        self.viewThemesActions = {}
-        for theme in sorted(self.interface.htmlService.syntax.keys()):
-            themeAction = QAction(theme, self.interface, checkable=True)
-            if theme == self.config.main['appearance']['theme']:
-                themeAction.setChecked(True)
-            themeAction.triggered.connect(partial(self.setTheme, theme))
-            self.viewThemesActions[theme] = themeAction
-            self.viewThemesMenu.addAction(themeAction)
+        self.viewOptions = QAction('Options', self.interface)
+        self.viewOptions.triggered.connect(self.openOptions)
+        viewMenu.addAction(self.viewOptions)
 
         self.viewClearOutput = QAction('Clear Output', self.interface)
         self.viewClearOutput.triggered.connect(self.interface.display.clear)
@@ -121,29 +99,6 @@ class CalculatorMenu():
         self.insertUserDefinedFunctionAction.setShortcut(QKeySequence(Qt.CTRL + Qt.SHIFT + Qt.Key_E))
         actionMenu.addAction(self.insertUserDefinedFunctionAction)
 
-        optionsMenu = menubar.addMenu('Options')
-
-        self.precisionSpinBox = MenuSpinBox(self.interface, 'Precision', 1, 50)
-        self.precisionSpinBox.spinbox.setValue(self.config.main['execution']['precision'])
-        self.precisionSpinBox.spinbox.valueChanged.connect(self.interface.calculatormanager.setPrecision)
-        optionsMenu.addAction(self.precisionSpinBox)
-
-        self.optionsSimplifyUnits = QAction('Simplify Units', self.interface, checkable=True,
-            checked=self.config.main['execution']['simplify_units'])
-        self.optionsSimplifyUnits.triggered.connect(self.interface.calculatormanager.setUnitSimplification)
-        optionsMenu.addAction(self.optionsSimplifyUnits)
-
-        self.optionsUnitSystemPreference = QAction('Unit System Preference', self.interface)
-        self.optionsUnitSystemPreference.triggered.connect(self.openUnitSystemPreference)
-        optionsMenu.addAction(self.optionsUnitSystemPreference)
-
-        self.optionsFeatureConfig = QAction('Install/Remove Features', self.interface)
-        self.optionsFeatureConfig.triggered.connect(self.openFeatureConfig)
-        optionsMenu.addAction(self.optionsFeatureConfig)
-
-        self.optionsFeatureOptions = QAction('Feature Options', self.interface)
-        self.optionsFeatureOptions.triggered.connect(self.openFeatureOptions)
-        optionsMenu.addAction(self.optionsFeatureOptions)
 
         helpMenu = menubar.addMenu('Help')
 
@@ -164,30 +119,8 @@ class CalculatorMenu():
     def showExecuteToolTip(self):
         QToolTip.showText(QCursor.pos(), "Ctrl+Enter", self.interface)
 
-    def setShortUnits(self, value):
-        self.config.main['display']['short_units'] = value
-        self.config.saveMainConfig()
-        self.viewShortUnits.setChecked(value)
-        self.interface.display.refresh()
-
-    def setShowExecutionErrors(self, value):
-        self.config.main['entry']['show_execution_errors'] = value
-        self.config.saveMainConfig()
-        self.viewSyntaxParsingAutoExecutes.setChecked(value)
-        self.interface.tabmanager.forceRefreshAllTabs()
-        self.interface.entry.refresh()
-
-    def setLineHighlighting(self, lineHighlighting):
-        self.config.main['entry']['view_line_highlighting'] = lineHighlighting
-        self.config.saveMainConfig()
-        self.viewLineHighlighting.setChecked(lineHighlighting)
-        self.interface.tabmanager.forceRefreshAllTabs()
-        self.interface.entry.refresh()
-
-    def setTheme(self, theme):
-        self.interface.htmlService.setTheme(theme)
-        for themeActionTheme, themeAction in self.viewThemesActions.items():
-            themeAction.setChecked(theme == themeActionTheme)
+    def openOptions(self):
+        OptionsDialog(self.interface)
 
     def insertConstant(self):
         constants = sorted(self.interface.calculatormanager.calculator.constants.keys(), key=str)
@@ -287,21 +220,6 @@ class CalculatorMenu():
 
     def selectUnitSystem(self, operator):
         self.interface.entry.insert(operator)
-
-    def openUnitSystemPreference(self):
-        calculator = self.interface.calculatormanager.calculator
-        SortableListDialog(self.interface,
-            'Unit System Preference',
-            'Order unit systems by preference, most prefered at top',
-            [calculator.unit_normaliser.systems[s].name for s in calculator.unit_normaliser.systems_preference if s in calculator.unit_normaliser.systems]
-            + [calculator.unit_normaliser.systems[s].name for s in calculator.unit_normaliser.systems if s not in calculator.unit_normaliser.systems_preference],
-            self.interface.calculatormanager.setUnitSystemPreference)
-
-    def openFeatureConfig(self):
-        FeatureConfigDialog(self.interface)
-
-    def openFeatureOptions(self):
-        FeatureOptionsDialog(self.interface)
 
     def openHelp(self):
         QDesktopServices.openUrl(QUrl('https://github.com/JordanL2/ModularCalculator/wiki'))

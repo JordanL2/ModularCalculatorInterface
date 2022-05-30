@@ -1,8 +1,9 @@
 # Changelog
 
 ## 1.4.0
-- Added modularcalculator repository into this repository as a submodule, to make manual installation easier.
 - All application configuration is now stored in the config.yml file.
+- All configuration is done through a single options panel, removing all the various menu items.
+- Added modularcalculator repository into this repository as a submodule, to make manual installation easier.
 
 ## 1.3.1
 - Fixed "Line Highlighting" option.

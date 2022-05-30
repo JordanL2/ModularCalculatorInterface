@@ -77,28 +77,6 @@ class CalculatorManager():
             self.display.addError(err, pos, question)
         self.display.refresh()
 
-
-    def setPrecision(self, value):
-        self.interface.menu.precisionSpinBox.spinbox.setValue(value)
-        self.config.main['execution']['precision'] = value
-        self.config.saveMainConfig()
-        self.calculator.number_prec_set(self.config.main['execution']['precision'])
-        self.refresh()
-
-    def setUnitSimplification(self, value):
-        self.interface.menu.optionsSimplifyUnits.setChecked(value)
-        self.config.main['execution']['simplify_units'] = value
-        self.config.saveMainConfig()
-        self.calculator.unit_simplification_set(self.config.main['execution']['simplify_units'])
-        self.refresh()
-
-    def setUnitSystemPreference(self, systemNames):
-        names = [s for n in systemNames for s in [s for s in self.calculator.unit_normaliser.systems if self.calculator.unit_normaliser.systems[s].name == n]]
-        self.config.main['execution']['unit_system_preference'] = names
-        self.config.saveMainConfig()
-        self.calculator.unit_normaliser.systems_preference = names
-        self.refresh()
-
     def setInstalledFeatures(self, calculator, importedFeatures):
         if 'features' not in self.config.main:
             self.config.main['features'] = {}

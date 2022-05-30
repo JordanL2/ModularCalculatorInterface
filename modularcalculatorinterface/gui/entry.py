@@ -20,8 +20,6 @@ class CalculatorEntry(QTextEdit):
         self.config = self.interface.config
         self.calculator = None
 
-        self.defaultConfig()
-        self.loadConfig()
         self.htmlService = interface.htmlService
         self.initStyling()
 
@@ -35,28 +33,10 @@ class CalculatorEntry(QTextEdit):
 
         self.undoStack = CalculatorUndoStack(self)
 
-    def defaultConfig(self):
-        defaultFont = QFontDatabase.systemFont(QFontDatabase.FixedFont)
-        defaultFontSize = defaultFont.pointSize()
-        self.options = {
-            'font': defaultFont.family(),
-            'fontsize_pt': defaultFontSize + 2,
-            'bold': True,
-        }
-
-    def loadConfig(self):
-        if self.config.main is not None:
-            if 'entry' in self.config.main:
-                entry_config = self.config.main['entry']
-                if entry_config is not None:
-                    for o in self.options.keys():
-                        if o in entry_config:
-                            self.options[o] = entry_config[o]
-
     def initStyling(self):
-        editFont = QFont(self.options['font'])
-        editFont.setPointSize(self.options['fontsize_pt'])
-        editFont.setBold(self.options['bold'])
+        editFont = QFont(self.config.main['entry']['font'])
+        editFont.setPointSize(self.config.main['entry']['fontsize_pt'])
+        editFont.setBold(self.config.main['entry']['bold'])
         self.setFont(editFont)
 
         self.colours = self.htmlService.background

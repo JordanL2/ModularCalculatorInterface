@@ -7,7 +7,7 @@ display:
   fraction_bold: false
   fraction_fontsize_pt: 10
   fraction_small_fontsize_pt: 8
-  max_denominator: 1000000000000
+  max_denominator_digits: 12
   question_bold: false
   question_fontsize_pt: 10
   short_units: false
