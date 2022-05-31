@@ -24,8 +24,8 @@ class AboutDialog(QDialog):
 
         self.setLayout(self.layout)
         self.setWindowTitle("About")
-        self.setVisible(True)
         self.setModal(True)
+        self.setVisible(True)
 
     def initContent(self):
         # Title
