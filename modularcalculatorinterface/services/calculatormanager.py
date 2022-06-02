@@ -72,8 +72,7 @@ class CalculatorManager():
         foundImportedFeatures = []
         for featureFile in self.importedFeatures:
             try:
-                ids = self.calculator.import_feature_file(featureFile)
-                self.calculator.install_features(ids)
+                self.calculator.import_feature_file(featureFile)
                 foundImportedFeatures.append(featureFile)
             except Exception as err:
                 print("!!! Couldn't import {} - {} !!!".format(featureFile, err))
