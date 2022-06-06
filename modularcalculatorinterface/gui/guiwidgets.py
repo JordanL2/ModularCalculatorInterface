@@ -5,11 +5,12 @@ from PyQt5.QtWidgets import QApplication, QListWidget, QListWidgetItem, QLabel, 
                             QDialog, QPushButton, QCalendarWidget, QTimeEdit, QComboBox, QTabBar
 
 
-def screenRelativeSize(width, height):
-    size = QSize()
-    size.setWidth(int(round(QApplication.desktop().screenGeometry().width() * width)))
-    size.setHeight(int(round(QApplication.desktop().screenGeometry().height() * height)))
-    return size
+def limitToScreen(width, height):
+    if width > QApplication.desktop().screenGeometry().width():
+        width = int(round(QApplication.desktop().screenGeometry().width()))
+    if height > QApplication.desktop().screenGeometry().height():
+        height = int(round(QApplication.desktop().screenGeometry().height()))
+    return QSize(width, height)
 
 
 class SelectionDialog(QDialog):
@@ -51,7 +52,7 @@ class SelectionDialog(QDialog):
         self.close()
 
     def sizeHint(self):
-        return screenRelativeSize(0.3, 0.5)
+        return limitToScreen(300, 600)
 
 
 class CategorisedSelectionDialog(QDialog):
@@ -114,7 +115,7 @@ class CategorisedSelectionDialog(QDialog):
             self.close()
 
     def sizeHint(self):
-        return screenRelativeSize(0.3, 0.5)
+        return limitToScreen(300, 600)
 
 
 class DatePicker(QDialog):

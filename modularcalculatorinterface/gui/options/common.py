@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from modularcalculatorinterface.gui.guiwidgets import screenRelativeSize
+from modularcalculatorinterface.gui.guiwidgets import limitToScreen
 
 from PyQt5.QtCore import Qt, QStringListModel, QSize
 from PyQt5.QtWidgets import QWidget, QCheckBox, QComboBox, QSpinBox, QAbstractItemView, QListView, QGridLayout, QSpacerItem
