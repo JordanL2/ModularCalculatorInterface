@@ -58,21 +58,37 @@ class OptionCheckbox(QWidget):
 
 class OptionComboBox(QComboBox):
 
-    def __init__(self, parent, config_toplevel, config_secondlevel, options, cast=None):
+    def __init__(self, parent, config_toplevel, config_secondlevel, options, ids=None, cast=None):
         super().__init__(parent)
         self.interface = parent.interface
         self.config_toplevel = config_toplevel
         self.config_secondlevel = config_secondlevel
         self.cast = cast
 
+        self.optionMap = None
+        if ids is not None:
+            self.optionMap = {}
+
         currentValue = self.config_toplevel[self.config_secondlevel]
-        for option in options:
-            self.addItem(str(option))
-        self.setCurrentText(str(self.config_toplevel[self.config_secondlevel]))
+        selected = None
+        for i, option in enumerate(options):
+            if ids is not None:
+                optionId = ids[i]
+                self.optionMap[str(option)] = optionId
+                self.addItem(str(option), optionId)
+                if ids[i] == self.config_toplevel[self.config_secondlevel]:
+                    selected = i
+            else:
+                self.addItem(str(option))
+                if option == self.config_toplevel[self.config_secondlevel]:
+                    selected = i
+        self.setCurrentIndex(selected)
 
         self.currentTextChanged.connect(self.onStateChanged)
 
     def onStateChanged(self, option):
+        if self.optionMap is not None:
+            option = self.optionMap[option]
         if self.cast is not None:
             option = self.cast(option)
         self.config_toplevel[self.config_secondlevel] = option

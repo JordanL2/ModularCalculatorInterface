@@ -11,7 +11,7 @@ class EntryTab(OptionsTab):
         layout = QFormLayout()
 
         layout.addRow("Font", OptionComboBox(self, self.config.main['entry'], 'font', getFixedWidthFonts()))
-        layout.addRow("Font size", OptionComboBox(self, self.config.main['entry'], 'fontsize_pt', getFontSizes(), int))
+        layout.addRow("Font size", OptionComboBox(self, self.config.main['entry'], 'fontsize_pt', getFontSizes(), cast=int))
         layout.addRow("Font bold", OptionCheckbox(self, self.config.main['entry'], 'bold'))
 
         self.addSpacerItem(layout)

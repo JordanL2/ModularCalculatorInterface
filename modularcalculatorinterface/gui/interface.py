@@ -11,7 +11,7 @@ from modularcalculatorinterface.services.tabmanager import *
 
 from PyQt5.QtCore import Qt, QThreadPool, QTimer
 from PyQt5.QtGui import QKeySequence, QIcon, QGuiApplication
-from PyQt5.QtWidgets import QWidget, QGridLayout, QSplitter, QFileDialog, QShortcut, QMessageBox, QScrollArea, QSizePolicy
+from PyQt5.QtWidgets import QWidget, QGridLayout, QSplitter, QFileDialog, QShortcut, QMessageBox, QScrollArea, QSizePolicy, QToolBar
 
 import os.path
 import traceback
@@ -68,6 +68,7 @@ class ModularCalculatorInterface(StatefulApplication):
                 return
 
     def initUI(self):
+        self.toolbar = QToolBar(self)
         self.tabbar = MiddleClickCloseableTabBar(self)
 
         self.entry = CalculatorEntry(self)
@@ -88,8 +89,9 @@ class ModularCalculatorInterface(StatefulApplication):
 
         layout = QGridLayout()
         layout.setSpacing(0)
-        layout.addWidget(self.tabbar, 0, 0, 1, 1)
-        layout.addWidget(self.splitter, 1, 0, 1, 1)
+        layout.addWidget(self.toolbar, 0, 0, 1, 1)
+        layout.addWidget(self.tabbar, 1, 0, 1, 1)
+        layout.addWidget(self.splitter, 2, 0, 1, 1)
 
         mainWidget = QWidget()
         mainWidget.setLayout(layout)
@@ -178,4 +180,5 @@ class ModularCalculatorInterface(StatefulApplication):
         self.htmlService.initStyling()
         self.entry.refresh()
         self.display.refresh()
+        self.menu.refresh()
         self.config.saveMainConfig()

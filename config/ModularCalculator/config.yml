@@ -1,5 +1,6 @@
 appearance:
   theme: Default
+  button_style: IconAndText
 display:
   answer_bold: true
   answer_fontsize_pt: 14

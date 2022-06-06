@@ -5,8 +5,8 @@ from modularcalculatorinterface.gui.guiwidgets import *
 from modularcalculatorinterface.gui.options.options import *
 
 from PyQt5.QtCore import Qt, QUrl
-from PyQt5.QtGui import QKeySequence, QCursor, QDesktopServices
-from PyQt5.QtWidgets import QAction, QFileDialog, QToolTip
+from PyQt5.QtGui import QKeySequence, QDesktopServices, QIcon
+from PyQt5.QtWidgets import QAction, QFileDialog, QToolButton, QMenu
 
 import os.path
 import string
@@ -18,106 +18,135 @@ class CalculatorMenu():
         self.interface = interface
         self.config = self.interface.config
         self.initMenu()
+        self.refresh()
 
     def initMenu(self):
-        menubar = self.interface.menuBar()
+        self.toolbar = self.interface.toolbar
 
-        self.fileMenu = menubar.addMenu('File')
+        self.fileNew = QAction(QIcon.fromTheme('document-new'), 'New', self.interface)
+        self.fileNew.setToolTip('New (Ctrl+N)')
+        self.fileNew.triggered.connect(self.interface.tabmanager.addTab)
+        self.fileNew.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_N))
+        self.toolbar.addAction(self.fileNew)
 
-        fileNew = QAction('New Tab', self.interface)
-        fileNew.triggered.connect(self.interface.tabmanager.addTab)
-        fileNew.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_N))
-        self.fileMenu.addAction(fileNew)
+        self.fileOpen = QAction(QIcon.fromTheme('document-open'), 'Open', self.interface)
+        self.fileOpen.setToolTip('Open (Ctrl+O)')
+        self.fileOpen.triggered.connect(self.interface.filemanager.open)
+        self.fileOpen.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_O))
+        self.toolbar.addAction(self.fileOpen)
 
-        fileClose = QAction('Close Tab', self.interface)
-        fileClose.triggered.connect(self.interface.tabmanager.closeCurrentTab)
-        fileClose.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_W))
-        self.fileMenu.addAction(fileClose)
-
-        fileOpen = QAction('Open', self.interface)
-        fileOpen.triggered.connect(self.interface.filemanager.open)
-        fileOpen.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_O))
-        self.fileMenu.addAction(fileOpen)
-
-        self.fileSave = QAction('Save', self.interface)
+        self.fileSave = QAction(QIcon.fromTheme('document-save'), 'Save', self.interface)
+        self.fileSave.setToolTip('Save (Ctrl+S)')
         self.fileSave.triggered.connect(self.interface.filemanager.save)
         self.fileSave.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_S))
-        self.fileMenu.addAction(self.fileSave)
+        self.toolbar.addAction(self.fileSave)
 
-        fileSaveAs = QAction('Save As...', self.interface)
-        fileSaveAs.triggered.connect(self.interface.filemanager.saveAs)
-        fileSaveAs.setShortcut(QKeySequence(Qt.CTRL + Qt.SHIFT + Qt.Key_S))
-        self.fileMenu.addAction(fileSaveAs)
+        self.fileSaveAs = QAction(QIcon.fromTheme('document-save-as'), 'Save As', self.interface)
+        self.fileSaveAs.setToolTip('Save As (Ctrl+Shift+S)')
+        self.fileSaveAs.triggered.connect(self.interface.filemanager.saveAs)
+        self.fileSaveAs.setShortcut(QKeySequence(Qt.CTRL + Qt.SHIFT + Qt.Key_S))
+        self.toolbar.addAction(self.fileSaveAs)
 
-
-        viewMenu = menubar.addMenu('View')
-
-        self.viewOptions = QAction('Options', self.interface)
-        self.viewOptions.triggered.connect(self.openOptions)
-        viewMenu.addAction(self.viewOptions)
-
-        self.viewClearOutput = QAction('Clear Output', self.interface)
-        self.viewClearOutput.triggered.connect(self.interface.display.clear)
-        self.viewClearOutput.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_L))
-        viewMenu.addAction(self.viewClearOutput)
+        self.toolbar.addSeparator()
 
 
-        actionMenu = menubar.addMenu('Insert')
+        self.insertButton = QToolButton(self.interface)
+        self.insertButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.insertButton.setIcon(QIcon.fromTheme('insert-text'))
+        self.insertButton.setText('Insert')
+        self.insertButton.setToolTip('Insert')
+        self.insertButton.setPopupMode(QToolButton.InstantPopup)
+        self.insertMenu = QMenu(self.insertButton)
+        self.insertButton.setMenu(self.insertMenu)
+        self.toolbar.addWidget(self.insertButton)
 
         self.insertConstantAction = QAction('Constant', self.interface)
         self.insertConstantAction.triggered.connect(self.insertConstant)
         self.insertConstantAction.setShortcut(QKeySequence(Qt.CTRL + Qt.SHIFT + Qt.Key_C))
-        actionMenu.addAction(self.insertConstantAction)
+        self.insertMenu.addAction(self.insertConstantAction)
 
         self.insertDateAction = QAction('Date && Time', self.interface)
         self.insertDateAction.triggered.connect(self.insertDate)
         self.insertDateAction.setShortcut(QKeySequence(Qt.CTRL + Qt.SHIFT + Qt.Key_D))
-        actionMenu.addAction(self.insertDateAction)
+        self.insertMenu.addAction(self.insertDateAction)
 
         self.insertUnitAction = QAction('Unit', self.interface)
         self.insertUnitAction.triggered.connect(self.insertUnit)
         self.insertUnitAction.setShortcut(QKeySequence(Qt.CTRL + Qt.SHIFT + Qt.Key_U))
-        actionMenu.addAction(self.insertUnitAction)
+        self.insertMenu.addAction(self.insertUnitAction)
 
         self.insertUnitSystemAction = QAction('Unit System', self.interface)
         self.insertUnitSystemAction.triggered.connect(self.insertUnitSystem)
         self.insertUnitSystemAction.setShortcut(QKeySequence(Qt.CTRL + Qt.SHIFT + Qt.Key_Y))
-        actionMenu.addAction(self.insertUnitSystemAction)
+        self.insertMenu.addAction(self.insertUnitSystemAction)
 
         self.insertOperatorAction = QAction('Operator', self.interface)
         self.insertOperatorAction.triggered.connect(self.insertOperator)
         self.insertOperatorAction.setShortcut(QKeySequence(Qt.CTRL + Qt.SHIFT + Qt.Key_O))
-        actionMenu.addAction(self.insertOperatorAction)
+        self.insertMenu.addAction(self.insertOperatorAction)
 
         self.insertFunctionAction = QAction('Function', self.interface)
         self.insertFunctionAction.triggered.connect(self.insertFunction)
         self.insertFunctionAction.setShortcut(QKeySequence(Qt.CTRL + Qt.SHIFT + Qt.Key_F))
-        actionMenu.addAction(self.insertFunctionAction)
+        self.insertMenu.addAction(self.insertFunctionAction)
 
         self.insertUserDefinedFunctionAction = QAction('User-Defined Function', self.interface)
         self.insertUserDefinedFunctionAction.triggered.connect(self.insertUserDefinedFunction)
         self.insertUserDefinedFunctionAction.setShortcut(QKeySequence(Qt.CTRL + Qt.SHIFT + Qt.Key_E))
-        actionMenu.addAction(self.insertUserDefinedFunctionAction)
+        self.insertMenu.addAction(self.insertUserDefinedFunctionAction)
 
 
-        helpMenu = menubar.addMenu('Help')
+        self.executeAction = QAction(QIcon.fromTheme('media-playback-start'), 'Execute', self.interface)
+        self.executeAction.setToolTip('Execute (Ctrl+Enter)')
+        self.executeAction.triggered.connect(self.interface.calculatormanager.calc)
+        self.toolbar.addAction(self.executeAction)
+        self.executeAction.setShortcuts([QKeySequence(Qt.CTRL + Qt.Key_Enter), QKeySequence(Qt.CTRL + Qt.Key_Return)])
+
+        self.viewClearOutput = QAction(QIcon.fromTheme('edit-clear'), 'Clear Output', self.interface)
+        self.viewClearOutput.setToolTip('Clear Output (Ctrl+L)')
+        self.viewClearOutput.triggered.connect(self.interface.display.clear)
+        self.viewClearOutput.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_L))
+        self.toolbar.addAction(self.viewClearOutput)
+
+        self.toolbar.addSeparator()
+
+
+        self.viewOptions = QAction(QIcon.fromTheme('preferences-other'), 'Options', self.interface)
+        self.viewOptions.setToolTip('Options')
+        self.viewOptions.triggered.connect(self.openOptions)
+        self.toolbar.addAction(self.viewOptions)
+
+
+        self.helpButton = QToolButton(self.interface)
+        self.helpButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.helpButton.setIcon(QIcon.fromTheme('help-about'))
+        self.helpButton.setText('Help')
+        self.helpButton.setToolTip('Help')
+        self.helpButton.setPopupMode(QToolButton.InstantPopup)
+        self.helpMenu = QMenu(self.helpButton)
+        self.helpButton.setMenu(self.helpMenu)
+        self.toolbar.addWidget(self.helpButton)
 
         self.helpHelpAction = QAction('Calculator Reference', self.interface)
         self.helpHelpAction.triggered.connect(self.openHelp)
-        helpMenu.addAction(self.helpHelpAction)
+        self.helpMenu.addAction(self.helpHelpAction)
 
         self.helpAboutAction = QAction('About', self.interface)
         self.helpAboutAction.triggered.connect(self.openHelpAbout)
-        helpMenu.addAction(self.helpAboutAction)
+        self.helpMenu.addAction(self.helpAboutAction)
 
-        self.executeAction = QAction('Execute', self.interface)
-        self.executeAction.triggered.connect(self.interface.calculatormanager.calc)
-        self.executeAction.hovered.connect(self.showExecuteToolTip)
-        menubar.addAction(self.executeAction)
-        self.executeAction.setShortcuts([QKeySequence(Qt.CTRL + Qt.Key_Enter), QKeySequence(Qt.CTRL + Qt.Key_Return)])
+    def refresh(self):
+        buttonConfig = self.config.main['appearance']['button_style']
+        if buttonConfig == 'IconAndText':
+            style = Qt.ToolButtonTextBesideIcon
+        if buttonConfig == 'Icon':
+            style = Qt.ToolButtonIconOnly
+        if buttonConfig == 'Text':
+            style = Qt.ToolButtonTextOnly
+        self.toolbar.setToolButtonStyle(style)
+        self.insertButton.setToolButtonStyle(style)
+        self.helpButton.setToolButtonStyle(style)
 
-    def showExecuteToolTip(self):
-        QToolTip.showText(QCursor.pos(), "Ctrl+Enter", self.interface)
 
     def openOptions(self):
         OptionsDialog(self.interface)
