@@ -98,8 +98,6 @@ class CalculatorEntry(QTextEdit):
             response = CalculatorResponse()
             i = 0
             ii = None
-            expr_truncated = expr
-            later_results = []
             if self.cached_response is not None and not force:
                 for result in self.cached_response.results:
                     if expr[i:].startswith(result.expression):
@@ -111,15 +109,8 @@ class CalculatorEntry(QTextEdit):
                     i -= len(response.results[-1].expression)
                     del response.results[-1]
 
-                if len(response.results) + 3 < len(self.cached_response.results):
-                    later_results = self.cached_response.results[len(response.results) + 3:]
-                    later_results_length = 0
-                    for l in later_results:
-                        later_results_length += len(l.expression)
-                    expr_truncated = expr[0:len(expr) - later_results_length]
-
             self.last_uuid = uuid.uuid4()
-            self.doSyntaxHighlighting(CalculatorEntry.doSyntaxParsing(self.calculator, expr_truncated, response.copy(), later_results, i, ii, self.last_uuid, True))
+            self.doSyntaxHighlighting(CalculatorEntry.doSyntaxParsing(self.calculator, expr, response.copy(), i, ii, self.last_uuid, True))
 
             if self.config.main['entry']['show_execution_errors']:
                 worker = SyntaxHighlighterWorker(self.calculator, expr, response, i, ii, self.last_uuid)
@@ -131,7 +122,7 @@ class CalculatorEntry(QTextEdit):
                 self.cached_response = None
                 self.oldText = self.getContents()
 
-    def doSyntaxParsing(calculator, expr, response, later_results, i, ii, uuid, parse_only):
+    def doSyntaxParsing(calculator, expr, response, i, ii, uuid, parse_only):
         error_statements = []
 
         try:
@@ -141,7 +132,6 @@ class CalculatorEntry(QTextEdit):
                 calculator.vars = {}
             calcResponse = calculator.calculate(expr[i:], {'parse_only': parse_only, 'include_state': True})
             response.results.extend(calcResponse.results)
-            response.results.extend(later_results)
             ii = len(expr)
         except CalculatingException as err:
             response.results.extend(err.response.results)
@@ -425,4 +415,4 @@ class SyntaxHighlighterWorker(QRunnable):
     def run(self):
         self.calculator.update_engine_prec()
 
-        self.signals.result.emit(CalculatorEntry.doSyntaxParsing(self.calculator, self.expr, self.response, [], self.i, self.ii, self.uuid, False))
+        self.signals.result.emit(CalculatorEntry.doSyntaxParsing(self.calculator, self.expr, self.response, self.i, self.ii, self.uuid, False))
