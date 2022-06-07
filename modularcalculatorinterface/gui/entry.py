@@ -127,6 +127,8 @@ class CalculatorEntry(QTextEdit):
                 worker.setAutoDelete(True)
                 self.interface.threadpool.clear()
                 self.interface.threadpool.start(worker)
+            else:
+                self.cached_response = None
 
         self.oldText = self.getContents()
 
