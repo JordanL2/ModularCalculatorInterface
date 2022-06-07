@@ -129,8 +129,7 @@ class CalculatorEntry(QTextEdit):
                 self.interface.threadpool.start(worker)
             else:
                 self.cached_response = None
-
-        self.oldText = self.getContents()
+                self.oldText = self.getContents()
 
     def doSyntaxParsing(calculator, expr, response, later_results, i, ii, uuid, parse_only):
         error_statements = []
@@ -177,6 +176,8 @@ class CalculatorEntry(QTextEdit):
         errorExpr = expr[ii:]
         newhtml, self.highlightPositions = self.htmlService.createStatementsHtml(statements, errorExpr, self.config.main['entry']['view_line_highlighting'])
         self.updateHtml(newhtml)
+        if not result['parse_only']:
+            self.oldText = self.getContents()
         self.addLineHighlights()
 
         self.interface.filemanager.setCurrentFileAndModified(self.interface.filemanager.currentFile(), self.isModified())
