@@ -4,6 +4,7 @@
 - All application configuration is now stored in the config.yml file.
 - All configuration is done through a single options panel, removing all the various menu items.
 - Replaced application menu with a toolbar, for easier access to all buttons.
+- Added Export Results button, to export the calculation results as a CSV file.
 - Added modularcalculator repository into this repository as a submodule, to make manual installation easier.
 - Fixed bug causing glitching when editing earlier statements when later statements had an execution error.
 - Syntax highlighting is now faster.

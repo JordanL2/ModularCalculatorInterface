@@ -71,7 +71,6 @@ class CalculatorManager():
                     result_fraction = None
                     if isinstance(result.value, Number):
                         result_fraction = result_value.as_fraction()
-                        result_value = str(result_value)
                     self.display.addAnswer(result.expression, result_value, result_fraction, result.unit)
         if err is not None:
             self.display.addError(err, pos, question)

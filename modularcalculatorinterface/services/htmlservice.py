@@ -99,20 +99,24 @@ class HtmlService():
         return newhtml
 
     def createAnswerFractionText(self, row, options):
-        if type(row.answer) == list:
-            answerText = self.interface.calculatormanager.calculator.feature_options['arrays.arrays']['Open']
-            answerText += (
-                self.interface.calculatormanager.calculator.feature_options['arrays.arrays']['Param'] + ' '
-            ).join([self.createAnswerText(r.value, r.unit, options) for r in row.answer])
-            answerText += self.interface.calculatormanager.calculator.feature_options['arrays.arrays']['Close']
-        else:
-            answerText = self.createAnswerText(row.answer, row.unit, options)
+        answerText = self.createAnswerListText(row.answer, row.unit, options)
 
         fractionText = None
         if row.fraction is not None and row.fraction[1] != 0 and row.fraction[2] < 10**options['max_denominator_digits']:
             fractionText = self.createFractionText(row.fraction, row.unit, options)
 
         return (answerText, fractionText)
+
+    def createAnswerListText(self, answer, unit, options):
+        if type(answer) == list:
+            answerText = self.interface.calculatormanager.calculator.feature_options['arrays.arrays']['Open']
+            answerText += (
+                self.interface.calculatormanager.calculator.feature_options['arrays.arrays']['Param'] + ' '
+            ).join([self.createAnswerText(r.value, r.unit, options) for r in answer])
+            answerText += self.interface.calculatormanager.calculator.feature_options['arrays.arrays']['Close']
+        else:
+            answerText = self.createAnswerText(answer, unit, options)
+        return answerText
 
     def createAnswerText(self, answer, unit, options):
         if isinstance(answer, UnitPowerList):
@@ -124,7 +128,7 @@ class HtmlService():
         else:
             answerText = str(answer)
         if unit is not None:
-            unit = self.createUnitText(self.interface.calculatormanager.calculator.number(answer)[0], unit, options)
+            unit = self.createUnitText(answer, unit, options)
             answerText += unit
         return answerText
 
@@ -142,9 +146,16 @@ class HtmlService():
         if options['short_units'] and unit.has_symbols():
             unit_parts = unit.symbol(False)
         else:
+            if type(answer) == str:
+                answer = Number('1')
             unit_parts = unit.get_name(answer, False)
             unit_parts = [(' ', 'space')] + unit_parts
         return ''.join([u[0] for u in unit_parts])
+
+    def createQuestionErrorText(self, row):
+        questionStatements = [row.err.statements[-1].copy()]
+        questionStatements[0].append(ErrorItem(row.question[row.i:]))
+        return ''.join([i.text for i in questionStatements[0]])
 
     def createQuestionHtml(self, expr, options):
         try:

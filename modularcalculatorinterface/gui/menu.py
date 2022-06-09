@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 from modularcalculatorinterface.gui.about import *
+from modularcalculatorinterface.gui.display import CalculatorDisplayAnswer, CalculatorDisplayError
 from modularcalculatorinterface.gui.guiwidgets import *
 from modularcalculatorinterface.gui.options.options import *
 
@@ -8,6 +9,7 @@ from PyQt5.QtCore import Qt, QUrl
 from PyQt5.QtGui import QKeySequence, QDesktopServices, QIcon
 from PyQt5.QtWidgets import QAction, QFileDialog, QToolButton, QMenu
 
+import csv
 import os.path
 import string
 
@@ -107,6 +109,12 @@ class CalculatorMenu():
         self.viewClearOutput.triggered.connect(self.interface.display.clear)
         self.viewClearOutput.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_L))
         self.toolbar.addAction(self.viewClearOutput)
+
+        self.exportResults = QAction(QIcon.fromTheme('x-office-spreadsheet'), 'Export Results', self.interface)
+        self.exportResults.setToolTip('Export Results (Ctrl+E)')
+        self.exportResults.triggered.connect(self.doExportResults)
+        self.exportResults.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_E))
+        self.toolbar.addAction(self.exportResults)
 
         self.toolbar.addSeparator()
 
@@ -249,6 +257,23 @@ class CalculatorMenu():
 
     def selectUnitSystem(self, operator):
         self.interface.entry.insert(operator)
+
+    def doExportResults(self):
+        filename = self.interface.getSaveFileName("Export Results as CSV", "Text CSV files (*.csv)")
+        if filename is not None and filename != '':
+            with open(filename, 'w') as csvfile:
+                writer = csv.writer(csvfile)
+                for row in self.interface.display.rawOutput:
+                    if isinstance(row, CalculatorDisplayAnswer):
+                        thisRow = [row.question.strip()]
+                        options = {'short_units': False}
+                        thisRow.append(self.interface.htmlService.createAnswerListText(row.answer, None, options))
+                        if row.unit is not None:
+                            thisRow.append(self.interface.htmlService.createUnitText(row.answer, row.unit, options).strip())
+                    elif isinstance(row, CalculatorDisplayError):
+                        thisRow = [self.interface.htmlService.createQuestionErrorText(row)]
+                        thisRow.append(row.err)
+                    writer.writerow(thisRow)
 
     def openHelp(self):
         QDesktopServices.openUrl(QUrl('https://github.com/JordanL2/ModularCalculator/wiki'))
