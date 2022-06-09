@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
-from modularcalculator.objects.api import *
 from modularcalculator.objects.exceptions import *
+from modularcalculatorinterface.services.htmlservice import *
 
 from PyQt5.QtCore import Qt, QObject, pyqtSignal, pyqtSlot, QRunnable
 from PyQt5.QtWidgets import QTextEdit, QAction
@@ -25,9 +25,7 @@ class CalculatorEntry(QTextEdit):
 
         self.oldText = None
 
-        self.autoExecute = True
-
-        self.cached_response = None
+        self.cachedStatements = None
 
         self.tabSpaces = 4
 
@@ -95,80 +93,102 @@ class CalculatorEntry(QTextEdit):
             if len(expr) > 0 and expr[-1] != "\n":
                 expr += "\n"
 
-            response = CalculatorResponse()
+            before = []
+            after = []
             i = 0
-            ii = None
-            if self.cached_response is not None and not force:
-                for result in self.cached_response.results:
-                    if expr[i:].startswith(result.expression):
-                        response.results.append(result)
-                        i += len(result.expression)
+            ii = len(expr)
+            if self.cachedStatements is not None and not force:
+                for statement in self.cachedStatements:
+                    if expr[i:].startswith(statement.text):
+                        before.append(statement)
+                        i += statement.length
                     else:
                         break
-                if len(response.results) > 0 and len(response.results) == len(self.cached_response.results):
-                    i -= len(response.results[-1].expression)
-                    del response.results[-1]
+                if len(before) > 0:
+                    i -= before[-1].length
+                    del before[-1]
+
+                for statement in reversed(self.cachedStatements):
+                    if ii <= i:
+                        break
+                    elif expr[ii - statement.length:].startswith(statement.text):
+                        after.insert(0, statement)
+                        ii -= statement.length
+                    else:
+                        break
+                if len(after) > 0:
+                    ii += after[0].length
+                    del after[0]
 
             self.last_uuid = uuid.uuid4()
-            self.doSyntaxHighlighting(CalculatorEntry.doSyntaxParsing(self.calculator, expr, response.copy(), i, ii, self.last_uuid, True))
+            parseResult = CalculatorEntry.doSyntaxParsing(self.calculator, expr[i:ii], True)
+            self.doSyntaxHighlighting({
+                'statements': parseResult,
+                'before': before,
+                'after': after,
+                'uuid': self.last_uuid,
+            })
 
             if self.config.main['entry']['show_execution_errors']:
-                worker = SyntaxHighlighterWorker(self.calculator, expr, response, i, ii, self.last_uuid)
+                worker = SyntaxHighlighterWorker(self.calculator, expr[i:], before, self.last_uuid)
                 worker.signals.result.connect(self.doSyntaxHighlighting)
                 worker.setAutoDelete(True)
                 self.interface.threadpool.clear()
                 self.interface.threadpool.start(worker)
-            else:
-                self.cached_response = None
-                self.oldText = self.getContents()
 
-    def doSyntaxParsing(calculator, expr, response, i, ii, uuid, parse_only):
-        error_statements = []
-
+    def doSyntaxParsing(calculator, expr, parse_only, state=None):
         try:
-            if len(response.results) > 0:
-                calculator.vars = response.results[-1].state.copy()
-            else:
+            if state is None:
                 calculator.vars = {}
-            calcResponse = calculator.calculate(expr[i:], {'parse_only': parse_only, 'include_state': True})
-            response.results.extend(calcResponse.results)
-            ii = len(expr)
+            else:
+                calculator.vars = state.copy()
+            response = calculator.calculate(expr, {'parse_only': parse_only, 'include_state': True})
+            statements = [Statement(r.items, r.state) for r in response.results]
         except CalculatingException as err:
-            response.results.extend(err.response.results)
-            error_statements = err.statements[len(err.response.results):]
-            err.statements = [r.items for r in response.results] + error_statements
-            ii = err.find_pos(expr)
+            statements = [Statement(r.items, r.state) for r in err.response.results]
+            statements += [Statement(s) for s in err.statements[len(err.response.results):]]
+            i = err.find_pos(expr)
+            statements.append(Statement([ErrorItem(expr[i:])]))
         except CalculatorException as err:
-            ii = i
+            statements = [Statement(ErrorItem(expr))]
 
-        return({
-            'expr': expr,
-            'response': response,
-            'error_statements': error_statements,
-            'ii': ii,
-            'uuid': uuid,
-            'parse_only': parse_only,
-            })
+        return statements
 
     def doSyntaxHighlighting(self, result):
-        expr = result['expr']
-        response = result['response']
-        error_statements = result['error_statements']
-        ii = result['ii']
-
-        if self.last_uuid is None or result['uuid'] != self.last_uuid:
+        statements = result['statements']
+        before = result['before']
+        after = result['after']
+        uuid = result['uuid']
+        if self.last_uuid is None or uuid != self.last_uuid:
             return
 
-        if not result['parse_only']:
-            self.cached_response = response
+        statements = self.htmlService.compactStatements(statements)
+        if len(statements) > 0 and len(statements[-1].items) > 0 and isinstance(statements[-1].items[-1], ErrorItem):
+            statements[-1].items[-1].text += ''.join([s.text for s in after])
+            after = []
 
-        statements = [r.items for r in response.results] + error_statements
-        errorExpr = expr[ii:]
-        newhtml, self.highlightPositions = self.htmlService.createStatementsHtml(statements, errorExpr, self.config.main['entry']['view_line_highlighting'])
-        self.updateHtml(newhtml)
-        if not result['parse_only']:
-            self.oldText = self.getContents()
-        self.addLineHighlights()
+        newhtml = self.htmlService.createStatementsHtml(statements)
+        allStatements = before + statements + after
+        self.cachedStatements = allStatements
+        totalHtml = self.htmlService.css
+        totalHtml += ''.join([s.html for s in before])
+        totalHtml += newhtml
+        totalHtml += ''.join([s.html for s in after])
+
+        self.updateHtml(totalHtml)
+        self.oldText = self.getContents()
+
+        if self.config.main['entry']['view_line_highlighting']:
+            p = 0
+            self.highlightPositions = []
+            for i, statement in enumerate(allStatements):
+                if i % 2 == 0:
+                    self.highlightPositions.append((p, p + statement.length))
+                p += statement.length
+            self.addLineHighlights()
+        else:
+            self.highlightPositions = []
+            self.setExtraSelections([])
 
         self.interface.filemanager.setCurrentFileAndModified(self.interface.filemanager.currentFile(), self.isModified())
 
@@ -399,20 +419,26 @@ class SyntaxHighlighterSignals(QObject):
 
 class SyntaxHighlighterWorker(QRunnable):
 
-    def __init__(self, calculator, expr, response, i, ii, uuid):
+    def __init__(self, calculator, expr, before, uuid):
         super(SyntaxHighlighterWorker, self).__init__()
 
         self.signals = SyntaxHighlighterSignals()
 
         self.calculator = calculator
         self.expr = expr
-        self.response = response
-        self.i = i
-        self.ii = ii
+        self.before = before
         self.uuid = uuid
 
     @pyqtSlot()
     def run(self):
         self.calculator.update_engine_prec()
-
-        self.signals.result.emit(CalculatorEntry.doSyntaxParsing(self.calculator, self.expr, self.response, self.i, self.ii, self.uuid, False))
+        state = None
+        if len(self.before) > 0:
+            state = self.before[-1].state
+        parseResult = CalculatorEntry.doSyntaxParsing(self.calculator, self.expr, False, state=state)
+        self.signals.result.emit({
+            'statements': parseResult,
+            'before': self.before,
+            'after': [],
+            'uuid': self.uuid,
+        })

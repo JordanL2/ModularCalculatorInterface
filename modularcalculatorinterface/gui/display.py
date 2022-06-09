@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 from modularcalculatorinterface.gui.guiwidgets import *
+from modularcalculatorinterface.services.htmlservice import *
 
 from PyQt5.QtCore import Qt, QPointF
 from PyQt5.QtGui import QPalette, QFont, QFontDatabase, QTextOption
@@ -65,7 +66,7 @@ class CalculatorDisplay(QWidget):
             (answerText, fractionText) = self.htmlService.createAnswerFractionText(row, self.config.main['display'])
 
         elif isinstance(row, CalculatorDisplayError):
-            questionHtml, _ = self.htmlService.createStatementsHtml([row.err.statements[-1]], row.question[row.i:], False)
+            questionHtml = self.htmlService.createQuestionErrorHtml(row)
             answerHtml = self.htmlService.createErrorHtml(row.err.message)
             answerText = None
             fractionHtml = None

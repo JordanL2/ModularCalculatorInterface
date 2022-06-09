@@ -6,6 +6,7 @@
 - Replaced application menu with a toolbar, for easier access to all buttons.
 - Added modularcalculator repository into this repository as a submodule, to make manual installation easier.
 - Fixed bug causing glitching when editing earlier statements when later statements had an execution error.
+- Syntax highlighting is now faster.
 
 ## 1.3.1
 - Fixed "Line Highlighting" option.

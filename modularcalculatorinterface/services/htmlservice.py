@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+from modularcalculator.objects.items import *
 from modularcalculator.objects.units import *
 from modularcalculator.services.syntaxhighlighter import *
 
@@ -50,56 +51,52 @@ class HtmlService():
             (" style=\"{}\"".format(style) if style is not None else ''),
             text)
 
-    def createStatementsHtml(self, statements, errorExpr, lineHighlighting=False):
-        splitStatements = []
-        for items in statements:
-            funcItems = [i for i, item in enumerate(items) if item.functional() and not item.text.strip() == '']
-            if len(funcItems) == 0:
-                splitStatements.append(items)
-            else:
-                nonEmptyItems = [i for i, item in enumerate(items) if not item.text.strip() == '']
-                firstNonEmptyItem = min(nonEmptyItems)
-                if firstNonEmptyItem > 0:
-                    splitStatements.append(items[0:firstNonEmptyItem])
-                splitStatements.append(items[firstNonEmptyItem:])
+    def compactStatements(self, statements):
+        if len(statements) < 2:
+            return statements
 
         compactedStatements = []
-        foundFunctional = False
-        for items in splitStatements:
-            functional = len(functional_items(items)) > 0
-            isEmpty = len([i for i in items if i.text.strip() != '']) == 0
-            if not isEmpty and foundFunctional:
-                foundFunctional = False
-                compactedStatements.append([])
-            if len(compactedStatements) == 0:
-                compactedStatements.append([])
-            compactedStatements[-1].extend(items)
-            if functional:
-                foundFunctional = True
 
-        newhtml = self.css
+        # Combine any statements with no functional items into the previous
+        # (unless first, then combine into next)
+        combinePrevious = False
+        for si, statement in enumerate(statements):
+            if combinePrevious:
+                statement.items = statements[si - 1].items + statement.items
+                combinePrevious = False
+            if not statement.hasFunctionalItems():
+                if len(compactedStatements) > 0:
+                    compactedStatements[-1].items.extend(statement.items)
+                else:
+                    combinePrevious = True
+            else:
+                compactedStatements.append(statement)
+        if combinePrevious:
+            compactedStatements.append(statements[-1])
 
-        highlightStatements = self.highlighter.highlight_statements(compactedStatements)
-        alternate = True
-        p = 0
-        highlightPositions = []
-        for highlightItems in highlightStatements:
-            alternate = not alternate
-            p0 = p
+        # Move any comments at the bottom of a statement into the next statement
+        for si, statement in enumerate(compactedStatements):
+            if si < len(compactedStatements) - 1:
+                lastFunctionalItem = max(statement.functionalItems())
+                nonEmptyItems = [i for i, item in enumerate(statement.items) if i > lastFunctionalItem and not item.functional() and item.text.strip() != '']
+                if len(nonEmptyItems) > 0:
+                    firstNonEmptyItem = min(nonEmptyItems)
+                    compactedStatements[si + 1].items = statement.items[firstNonEmptyItem:] + compactedStatements[si + 1].items
+                    statement.items = statement.items[0:firstNonEmptyItem]
 
-            for item in highlightItems:
-                style = item[0]
-                text = item[1]
-                newhtml += self.makeSpan(self.htmlSafe(text), style)
-                p += len(text)
+        return compactedStatements
 
-            if alternate and lineHighlighting:
-                highlightPositions.append((p0, p))
+    def createStatementsHtml(self, statements):
+        newhtml = ""
 
-        if errorExpr != '':
-            newhtml += self.makeSpan(self.htmlSafe(errorExpr), 'error')
+        for statement in statements:
+            if statement.text is None:
+                statement.generateText()
+            if statement.html is None:
+                statement.generateHtml(self)
+            newhtml += statement.html
 
-        return newhtml, highlightPositions
+        return newhtml
 
     def createAnswerFractionText(self, row, options):
         if type(row.answer) == list:
@@ -152,10 +149,11 @@ class HtmlService():
     def createQuestionHtml(self, expr, options):
         try:
             statements, _, _ = self.interface.calculatormanager.calculator.parse(expr, {})
+            statements = [Statement(s) for s in statements]
         except ParsingException:
             return expr
-        html, _ = self.createStatementsHtml(statements, '', False)
-        return html
+        html = self.createStatementsHtml(statements)
+        return self.css + html
 
     def createAnswerFractionHtml(self, row, options):
         answerHtml = self.css
@@ -225,3 +223,64 @@ class HtmlService():
 
     def createErrorHtml(self, error):
         return self.css + self.makeSpan(self.htmlSafe(error), 'error')
+
+    def createQuestionErrorHtml(self, row):
+        questionStatements = [row.err.statements[-1].copy()]
+        questionStatements[0].append(ErrorItem(row.question[row.i:]))
+        questionStatements = [Statement(s) for s in questionStatements]
+        questionHtml = self.createStatementsHtml(questionStatements)
+        return self.css + questionHtml
+
+
+class ErrorItem(Item):
+
+    def __init__(self,  text):
+        super().__init__(text)
+
+    def isop(self):
+        return False
+
+    def desc(self):
+        return 'error'
+
+    def copy(self, classtype=None):
+        copy = super().copy(classtype or self.__class__)
+        copy.op = self.op
+        return copy
+
+
+class Statement():
+
+    def __init__(self, items, state=None):
+        self.items = items
+        self.state = state
+        self.text = None
+        self.length = None
+        self.html = None
+
+    def generateText(self):
+        self.text = ''.join([i.text for i in self.items])
+        self.length = len(self.text)
+        return self.text, self.length
+
+    def generateHtml(self, htmlservice):
+        highlightStatement = htmlservice.highlighter.highlight_statements([self.items])[0]
+        statementHtml = ''
+        for item in highlightStatement:
+            style = item[0]
+            text = item[1]
+            statementHtml += htmlservice.makeSpan(htmlservice.htmlSafe(text), style)
+        self.html = statementHtml
+        return self.html
+
+    def nonEmptyItems(self):
+        return [i for i, item in enumerate(self.items) if i.text.strip() != '']
+
+    def isEmpty(self):
+        return len(self.nonEmptyItems()) > 0
+
+    def functionalItems(self):
+        return [i for i, item in enumerate(self.items) if item.functional() and not item.text.strip() == '']
+
+    def hasFunctionalItems(self):
+        return len(self.functionalItems()) > 0
