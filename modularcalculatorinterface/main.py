@@ -5,17 +5,18 @@ from modularcalculatorinterface.gui.interface import ModularCalculatorInterface
 
 from PyQt5.QtWidgets import QApplication
 
+import argparse
 import sys
 
 
 def main():
-    flags = {'clear': False}
-    if len(sys.argv) >= 2 and sys.argv[1] == '--clear':
-        print("Will not restore state due to --clear flag")
-        flags['clear'] = True
+    parser = argparse.ArgumentParser(prog='modularcalculator')
+    parser.add_argument('--clear', action='store_true', help='Clear the application state')
+    args = parser.parse_args()
+
     config = Config(sys.argv)
     app = QApplication(sys.argv)
-    calc = ModularCalculatorInterface(flags, config)
+    calc = ModularCalculatorInterface(args, config)
     sys.exit(app.exec_())
 
 

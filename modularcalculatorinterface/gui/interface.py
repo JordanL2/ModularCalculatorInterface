@@ -19,7 +19,7 @@ import traceback
 
 class ModularCalculatorInterface(StatefulApplication):
 
-    def __init__(self, flags, config):
+    def __init__(self, args, config):
         super().__init__()
 
         self.config = config
@@ -41,7 +41,7 @@ class ModularCalculatorInterface(StatefulApplication):
         self.calculatormanager.updateInsertOptions()
 
         self.stateHashes = {}
-        if not flags['clear']:
+        if not args.clear:
             self.restoreAllState()
         else:
             self.initEmptyState()
