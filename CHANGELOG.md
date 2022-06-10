@@ -6,6 +6,7 @@
 - Replaced application menu with a toolbar, for easier access to all buttons.
 - Added Export Results button, to export the calculation results as a CSV file.
 - Fixed bug causing glitching when editing earlier statements when later statements had an execution error.
+- Fixed bug when disabling arrays feature and we're already displaying results with arrays.
 - Syntax highlighting is now faster.
 - 'Show execution errors' syntax highlighting now done in a separate process.
 - Added modularcalculator repository into this repository as a submodule, to make manual installation easier.

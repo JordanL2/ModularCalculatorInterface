@@ -8,6 +8,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QLabel, QGridLayout, QListWidgetItem, QListWidget, QComboBox, QPushButton, QFileDialog, QMessageBox, QScrollArea, QCheckBox, QSizePolicy, QDialog, QLineEdit
 
 from functools import partial
+import traceback
 
 
 class FeaturesTab(OptionsTab):

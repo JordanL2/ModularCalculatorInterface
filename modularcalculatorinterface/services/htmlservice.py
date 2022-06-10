@@ -109,6 +109,8 @@ class HtmlService():
 
     def createAnswerListText(self, answer, unit, options):
         if type(answer) == list:
+            if 'arrays.arrays' not in self.interface.calculatormanager.calculator.feature_options:
+                return ('', '')
             answerText = self.interface.calculatormanager.calculator.feature_options['arrays.arrays']['Open']
             answerText += (
                 self.interface.calculatormanager.calculator.feature_options['arrays.arrays']['Param'] + ' '
@@ -169,6 +171,8 @@ class HtmlService():
     def createAnswerFractionHtml(self, row, options):
         answerHtml = self.css
         if type(row.answer) == list:
+            if 'arrays.arrays' not in self.interface.calculatormanager.calculator.feature_options:
+                return ('', '')
             answerHtml += self.makeSpan(
                 self.interface.calculatormanager.calculator.feature_options['arrays.arrays']['Open'],
                 'array_start')
