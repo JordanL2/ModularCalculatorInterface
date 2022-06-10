@@ -5,9 +5,10 @@
 - All configuration is done through a single options panel, removing all the various menu items.
 - Replaced application menu with a toolbar, for easier access to all buttons.
 - Added Export Results button, to export the calculation results as a CSV file.
-- Added modularcalculator repository into this repository as a submodule, to make manual installation easier.
 - Fixed bug causing glitching when editing earlier statements when later statements had an execution error.
 - Syntax highlighting is now faster.
+- 'Show execution errors' syntax highlighting now done in a separate process.
+- Added modularcalculator repository into this repository as a submodule, to make manual installation easier.
 
 ## 1.3.1
 - Fixed "Line Highlighting" option.

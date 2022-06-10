@@ -15,29 +15,34 @@ class CalculatorManager():
         self.initCalculator()
 
     def initCalculator(self):
-        self.setCalculator(ModularCalculator())
-        self.calculator.enable_units()
-        self.calculator.number_prec_set(self.config.main['execution']['precision'])
-        self.calculator.unit_simplification_set(self.config.main['execution']['simplify_units'])
+        self.setCalculator(CalculatorManager.createCalculator(self.config.main))
 
-        if 'features' in self.config.main and 'external' in self.config.main['features']:
-            for featureFile in self.config.main['features']['external']:
+    def createCalculator(config):
+        calculator = ModularCalculator()
+        calculator.enable_units()
+        calculator.number_prec_set(config['execution']['precision'])
+        calculator.unit_simplification_set(config['execution']['simplify_units'])
+
+        if 'features' in config and 'external' in config['features']:
+            for featureFile in config['features']['external']:
                 try:
-                    self.calculator.import_feature_file(featureFile)
+                    calculator.import_feature_file(featureFile)
                 except Exception as err:
                     print("!!! Couldn't import {} - {} !!!".format(featureFile, err))
 
-        if 'features' in self.config.main and 'installed' in self.config.main['features']:
-            self.calculator.install_features(self.config.main['features']['installed'], False, True)
+        if 'features' in config and 'installed' in config['features']:
+            calculator.install_features(config['features']['installed'], False, True)
         else:
-            self.calculator.load_preset('Computing')
+            calculator.load_preset('Computing')
 
-        if 'feature_options' in self.config.main:
-            for featureId, featureOptions in self.config.main['feature_options'].items():
-                self.calculator.feature_options[featureId] = featureOptions
+        if 'feature_options' in config:
+            for featureId, featureOptions in config['feature_options'].items():
+                calculator.feature_options[featureId] = featureOptions
 
-        if 'unit_system_preference' in self.config.main['execution']:
-            self.calculator.unit_normaliser.systems_preference = self.config.main['execution']['unit_system_preference']
+        if 'unit_system_preference' in config['execution']:
+            calculator.unit_normaliser.systems_preference = config['execution']['unit_system_preference']
+
+        return calculator
 
     def setCalculator(self, calculator):
         self.calculator = calculator

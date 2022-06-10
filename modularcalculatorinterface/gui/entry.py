@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 
-from modularcalculator.objects.exceptions import *
 from modularcalculatorinterface.services.htmlservice import *
+from modularcalculatorinterface.services.syntaxservice import *
 
-from PyQt5.QtCore import Qt, QObject, pyqtSignal, pyqtSlot, QRunnable
+from PyQt5.QtCore import Qt, QObject, pyqtSignal
 from PyQt5.QtWidgets import QTextEdit, QAction
 from PyQt5.QtGui import QFont, QFontDatabase, QTextCursor, QTextFormat, QKeySequence, QPalette
 
@@ -30,6 +30,9 @@ class CalculatorEntry(QTextEdit):
         self.tabSpaces = 4
 
         self.undoStack = CalculatorUndoStack(self)
+
+        self.syntaxservice = SyntaxService(self)
+        self.syntaxservice.restartProc()
 
     def initStyling(self):
         editFont = QFont(self.config.main['entry']['font'])
@@ -121,44 +124,13 @@ class CalculatorEntry(QTextEdit):
                     del after[0]
 
             self.last_uuid = uuid.uuid4()
-            parseResult = CalculatorEntry.doSyntaxParsing(self.calculator, expr[i:ii], True)
-            self.doSyntaxHighlighting({
-                'statements': parseResult,
-                'before': before,
-                'after': after,
-                'uuid': self.last_uuid,
-            })
+            parseResult = SyntaxService.doSyntaxParsing(self.calculator, expr[i:ii], True)
+            self.doSyntaxHighlighting(parseResult, before, after, self.last_uuid)
 
             if self.config.main['entry']['show_execution_errors']:
-                worker = SyntaxHighlighterWorker(self.calculator, expr[i:], before, self.last_uuid)
-                worker.signals.result.connect(self.doSyntaxHighlighting)
-                worker.setAutoDelete(True)
-                self.interface.threadpool.clear()
-                self.interface.threadpool.start(worker)
+                self.syntaxservice.sendToProc(expr[i:], before, self.last_uuid)
 
-    def doSyntaxParsing(calculator, expr, parse_only, state=None):
-        try:
-            if state is None:
-                calculator.vars = {}
-            else:
-                calculator.vars = state.copy()
-            response = calculator.calculate(expr, {'parse_only': parse_only, 'include_state': True})
-            statements = [Statement(r.items, r.state) for r in response.results]
-        except CalculatingException as err:
-            statements = [Statement(r.items, r.state) for r in err.response.results]
-            statements += [Statement(s) for s in err.statements[len(err.response.results):]]
-            i = err.find_pos(expr)
-            statements.append(Statement([ErrorItem(expr[i:])]))
-        except CalculatorException as err:
-            statements = [Statement(ErrorItem(expr))]
-
-        return statements
-
-    def doSyntaxHighlighting(self, result):
-        statements = result['statements']
-        before = result['before']
-        after = result['after']
-        uuid = result['uuid']
+    def doSyntaxHighlighting(self, statements, before, after, uuid):
         if self.last_uuid is None or uuid != self.last_uuid:
             return
 
@@ -169,22 +141,27 @@ class CalculatorEntry(QTextEdit):
 
         newhtml = self.htmlService.createStatementsHtml(statements)
         allStatements = before + statements + after
-        self.cachedStatements = allStatements
         totalHtml = self.htmlService.css
         totalHtml += ''.join([s.html for s in before])
         totalHtml += newhtml
         totalHtml += ''.join([s.html for s in after])
 
-        self.updateHtml(totalHtml)
-        self.oldText = self.getContents()
-
+        highlightPositions = []
         if self.config.main['entry']['view_line_highlighting']:
             p = 0
-            self.highlightPositions = []
             for i, statement in enumerate(allStatements):
                 if i % 2 == 0:
-                    self.highlightPositions.append((p, p + statement.length))
+                    highlightPositions.append((p, p + statement.length))
                 p += statement.length
+
+        self.applySyntaxHighlighting(allStatements, totalHtml, highlightPositions)
+
+    def applySyntaxHighlighting(self, allStatements, html, highlightPositions):
+        self.cachedStatements = allStatements
+        self.updateHtml(html)
+        self.oldText = self.getContents()
+        if self.config.main['entry']['view_line_highlighting']:
+            self.highlightPositions = highlightPositions
             self.addLineHighlights()
         else:
             self.highlightPositions = []
@@ -410,35 +387,3 @@ class CalculatorUndoStack(QObject):
     def clearHistory(self):
         self.history = [self.history[-1]]
         self.historyPos = 1
-
-
-class SyntaxHighlighterSignals(QObject):
-
-    result = pyqtSignal(dict)
-
-
-class SyntaxHighlighterWorker(QRunnable):
-
-    def __init__(self, calculator, expr, before, uuid):
-        super(SyntaxHighlighterWorker, self).__init__()
-
-        self.signals = SyntaxHighlighterSignals()
-
-        self.calculator = calculator
-        self.expr = expr
-        self.before = before
-        self.uuid = uuid
-
-    @pyqtSlot()
-    def run(self):
-        self.calculator.update_engine_prec()
-        state = None
-        if len(self.before) > 0:
-            state = self.before[-1].state
-        parseResult = CalculatorEntry.doSyntaxParsing(self.calculator, self.expr, False, state=state)
-        self.signals.result.emit({
-            'statements': parseResult,
-            'before': self.before,
-            'after': [],
-            'uuid': self.uuid,
-        })

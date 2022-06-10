@@ -176,6 +176,7 @@ class ModularCalculatorInterface(StatefulApplication):
 
     def applyConfig(self):
         self.calculatormanager.initCalculator()
+        self.entry.syntaxservice.restartProc()
         self.tabmanager.forceRefreshAllTabs()
         self.htmlService.initStyling()
         self.entry.refresh()
