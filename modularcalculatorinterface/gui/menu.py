@@ -267,11 +267,11 @@ class CalculatorMenu():
                     if isinstance(row, CalculatorDisplayAnswer):
                         thisRow = [row.question.strip()]
                         options = {'short_units': False}
-                        thisRow.append(self.interface.htmlService.createAnswerListText(row.answer, None, options))
+                        thisRow.append(self.interface.htmlservice.createAnswerListText(row.answer, None, options))
                         if row.unit is not None:
-                            thisRow.append(self.interface.htmlService.createUnitText(row.answer, row.unit, options).strip())
+                            thisRow.append(self.interface.htmlservice.createUnitText(row.answer, row.unit, options).strip())
                     elif isinstance(row, CalculatorDisplayError):
-                        thisRow = [self.interface.htmlService.createQuestionErrorText(row)]
+                        thisRow = [self.interface.htmlservice.createQuestionErrorText(row)]
                         thisRow.append(row.err)
                     writer.writerow(thisRow)
 

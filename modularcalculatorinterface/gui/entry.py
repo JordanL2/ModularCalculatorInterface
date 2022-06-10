@@ -20,7 +20,7 @@ class CalculatorEntry(QTextEdit):
         self.config = self.interface.config
         self.calculator = None
 
-        self.htmlService = interface.htmlService
+        self.htmlservice = interface.htmlservice
         self.initStyling()
 
         self.oldText = None
@@ -40,7 +40,7 @@ class CalculatorEntry(QTextEdit):
         editFont.setBold(self.config.main['entry']['bold'])
         self.setFont(editFont)
 
-        self.colours = self.htmlService.background
+        self.colours = self.htmlservice.background
         palette = self.palette()
         palette.setColor(QPalette.Base, self.colours[0])
         self.setPalette(palette)
@@ -123,25 +123,25 @@ class CalculatorEntry(QTextEdit):
                     ii += after[0].length
                     del after[0]
 
-            self.last_uuid = uuid.uuid4()
-            parseResult = SyntaxService.doSyntaxParsing(self.calculator, expr[i:ii], True)
-            self.doSyntaxHighlighting(parseResult, before, after, self.last_uuid)
+            self.lastUuid = uuid.uuid4()
+            statements = SyntaxService.doSyntaxParsing(self.calculator, expr[i:ii], True)
+            self.doSyntaxHighlighting(statements, before, after, self.lastUuid)
 
             if self.config.main['entry']['show_execution_errors']:
-                self.syntaxservice.sendToProc(expr[i:], before, self.last_uuid)
+                self.syntaxservice.sendToProc(expr[i:], before, self.lastUuid)
 
     def doSyntaxHighlighting(self, statements, before, after, uuid):
-        if self.last_uuid is None or uuid != self.last_uuid:
+        if self.lastUuid is None or uuid != self.lastUuid:
             return
 
-        statements = self.htmlService.compactStatements(statements)
+        statements = self.htmlservice.compactStatements(statements)
         if len(statements) > 0 and len(statements[-1].items) > 0 and isinstance(statements[-1].items[-1], ErrorItem):
             statements[-1].items[-1].text += ''.join([s.text for s in after])
             after = []
 
-        newhtml = self.htmlService.createStatementsHtml(statements)
+        newhtml = self.htmlservice.createStatementsHtml(statements)
         allStatements = before + statements + after
-        totalHtml = self.htmlService.css
+        totalHtml = self.htmlservice.css
         totalHtml += ''.join([s.html for s in before])
         totalHtml += newhtml
         totalHtml += ''.join([s.html for s in after])
@@ -245,7 +245,7 @@ class CalculatorEntry(QTextEdit):
         }
 
     def restoreState(self, state, refresh=True):
-        self.last_uuid = None
+        self.lastUuid = None
         if 'html' in state:
             self.setHtml(state['html'])
             if 'highlightPositions' in state:

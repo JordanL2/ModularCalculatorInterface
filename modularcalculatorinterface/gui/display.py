@@ -20,14 +20,14 @@ class CalculatorDisplay(QWidget):
 
         self.interface = interface
         self.config = self.interface.config
-        self.htmlService = interface.htmlService
+        self.htmlservice = interface.htmlservice
 
         self.initStyling()
 
         self.initOutput()
 
     def initStyling(self):
-        self.colours = self.htmlService.background
+        self.colours = self.htmlservice.background
         displayScrollPalette = self.interface.displayScroll.palette()
         displayScrollPalette.setColor(QPalette.Base, self.colours[0])
         self.interface.displayScroll.setPalette(displayScrollPalette)
@@ -61,13 +61,13 @@ class CalculatorDisplay(QWidget):
     def renderAnswer(self, row, n):
         if isinstance(row, CalculatorDisplayAnswer):
             question = row.question.strip()
-            questionHtml = self.htmlService.createQuestionHtml(question, self.config.main['display'])
-            (answerHtml, fractionHtml) = self.htmlService.createAnswerFractionHtml(row, self.config.main['display'])
-            (answerText, fractionText) = self.htmlService.createAnswerFractionText(row, self.config.main['display'])
+            questionHtml = self.htmlservice.createQuestionHtml(question, self.config.main['display'])
+            (answerHtml, fractionHtml) = self.htmlservice.createAnswerFractionHtml(row, self.config.main['display'])
+            (answerText, fractionText) = self.htmlservice.createAnswerFractionText(row, self.config.main['display'])
 
         elif isinstance(row, CalculatorDisplayError):
-            questionHtml = self.htmlService.createQuestionErrorHtml(row)
-            answerHtml = self.htmlService.createErrorHtml(row.err.message)
+            questionHtml = self.htmlservice.createQuestionErrorHtml(row)
+            answerHtml = self.htmlservice.createErrorHtml(row.err.message)
             answerText = None
             fractionHtml = None
             fractionText = None

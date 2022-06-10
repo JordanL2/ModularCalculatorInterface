@@ -20,8 +20,8 @@ class SyntaxService():
         self.interface = entry.interface
         self.config = entry.interface.config
         self.proc = None
-        self.queue_in = multiprocessing.Queue()
-        self.queue_out = multiprocessing.Queue()
+        self.queueIn = multiprocessing.Queue()
+        self.queueOut = multiprocessing.Queue()
         self.readTimer = QTimer(self.interface)
         self.readTimer.start(SyntaxService.POLL_MS)
         self.readTimer.timeout.connect(self.readFromProc)
@@ -30,20 +30,20 @@ class SyntaxService():
         self.stopProc()
         self.proc = multiprocessing.Process(
             target=SyntaxService.processListen,
-            args=[self.queue_in, self.queue_out, self.config.main],
+            args=[self.queueIn, self.queueOut, self.config.main],
             daemon=True)
         self.proc.start()
 
     def stopProc(self):
         if self.proc is not None:
-            self.queue_in.put({'quit': True})
+            self.queueIn.put({'quit': True})
             self.proc = None
 
     def sendToProc(self, expr, before, uuid):
         state = None
         if len(before) > 0:
             state = before[-1].state
-        self.queue_in.put({
+        self.queueIn.put({
             'expr': expr,
             'state': state,
             'before': before,
@@ -53,18 +53,18 @@ class SyntaxService():
     def readFromProc(self):
         while True:
             try:
-                result = self.queue_out.get(block=False)
+                result = self.queueOut.get(block=False)
                 self.entry.doSyntaxHighlighting(result['statements'], result['before'], [], result['uuid'])
             except Empty:
                 break
 
-    def processListen(queue_in, queue_out, config):
+    def processListen(queueIn, queueOut, config):
         calculator = CalculatorManager.createCalculator(config)
         while True:
             messages = []
             while True:
                 try:
-                    message = queue_in.get(block=False)
+                    message = queueIn.get(block=False)
                     messages.append(message)
                 except Empty:
                     break
@@ -78,7 +78,7 @@ class SyntaxService():
                 before = message['before']
                 uuid = message['uuid']
                 statements = SyntaxService.doSyntaxParsing(calculator, expr, False, state)
-                queue_out.put({
+                queueOut.put({
                     'statements': statements,
                     'before': before,
                     'uuid': uuid,
@@ -86,13 +86,13 @@ class SyntaxService():
             else:
                 sleep(SyntaxService.POLL_MS / 1000)
 
-    def doSyntaxParsing(calculator, expr, parse_only, state=None):
+    def doSyntaxParsing(calculator, expr, parseOnly, state=None):
         try:
             if state is None:
                 calculator.vars = {}
             else:
                 calculator.vars = state.copy()
-            response = calculator.calculate(expr, {'parse_only': parse_only, 'include_state': True})
+            response = calculator.calculate(expr, {'parse_only': parseOnly, 'include_state': True})
             statements = [Statement(r.items, r.state) for r in response.results]
         except CalculatingException as err:
             statements = [Statement(r.items, r.state) for r in err.response.results]

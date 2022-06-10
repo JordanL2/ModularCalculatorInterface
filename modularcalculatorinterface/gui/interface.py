@@ -30,7 +30,7 @@ class ModularCalculatorInterface(StatefulApplication):
         self.threadpool = QThreadPool()
         self.threadpool.setMaxThreadCount(1)
 
-        self.htmlService = HtmlService(self)
+        self.htmlservice = HtmlService(self)
         self.initUI()
 
         self.calculatormanager = CalculatorManager(self)
@@ -178,7 +178,7 @@ class ModularCalculatorInterface(StatefulApplication):
         self.calculatormanager.initCalculator()
         self.entry.syntaxservice.restartProc()
         self.tabmanager.forceRefreshAllTabs()
-        self.htmlService.initStyling()
+        self.htmlservice.initStyling()
         self.entry.refresh()
         self.display.refresh()
         self.menu.refresh()
