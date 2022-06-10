@@ -126,6 +126,7 @@ class FeaturesTab(OptionsTab):
         try:
             self.calculatormanager.setInstalledFeatures(calculator, self.importedFeatures)
             self.calculator = calculator
+            self.interface.applyConfig()
         except Exception:
             errorMessage = QMessageBox(self.interface)
             errorMessage.setText("Could not instantiate calculator with selected features")
