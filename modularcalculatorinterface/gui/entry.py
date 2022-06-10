@@ -190,11 +190,16 @@ class CalculatorEntry(QTextEdit):
         self.checkSyntax(True)
 
     def updateHtml(self, html):
+        cursoranc = self.textCursor().anchor()
         cursorpos = self.textCursor().position()
         sliderpos = self.verticalScrollBar().sliderPosition()
         self.setHtml(html)
         cursor = self.textCursor()
-        cursor.setPosition(cursorpos)
+        if cursoranc != cursorpos:
+            cursor.setPosition(cursoranc)
+            cursor.setPosition(cursorpos, QTextCursor.KeepAnchor)
+        else:
+            cursor.setPosition(cursorpos)
         self.setTextCursor(cursor)
         self.verticalScrollBar().setSliderPosition(sliderpos)
 
