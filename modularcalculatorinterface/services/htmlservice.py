@@ -208,7 +208,7 @@ class HtmlService():
             answerFormatted = self.formatNumber(answer, options)
             answerHtml = self.makeSpan(self.htmlSafe(answerFormatted), 'literal')
         if unit is not None:
-            unit = self.createUnitHtml(self.interface.calculatormanager.calculator.number(answer)[0], unit, options)
+            unit = self.createUnitHtml(self.interface.calculatormanager.calculator.number(answer), unit, options)
             answerHtml += unit
         return answerHtml
 
@@ -252,7 +252,7 @@ class HtmlService():
         try:
             calculator = self.interface.calculatormanager.calculator
             if options['number_format'] != 'Default':
-                number = calculator.number(answer)[0]
+                number = calculator.number(answer)
                 formatters = [f for f in calculator.number_casters if f['name'] == options['number_format']]
                 if len(formatters) > 0:
                     formatter = formatters[0]
