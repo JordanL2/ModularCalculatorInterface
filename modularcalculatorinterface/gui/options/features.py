@@ -321,16 +321,14 @@ class ConfigureFeatureDialog(QDialog):
 
         maxI = 0
         self.fieldEditBoxes = {}
-        for i, fieldAndValue in enumerate(self.calculator.feature_options[featureId].items()):
-            fieldName = fieldAndValue[0]
-            fieldValue = self.encode(fieldAndValue[1])
+        for fieldName, fieldValue in sorted(self.calculator.feature_options[featureId].items(), key= lambda f: f[0].lower()):
+            fieldValue = self.encode(fieldValue)
             lineEdit = QLineEdit(fieldValue, self)
             self.fieldEditBoxes[fieldName] = lineEdit
-            grid.addWidget(QLabel(fieldName), i, 0, 1, 1)
-            grid.addWidget(QLabel(   ), i, 1, 1, 1)
-            grid.addWidget(lineEdit, i, 2, 1, 1)
-            maxI = i
-        maxI += 1
+            grid.addWidget(QLabel(fieldName), maxI, 0, 1, 1)
+            grid.addWidget(QLabel(   ), maxI, 1, 1, 1)
+            grid.addWidget(lineEdit, maxI, 2, 1, 1)
+            maxI += 1
 
         button = QPushButton("Reset", self)
         button.clicked.connect(self.reset)
