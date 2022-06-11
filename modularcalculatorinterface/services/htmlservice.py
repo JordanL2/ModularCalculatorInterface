@@ -128,7 +128,8 @@ class HtmlService():
                 unit_parts = answer.singular(False, False)
             answerText = ''.join([u[0] for u in unit_parts])
         else:
-            answerText = str(answer)
+            answerFormatted = self.formatNumber(answer, options)
+            answerText = str(answerFormatted)
         if unit is not None:
             unit = self.createUnitText(answer, unit, options)
             answerText += unit
@@ -204,7 +205,8 @@ class HtmlService():
                 unit_parts = answer.singular(False, False)
             answerHtml = ''.join([self.makeSpan(self.htmlSafe(u[0]), u[1]) for u in unit_parts])
         else:
-            answerHtml = self.makeSpan(self.htmlSafe(answer), 'literal')
+            answerFormatted = self.formatNumber(answer, options)
+            answerHtml = self.makeSpan(self.htmlSafe(answerFormatted), 'literal')
         if unit is not None:
             unit = self.createUnitHtml(self.interface.calculatormanager.calculator.number(answer)[0], unit, options)
             answerHtml += unit
@@ -245,6 +247,21 @@ class HtmlService():
         questionStatements = [Statement(s) for s in questionStatements]
         questionHtml = self.createStatementsHtml(questionStatements)
         return self.css + questionHtml
+
+    def formatNumber(self, answer, options):
+        try:
+            calculator = self.interface.calculatormanager.calculator
+            if options['number_format'] != 'Default':
+                number = calculator.number(answer)[0]
+                formatters = [f for f in calculator.number_casters if f['name'] == options['number_format']]
+                if len(formatters) > 0:
+                    formatter = formatters[0]
+                    if formatter['reverter'] is not None:
+                        return formatter['reverter'](calculator, number)
+                return number
+            return answer
+        except CalculatorException:
+            return answer
 
 
 class ErrorItem(Item):

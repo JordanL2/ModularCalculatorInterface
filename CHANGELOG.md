@@ -5,6 +5,7 @@
 - All configuration is done through a single options panel, removing all the various menu items.
 - Replaced application menu with a toolbar, for easier access to all buttons.
 - Added Export Results button, to export the calculation results as a CSV file.
+- Added Number format option, to automatically display all numerical answers as e.g. hexadecimal, scientific notation.
 - Fixed bug causing glitching when editing earlier statements when later statements had an execution error.
 - Fixed bug when disabling arrays feature and we're already displaying results with arrays.
 - Syntax highlighting is now faster.

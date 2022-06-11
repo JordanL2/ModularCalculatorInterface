@@ -4,6 +4,8 @@ from modularcalculatorinterface.gui.options.common import *
 
 from PyQt5.QtWidgets import QFormLayout
 
+from inspect import signature, Parameter
+
 
 class DisplayTab(OptionsTab):
 
@@ -27,6 +29,20 @@ class DisplayTab(OptionsTab):
         layout.addRow("Fraction maximum denominator digits", OptionSpinBox(self, self.config.main['display'], 'max_denominator_digits', 1, 50))
 
         self.addSpacerItem(layout)
+        numberCasters = []
+        for caster in self.interface.calculatormanager.calculator.number_casters:
+            if caster['reverter'] is None:
+                numberCasters.append(caster)
+            else:
+                funcSingature = signature(caster['reverter'])
+                n = len([p for p in funcSingature.parameters.values() if p.default == Parameter.empty])
+                if n == 2:
+                    numberCasters.append(caster)
+        numberCasters = sorted(numberCasters, key=lambda c: c['title'].lower())
+        numberFormats = ['Default'] + [c['title'] for c in numberCasters]
+        numberFormatIds = ['Default'] + [c['name'] for c in numberCasters]
+        layout.addRow("Number format", OptionComboBox(self, self.config.main['display'], 'number_format', numberFormats, ids=numberFormatIds))
+
         layout.addRow("Units in short form", OptionCheckbox(self, self.config.main['display'], 'short_units'))
 
         self.setLayout(layout)

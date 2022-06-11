@@ -9,6 +9,7 @@ display:
   fraction_fontsize_pt: 10
   fraction_small_fontsize_pt: 8
   max_denominator_digits: 12
+  number_format: Default
   question_bold: false
   question_fontsize_pt: 10
   short_units: false

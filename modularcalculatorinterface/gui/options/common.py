@@ -82,7 +82,8 @@ class OptionComboBox(QComboBox):
                 self.addItem(str(option))
                 if option == self.config_toplevel[self.config_secondlevel]:
                     selected = i
-        self.setCurrentIndex(selected)
+        if selected is not None:
+            self.setCurrentIndex(selected)
 
         self.currentTextChanged.connect(self.onStateChanged)
 
