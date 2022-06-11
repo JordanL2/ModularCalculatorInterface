@@ -376,10 +376,18 @@ class ConfigureFeatureDialog(QDialog):
         for field, value in self.calculator.feature_list[self.feature.id()].default_options().items():
             self.fieldEditBoxes[field].setText(self.encode(value))
 
-    def closeEvent(self, e):
+    def apply(self):
         fields = {}
         for field, lineEdit in self.fieldEditBoxes.items():
             value = lineEdit.text()
             fields[field] = self.decode(value)
         self.parent.applyFeatureOptions(self.feature.id(), fields)
+
+    def closeEvent(self, e):
+        self.apply()
         super().closeEvent(e)
+
+    def reject(self):
+        self.apply()
+        super().reject()
+

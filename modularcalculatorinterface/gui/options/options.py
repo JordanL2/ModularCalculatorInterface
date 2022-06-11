@@ -84,3 +84,8 @@ class OptionsDialog(QDialog):
     def closeEvent(self, e):
         self.interface.applyConfig()
         super().closeEvent(e)
+
+    def reject(self):
+        self.interface.applyConfig()
+        super().reject()
+
