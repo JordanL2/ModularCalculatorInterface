@@ -22,3 +22,4 @@ entry:
 execution:
   precision: 30
   simplify_units: true
+  rounding: ROUND_HALF_UP

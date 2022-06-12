@@ -11,6 +11,11 @@ class CalculatorTab(OptionsTab):
         layout = QFormLayout()
 
         layout.addRow("Precision", OptionSpinBox(self, self.config.main['execution'], 'precision', 1, 50))
+
+        roundingOptions = ['Towards Infinity', 'Away from zero', 'To nearest, ties going away from zero', 'To nearest, ties going towards zero', 'Towards zero', 'Towards -Infinity']
+        roundingOptionIds = ['ROUND_CEILING', 'ROUND_UP', 'ROUND_HALF_UP', 'ROUND_HALF_DOWN', 'ROUND_DOWN', 'ROUND_FLOOR']
+        layout.addRow("Rounding", OptionComboBox(self, self.config.main['execution'], 'rounding', roundingOptions, ids=roundingOptionIds))
+
         layout.addRow("Simplify units", OptionCheckbox(self, self.config.main['execution'], 'simplify_units'))
 
         unitNormaliser = self.interface.calculatormanager.calculator.unit_normaliser

@@ -3,6 +3,7 @@
 ## 1.4.0
 - Added Export Results button, to export the calculation results as a CSV file.
 - Added Number format option, to automatically display all numerical answers as e.g. hexadecimal, scientific notation.
+- Added Rounding option to determine how numbers are rounded.
 - Replaced application menu with a toolbar, for easier access to all buttons.
 - All configuration is done through a single options panel, removing all the various menu items.
 - All application configuration is now stored in the config.yml file.
@@ -16,6 +17,7 @@
 	- Converting a number to an alternative-base number, or scientific notation number, respects the calculator's precision option.
 	- Alternative-base numbers and scientific notation numbers now all stored internally as a Number, with 'number_cast' attribute storing a function reference to convert back to its original representation - this is done when casting to a string. This avoids converting between formats multiple times internally, potentially losing precision each time.
 - Number casters now includes a reference to the function to reverse the casting to Number.
+- Numerical Engine has `number_set_rounding` function to set rounding mode, use names of `decimal` rounding modes.
 - Fixing error thrown when throwing a CalculateException.
 - Fixing scientific notation number 0E0 being displayed as E0.
 
