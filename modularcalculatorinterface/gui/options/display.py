@@ -31,9 +31,7 @@ class DisplayTab(OptionsTab):
         self.addSpacerItem(layout)
         numberCasters = []
         for caster in self.interface.calculatormanager.calculator.number_casters:
-            if caster['reverter'] is None:
-                numberCasters.append(caster)
-            else:
+            if caster['reverter'] is not None:
                 funcSingature = signature(caster['reverter'])
                 n = len([p for p in funcSingature.parameters.values() if p.default == Parameter.empty])
                 if n == 2:
