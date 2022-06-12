@@ -4,6 +4,8 @@ A powerful, scriptable, modular calculator aimed at scientific, engineering or c
 
 All features can be added, removed, and customised, and new features can be written in python.
 
+For syntax and other topics, see the [modularcalculator wiki](https://github.com/JordanL2/ModularCalculator/wiki).
+
 [Licence](LICENSE)
 
 [Changelog](CHANGELOG.md)
