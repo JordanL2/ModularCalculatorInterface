@@ -260,7 +260,7 @@ class CalculatorMenu():
                 for row in self.interface.display.rawOutput:
                     if isinstance(row, CalculatorDisplayAnswer):
                         thisRow = [row.question.strip()]
-                        options = {'short_units': False}
+                        options = self.config.main['display']
                         thisRow.append(self.interface.htmlservice.createAnswerListText(row.answer, None, options))
                         if row.unit is not None:
                             thisRow.append(self.interface.htmlservice.createUnitText(row.answer, row.unit, options).strip())
