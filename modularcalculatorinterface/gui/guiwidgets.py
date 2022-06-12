@@ -177,7 +177,7 @@ class TabBarWithPlus(QWidget):
         layout.addWidget(self.tabbar, 0, 0, 1, 1)
         layout.setColumnStretch(0, 1)
 
-        self.fileNew = SmallerPushButton('+', self.tabbar)
+        self.fileNew = NewTabButton('+', self.tabbar)
         self.fileNew.setToolTip('New (Ctrl+N)')
         self.fileNew.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_N))
         layout.addWidget(self.fileNew, 0, 1, 1, 1)
@@ -186,7 +186,7 @@ class TabBarWithPlus(QWidget):
         self.setLayout(layout)
 
 
-class SmallerPushButton(QPushButton):
+class NewTabButton(QPushButton):
 
     def __init__(self, text, tabbar):
         super().__init__(text)

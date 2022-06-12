@@ -5,7 +5,7 @@ from modularcalculatorinterface.services.syntaxservice import *
 
 from PyQt5.QtCore import Qt, QObject, pyqtSignal
 from PyQt5.QtWidgets import QTextEdit, QAction
-from PyQt5.QtGui import QFont, QFontDatabase, QTextCursor, QTextFormat, QKeySequence, QPalette
+from PyQt5.QtGui import QFont, QTextCursor, QTextFormat, QKeySequence, QPalette
 
 import time
 import uuid

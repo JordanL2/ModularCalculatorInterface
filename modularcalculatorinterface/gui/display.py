@@ -4,7 +4,7 @@ from modularcalculatorinterface.gui.guiwidgets import *
 from modularcalculatorinterface.services.htmlservice import *
 
 from PyQt5.QtCore import Qt, QPointF
-from PyQt5.QtGui import QPalette, QFont, QFontDatabase, QTextOption
+from PyQt5.QtGui import QPalette, QFont, QTextOption
 from PyQt5.QtWidgets import QTextEdit, QWidget, QGridLayout, QVBoxLayout, QSizePolicy, QSpacerItem, QFrame
 
 import math
