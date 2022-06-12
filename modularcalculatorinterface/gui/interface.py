@@ -55,6 +55,7 @@ class ModularCalculatorInterface(StatefulApplication):
         self.tabmanager.forceRefreshAllTabs()
         self.entry.refresh()
         self.show()
+        self.display.layout.doResize(force=True)
 
     def setIcon(self):
         places = [

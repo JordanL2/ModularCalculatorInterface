@@ -165,15 +165,15 @@ class DisplayLayout(QGridLayout):
         self.addWidget(questionWidget, n, 0, 1, 1)
         self.addWidget(answerWidget, n, 1, 1, 1)
 
-    def doResize(self):
+    def doResize(self, force=False):
         for pair in self.displayWidgets:
-            height0 = pair[0].optimumHeight()
+            height0 = pair[0].optimumHeight(force=force)
             if height0 >= self.maxHeight:
                 pair[0].setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
             else:
                 pair[0].setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
-            height1 = pair[1].optimumHeight()
+            height1 = pair[1].optimumHeight(force=force)
             if height1 >= self.maxHeight:
                 pair[1].setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
             else:
@@ -198,8 +198,8 @@ class DisplayAnswerFractionLabel(QWidget):
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self.layout)
 
-    def optimumHeight(self):
-        return self.answerLabel.optimumHeight() + self.fractionLabel.optimumHeight()
+    def optimumHeight(self, force=False):
+        return self.answerLabel.optimumHeight(force=force) + self.fractionLabel.optimumHeight(force=force)
 
     def setFixedHeight(self, height):
         self.answerLabel.setFixedHeight(int(math.ceil(self.answerLabel.optimumHeight())))
@@ -241,11 +241,11 @@ class DisplayLabel(QTextEdit):
         else:
             super().mouseReleaseEvent(e)
 
-    def optimumHeight(self):
+    def optimumHeight(self, force=False):
         #TODO figure out why we need the -8 magic number
         lineWidth = self.contentsRect().width() - 8
 
-        if self.cachedOptimumHeight is not None and self.cachedOptimumHeight[0] == lineWidth:
+        if not force and self.cachedOptimumHeight is not None and self.cachedOptimumHeight[0] == lineWidth:
             return self.cachedOptimumHeight[1]
 
         textLayout = self.document().firstBlock().layout()
