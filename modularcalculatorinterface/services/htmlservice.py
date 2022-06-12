@@ -149,9 +149,11 @@ class HtmlService():
         if options['short_units'] and unit.has_symbols():
             unit_parts = unit.symbol(False)
         else:
-            if type(answer) == str:
-                answer = Number('1')
-            unit_parts = unit.get_name(answer, False)
+            try:
+                number = self.interface.calculatormanager.calculator.number(answer)
+            except CalculatorException:
+                number = Number(1)
+            unit_parts = unit.get_name(number, False)
             unit_parts = [(' ', 'space')] + unit_parts
         return ''.join([u[0] for u in unit_parts])
 
@@ -208,7 +210,11 @@ class HtmlService():
             answerFormatted = self.formatNumber(answer, options)
             answerHtml = self.makeSpan(self.htmlSafe(answerFormatted), 'literal')
         if unit is not None:
-            unit = self.createUnitHtml(self.interface.calculatormanager.calculator.number(answer), unit, options)
+            try:
+                number = self.interface.calculatormanager.calculator.number(answer)
+            except CalculatorException:
+                number = Number(1)
+            unit = self.createUnitHtml(number, unit, options)
             answerHtml += unit
         return answerHtml
 
