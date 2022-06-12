@@ -4,6 +4,10 @@ A powerful, scriptable, modular calculator aimed at scientific, engineering or c
 
 All features can be added, removed, and customised, and new features can be written in python.
 
+[Licence](LICENSE)
+
+[Changelog](CHANGELOG.md)
+
 
 # Requirements
 
