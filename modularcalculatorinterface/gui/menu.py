@@ -25,12 +25,6 @@ class CalculatorMenu():
     def initMenu(self):
         self.toolbar = self.interface.toolbar
 
-        self.fileNew = QAction(QIcon.fromTheme('document-new'), 'New', self.interface)
-        self.fileNew.setToolTip('New (Ctrl+N)')
-        self.fileNew.triggered.connect(self.interface.tabmanager.addTab)
-        self.fileNew.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_N))
-        self.toolbar.addAction(self.fileNew)
-
         self.fileOpen = QAction(QIcon.fromTheme('document-open'), 'Open', self.interface)
         self.fileOpen.setToolTip('Open (Ctrl+O)')
         self.fileOpen.triggered.connect(self.interface.filemanager.open)

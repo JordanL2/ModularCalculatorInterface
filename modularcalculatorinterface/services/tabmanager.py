@@ -11,6 +11,7 @@ class TabManager():
         self.tabbar = self.interface.tabbar
         self.filemanager = self.interface.filemanager
         self.selectedTab = None
+        self.interface.tabbarWidget.fileNew.pressed.connect(self.addTab)
 
 
     def initEmptyState(self):

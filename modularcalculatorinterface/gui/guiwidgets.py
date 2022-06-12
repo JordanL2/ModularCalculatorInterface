@@ -1,8 +1,10 @@
 #!/usr/bin/python3
 
 from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import QApplication, QListWidget, QListWidgetItem, QLabel, QVBoxLayout, \
-                            QDialog, QPushButton, QCalendarWidget, QTimeEdit, QComboBox, QTabBar
+                            QDialog, QPushButton, QCalendarWidget, QTimeEdit, QComboBox, QTabBar, \
+                            QWidget, QGridLayout
 
 
 def limitToScreen(width, height):
@@ -162,6 +164,39 @@ class ExpandedListWidget(QListWidget):
         if self.maxHeight:
             size.setHeight(self.sizeHintForRow(0) * self.count() + 10)
         return size
+
+
+class TabBarWithPlus(QWidget):
+
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.tabbar = MiddleClickCloseableTabBar(self)
+        layout = QGridLayout()
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setVerticalSpacing(0)
+        layout.addWidget(self.tabbar, 0, 0, 1, 1)
+        layout.setColumnStretch(0, 1)
+
+        self.fileNew = SmallerPushButton('+', self.tabbar)
+        self.fileNew.setToolTip('New (Ctrl+N)')
+        self.fileNew.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_N))
+        layout.addWidget(self.fileNew, 0, 1, 1, 1)
+        layout.setColumnStretch(1, 0)
+
+        self.setLayout(layout)
+
+
+class SmallerPushButton(QPushButton):
+
+    def __init__(self, text, tabbar):
+        super().__init__(text)
+        self.tabbar = tabbar
+
+    def sizeHint(self):
+        mySize = super().sizeHint()
+        tabSize = self.tabbar.sizeHint()
+        mySize.setHeight(tabSize.height())
+        return mySize
 
 
 class MiddleClickCloseableTabBar(QTabBar):

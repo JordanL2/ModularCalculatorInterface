@@ -69,7 +69,9 @@ class ModularCalculatorInterface(StatefulApplication):
 
     def initUI(self):
         self.toolbar = QToolBar(self)
-        self.tabbar = MiddleClickCloseableTabBar(self)
+
+        self.tabbarWidget = TabBarWithPlus(self)
+        self.tabbar = self.tabbarWidget.tabbar
 
         self.entry = CalculatorEntry(self)
 
@@ -88,10 +90,14 @@ class ModularCalculatorInterface(StatefulApplication):
         self.splitter.addWidget(self.makeSection(self.displayScroll, 'Output'))
 
         layout = QGridLayout()
+        layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
         layout.addWidget(self.toolbar, 0, 0, 1, 1)
-        layout.addWidget(self.tabbar, 1, 0, 1, 1)
+        layout.setRowStretch(0, 0)
+        layout.addWidget(self.tabbarWidget, 1, 0, 1, 1)
+        layout.setRowStretch(1, 0)
         layout.addWidget(self.splitter, 2, 0, 1, 1)
+        layout.setRowStretch(2, 1)
 
         mainWidget = QWidget()
         mainWidget.setLayout(layout)
