@@ -95,8 +95,7 @@ class HtmlService():
                 unit_parts = answer.singular(False, False)
             answerText = ''.join([u[0] for u in unit_parts])
         else:
-            answerFormatted = self.formatNumber(answer, options)
-            answerText = str(answerFormatted)
+            answerText = self.formatNumber(answer, options)
         if unit is not None:
             unit = self.createUnitText(answer, unit, options)
             answerText += unit
@@ -223,6 +222,8 @@ class HtmlService():
 
     def formatNumber(self, answer, options):
         try:
+            if not isinstance(answer, Number):
+                return str(answer)
             calculator = self.interface.calculatormanager.calculator
             if options['number_format'] != 'Default':
                 number = calculator.number(answer)
@@ -231,7 +232,7 @@ class HtmlService():
                     formatter = formatters[0]
                     if formatter['reverter'] is not None:
                         return formatter['reverter'](calculator, number)
-                return number
-            return answer
+                return number.to_string(calculator)
+            return answer.to_string(calculator)
         except CalculatorException:
             return answer

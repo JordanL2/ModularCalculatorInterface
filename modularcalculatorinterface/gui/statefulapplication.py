@@ -117,7 +117,7 @@ class SetEncoder(json.JSONEncoder):
 			}
 		if isinstance(obj, OperandResult):
 			return {
-				'value': str(obj.value),
+				'value': repr(obj.value),
 				'unit': str(obj.unit),
 			}
 		if isinstance(obj, UnitPowerList):
@@ -126,6 +126,6 @@ class SetEncoder(json.JSONEncoder):
 			}
 		if isinstance(obj, Number):
 			return {
-				'str': str(obj),
+				'str': repr(obj),
 			}
 		return json.JSONEncoder.default(self, obj)
