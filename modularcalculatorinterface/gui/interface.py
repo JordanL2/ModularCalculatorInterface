@@ -40,22 +40,36 @@ class ModularCalculatorInterface(StatefulApplication):
         self.menu = CalculatorMenu(self)
         self.calculatormanager.updateInsertOptions()
 
-        self.stateHashes = {}
+        # Attempt to restore state, if exception then try clear state
         if not args.clear:
-            self.restoreAllState()
+            restoreStates = [True, False]
         else:
-            self.initEmptyState()
+            restoreStates = [False]
+        for restoreState in restoreStates:
+            try:
+                self.stateHashes = {}
+                if restoreState:
+                    self.restoreAllState()
+                else:
+                    self.initEmptyState()
+                self.tabmanager.forceRefreshAllTabs()
+                self.entry.refresh()
+                break
+            except Exception as e:
+                print(traceback.format_exc())
+                if not restoreState:
+                    raise e
+                else:
+                    print("Error occurred when restoring state. Will try starting with a clean state...")
+
+        self.initShortcuts()
+        self.entry.setFocus()
+        self.show()
+        self.display.layout.doResize(force=True)
+
         self.saveStateTimer = QTimer(self)
         self.saveStateTimer.start(15000)
         self.saveStateTimer.timeout.connect(self.storeAllState)
-
-        self.initShortcuts()
-
-        self.entry.setFocus()
-        self.tabmanager.forceRefreshAllTabs()
-        self.entry.refresh()
-        self.show()
-        self.display.layout.doResize(force=True)
 
     def setIcon(self):
         places = [

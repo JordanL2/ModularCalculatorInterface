@@ -15,6 +15,7 @@ class TabManager():
 
 
     def initEmptyState(self):
+        self.clearState()
         self.addTab()
         self.loadTab(0)
         self.interface.tabbar.currentChanged.connect(self.selectTab)
@@ -22,6 +23,7 @@ class TabManager():
         self.interface.tabbar.tabMoved.connect(self.moveTab)
 
     def restoreState(self, state):
+        self.clearState()
         self.interface.defaultState(state, {
                 "tabs": [],
                 "selectedTab": None,
@@ -43,6 +45,12 @@ class TabManager():
         self.interface.tabbar.currentChanged.connect(self.selectTab)
         self.interface.tabbar.tabCloseRequested.connect(self.closeTab)
         self.interface.tabbar.tabMoved.connect(self.moveTab)
+
+    def clearState(self):
+        for t in range(0, self.tabbar.count()):
+            self.tabbar.removeTab(0)
+        self.tabs = []
+        self.selectedTab = None
 
     def saveState(self):
         state = {}
