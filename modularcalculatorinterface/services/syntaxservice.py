@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 
 from modularcalculator.objects.exceptions import CalculatingException, CalculatorException
+from modularcalculator.services.syntaxhighlighter import *
 from modularcalculatorinterface.services.calculatormanager import *
-from modularcalculatorinterface.services.htmlservice import Statement, ErrorItem
 
 from PyQt5.QtCore import QTimer
 
@@ -60,6 +60,8 @@ class SyntaxService():
 
     def processListen(queueIn, queueOut, config):
         calculator = CalculatorManager.createCalculator(config)
+        highlighter = SyntaxHighlighter()
+
         while True:
             messages = []
             while True:
@@ -77,7 +79,7 @@ class SyntaxService():
                 state = message['state']
                 before = message['before']
                 uuid = message['uuid']
-                statements = SyntaxService.doSyntaxParsing(calculator, expr, False, state)
+                statements = SyntaxService.doSyntaxParsing(calculator, highlighter, expr, False, state)
                 queueOut.put({
                     'statements': statements,
                     'before': before,
@@ -86,7 +88,7 @@ class SyntaxService():
             else:
                 sleep(SyntaxService.POLL_MS / 1000)
 
-    def doSyntaxParsing(calculator, expr, parseOnly, state=None):
+    def doSyntaxParsing(calculator, highlighter, expr, parseOnly, state=None):
         try:
             if state is None:
                 calculator.vars = {}
@@ -102,4 +104,96 @@ class SyntaxService():
         except CalculatorException as err:
             statements = [Statement(ErrorItem(expr))]
 
+        statements = SyntaxService.compactStatements(statements)
+
+        for statement in statements:
+            statement.flatten(highlighter)
+            statement.generateText()
+
         return statements
+
+    def compactStatements(statements):
+        if len(statements) < 2:
+            return statements
+
+        compactedStatements = []
+
+        # Combine any statements with no functional items into the previous
+        # (unless first, then combine into next)
+        combinePrevious = False
+        for si, statement in enumerate(statements):
+            if combinePrevious:
+                statement.items = statements[si - 1].items + statement.items
+                combinePrevious = False
+            if not statement.hasFunctionalItems():
+                if len(compactedStatements) > 0:
+                    compactedStatements[-1].items.extend(statement.items)
+                else:
+                    combinePrevious = True
+            else:
+                compactedStatements.append(statement)
+        if combinePrevious:
+            compactedStatements.append(statements[-1])
+
+        # Move any comments at the bottom of a statement into the next statement
+        for si, statement in enumerate(compactedStatements):
+            if si < len(compactedStatements) - 1:
+                lastFunctionalItem = max(statement.functionalItems())
+                nonEmptyItems = [i for i, item in enumerate(statement.items) if i > lastFunctionalItem and not item.functional() and item.text.strip() != '']
+                if len(nonEmptyItems) > 0:
+                    firstNonEmptyItem = min(nonEmptyItems)
+                    compactedStatements[si + 1].items = statement.items[firstNonEmptyItem:] + compactedStatements[si + 1].items
+                    statement.items = statement.items[0:firstNonEmptyItem]
+
+        return compactedStatements
+
+
+class ErrorItem(Item):
+
+    def __init__(self,  text):
+        super().__init__(text)
+
+    def isop(self):
+        return False
+
+    def desc(self):
+        return 'error'
+
+
+class Statement():
+
+    def __init__(self, items, state=None):
+        self.items = items
+        self.state = state
+        self.flatItems = None
+        self.text = None
+        self.length = None
+        self.html = None
+
+    def flatten(self, highlighter):
+        highlightStatement = highlighter.highlight_statements([self.items])[0]
+        self.flatItems = highlightStatement
+        self.items = None
+
+    def generateText(self):
+        self.text = ''.join([i[1] for i in self.flatItems])
+        self.length = len(self.text)
+        return self.text, self.length
+
+    def generateHtml(self, htmlservice):
+        statementHtml = ''
+        for item in self.flatItems:
+            style = item[0]
+            text = item[1]
+            statementHtml += htmlservice.makeSpan(htmlservice.htmlSafe(text), style)
+        self.html = statementHtml
+        return self.html
+
+    def nonEmptyItems(self):
+        return [i for i, item in enumerate(self.items) if i.text.strip() != '']
+
+    def functionalItems(self):
+        return [i for i, item in enumerate(self.items) if item.functional() and not item.text.strip() == '']
+
+    def hasFunctionalItems(self):
+        return len(self.functionalItems()) > 0

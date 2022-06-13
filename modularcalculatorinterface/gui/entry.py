@@ -124,7 +124,7 @@ class CalculatorEntry(QTextEdit):
                     del after[0]
 
             self.lastUuid = uuid.uuid4()
-            statements = SyntaxService.doSyntaxParsing(self.calculator, expr[i:ii], True)
+            statements = SyntaxService.doSyntaxParsing(self.calculator, self.htmlservice.highlighter, expr[i:ii], True)
             self.doSyntaxHighlighting(statements, before, after, self.lastUuid)
 
             if self.config.main['entry']['show_execution_errors']:
@@ -134,12 +134,12 @@ class CalculatorEntry(QTextEdit):
         if self.lastUuid is None or uuid != self.lastUuid:
             return
 
-        statements = self.htmlservice.compactStatements(statements)
-        if len(statements) > 0 and len(statements[-1].items) > 0 and isinstance(statements[-1].items[-1], ErrorItem):
-            statements[-1].items[-1].text += ''.join([s.text for s in after])
+        if len(statements) > 0 and len(statements[-1].flatItems) > 0 and statements[-1].flatItems[-1][0] == 'error':
+            statements[-1].flatItems[-1] = (statements[-1].flatItems[-1][0], statements[-1].flatItems[-1][1] + ''.join([s.text for s in after]))
             after = []
 
         newhtml = self.htmlservice.createStatementsHtml(statements)
+
         allStatements = before + statements + after
         totalHtml = self.htmlservice.css
         totalHtml += ''.join([s.html for s in before])

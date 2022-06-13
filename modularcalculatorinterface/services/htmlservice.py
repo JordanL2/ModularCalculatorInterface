@@ -2,7 +2,7 @@
 
 from modularcalculator.objects.items import *
 from modularcalculator.objects.units import *
-from modularcalculator.services.syntaxhighlighter import *
+from modularcalculatorinterface.services.syntaxservice import *
 
 from PyQt5.QtGui import QColor, QPalette, QGuiApplication
 
@@ -51,45 +51,12 @@ class HtmlService():
             (" style=\"{}\"".format(style) if style is not None else ''),
             text)
 
-    def compactStatements(self, statements):
-        if len(statements) < 2:
-            return statements
-
-        compactedStatements = []
-
-        # Combine any statements with no functional items into the previous
-        # (unless first, then combine into next)
-        combinePrevious = False
-        for si, statement in enumerate(statements):
-            if combinePrevious:
-                statement.items = statements[si - 1].items + statement.items
-                combinePrevious = False
-            if not statement.hasFunctionalItems():
-                if len(compactedStatements) > 0:
-                    compactedStatements[-1].items.extend(statement.items)
-                else:
-                    combinePrevious = True
-            else:
-                compactedStatements.append(statement)
-        if combinePrevious:
-            compactedStatements.append(statements[-1])
-
-        # Move any comments at the bottom of a statement into the next statement
-        for si, statement in enumerate(compactedStatements):
-            if si < len(compactedStatements) - 1:
-                lastFunctionalItem = max(statement.functionalItems())
-                nonEmptyItems = [i for i, item in enumerate(statement.items) if i > lastFunctionalItem and not item.functional() and item.text.strip() != '']
-                if len(nonEmptyItems) > 0:
-                    firstNonEmptyItem = min(nonEmptyItems)
-                    compactedStatements[si + 1].items = statement.items[firstNonEmptyItem:] + compactedStatements[si + 1].items
-                    statement.items = statement.items[0:firstNonEmptyItem]
-
-        return compactedStatements
-
     def createStatementsHtml(self, statements):
         newhtml = ""
 
         for statement in statements:
+            if statement.flatItems is None:
+                statement.flatten(self.highlighter)
             if statement.text is None:
                 statement.generateText()
             if statement.html is None:
@@ -268,57 +235,3 @@ class HtmlService():
             return answer
         except CalculatorException:
             return answer
-
-
-class ErrorItem(Item):
-
-    def __init__(self,  text):
-        super().__init__(text)
-
-    def isop(self):
-        return False
-
-    def desc(self):
-        return 'error'
-
-    def copy(self, classtype=None):
-        copy = super().copy(classtype or self.__class__)
-        copy.op = self.op
-        return copy
-
-
-class Statement():
-
-    def __init__(self, items, state=None):
-        self.items = items
-        self.state = state
-        self.text = None
-        self.length = None
-        self.html = None
-
-    def generateText(self):
-        self.text = ''.join([i.text for i in self.items])
-        self.length = len(self.text)
-        return self.text, self.length
-
-    def generateHtml(self, htmlservice):
-        highlightStatement = htmlservice.highlighter.highlight_statements([self.items])[0]
-        statementHtml = ''
-        for item in highlightStatement:
-            style = item[0]
-            text = item[1]
-            statementHtml += htmlservice.makeSpan(htmlservice.htmlSafe(text), style)
-        self.html = statementHtml
-        return self.html
-
-    def nonEmptyItems(self):
-        return [i for i, item in enumerate(self.items) if i.text.strip() != '']
-
-    def isEmpty(self):
-        return len(self.nonEmptyItems()) > 0
-
-    def functionalItems(self):
-        return [i for i, item in enumerate(self.items) if item.functional() and not item.text.strip() == '']
-
-    def hasFunctionalItems(self):
-        return len(self.functionalItems()) > 0
