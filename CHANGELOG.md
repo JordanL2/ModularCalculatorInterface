@@ -4,6 +4,7 @@
 - Added Export Results button, to export the calculation results as a CSV file.
 - Added Number format option, to automatically display all numerical answers as e.g. hexadecimal, scientific notation.
 - Added Rounding option to determine how numbers are rounded.
+- Added option to determine the maximum size of numbers before the decimal point.
 - Replaced application menu with a toolbar, for easier access to all buttons.
 - All configuration is done through a single options panel, removing all the various menu items.
 - All application configuration is now stored in the config.yml file.

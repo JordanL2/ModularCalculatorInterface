@@ -20,6 +20,7 @@ entry:
   show_execution_errors: true
   view_line_highlighting: true
 execution:
+  number_size: 100
   precision: 30
   simplify_units: true
   rounding: ROUND_HALF_UP

@@ -111,7 +111,7 @@ class SetEncoder(json.JSONEncoder):
 			}
 		if isinstance(obj, CalculatorDisplayError):
 			return {
-				'err': obj.err.message,
+				'err': (obj.err if type(obj.err) == str else obj.err.message),
 				'i': obj.i,
 				'question': obj.question,
 			}

@@ -10,7 +10,8 @@ class CalculatorTab(OptionsTab):
     def initTab(self):
         layout = QFormLayout()
 
-        layout.addRow("Precision", OptionSpinBox(self, self.config.main['execution'], 'precision', 1, 50))
+        layout.addRow("Max number size before decimal point", OptionSpinBox(self, self.config.main['execution'], 'number_size', 1, 500))
+        layout.addRow("Max number of decimal places", OptionSpinBox(self, self.config.main['execution'], 'precision', 1, 500))
 
         roundingOptions = ['Towards Infinity', 'Away from zero', 'To nearest, ties going away from zero', 'To nearest, ties going towards zero', 'Towards zero', 'Towards -Infinity']
         roundingOptionIds = ['ROUND_CEILING', 'ROUND_UP', 'ROUND_HALF_UP', 'ROUND_HALF_DOWN', 'ROUND_DOWN', 'ROUND_FLOOR']

@@ -20,6 +20,7 @@ class CalculatorManager():
     def createCalculator(config):
         calculator = ModularCalculator()
         calculator.enable_units()
+        calculator.number_size_set(config['execution']['number_size'])
         calculator.number_prec_set(config['execution']['precision'])
         calculator.number_set_rounding(config['execution']['rounding'])
         calculator.unit_simplification_set(config['execution']['simplify_units'])
@@ -73,11 +74,16 @@ class CalculatorManager():
             self.display.clear()
             for i, result in enumerate(response.results):
                 if result.has_result():
-                    result_value = result.value
-                    result_fraction = None
-                    if isinstance(result.value, Number):
-                        result_fraction = result_value.as_fraction()
-                    self.display.addAnswer(result.expression, result_value, result_fraction, result.unit)
+                    try:
+                        result_value = result.value
+                        result_fraction = None
+                        if isinstance(result.value, Number):
+                            result_fraction = result_value.as_fraction()
+                        self.display.addAnswer(result.expression, result_value, result_fraction, result.unit)
+                    except InvalidOperation as e:
+                        self.display.addError("Number is too large", None, result.expression)
+                    except Exception as e:
+                        self.display.addError(str(e), None, result.expression)
         if err is not None:
             self.display.addError(err, pos, question)
         self.display.refresh()
