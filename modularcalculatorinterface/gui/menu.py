@@ -91,6 +91,8 @@ class CalculatorMenu():
         self.insertUserDefinedFunctionAction.setShortcut(QKeySequence(Qt.CTRL + Qt.SHIFT + Qt.Key_E))
         self.insertMenu.addAction(self.insertUserDefinedFunctionAction)
 
+        self.toolbar.addSeparator()
+
 
         self.executeAction = QAction(QIcon.fromTheme('media-playback-start'), 'Execute', self.interface)
         self.executeAction.setToolTip('Execute (Ctrl+Enter)')
