@@ -31,6 +31,8 @@ class CalculatorDisplay(QWidget):
         displayScrollPalette = self.interface.displayScroll.palette()
         displayScrollPalette.setColor(QPalette.Base, self.colours[0])
         self.interface.displayScroll.setPalette(displayScrollPalette)
+        self.interface.displayScroll.setAutoFillBackground(True)
+        self.interface.displayScroll.setBackgroundRole(QPalette.Base)
 
     def initOutput(self):
         self.rawOutput = []
