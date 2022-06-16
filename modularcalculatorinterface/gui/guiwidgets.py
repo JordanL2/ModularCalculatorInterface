@@ -173,6 +173,7 @@ class TabBarWithPlus(QWidget):
         self.tabbar = MiddleClickCloseableTabBar(self)
         layout = QGridLayout()
         layout.setVerticalSpacing(0)
+        layout.setContentsMargins(5, 0, 5, 5)
         layout.addWidget(self.tabbar, 0, 0, 1, 1)
         layout.setColumnStretch(0, 1)
 
