@@ -75,7 +75,7 @@ class OptionsDialog(QDialog):
         menuWidget.setLayout(menuGrid)
         menuWidget.setFixedWidth(self.optionMenu.sizeHintForColumn(0) + 20)
 
-        self.optionMenu.itemClicked.connect(self.selectTab)
+        self.optionMenu.currentItemChanged.connect(self.selectTab)
         self.grid.addWidget(menuWidget, 0, 0, 1, 1)
 
     def selectTab(self, item):

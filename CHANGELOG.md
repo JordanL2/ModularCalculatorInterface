@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.4.1
+- Fixed not being able to select different option tabs with the keyboard.
+
 ## 1.4.0
 - Replaced application menu with a toolbar. Can configure whether it shows icons, text, or both (default).
 - Added Options dialog, replacing the various menu items.
