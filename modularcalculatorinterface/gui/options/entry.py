@@ -2,13 +2,11 @@
 
 from modularcalculatorinterface.gui.options.common import *
 
-from PyQt5.QtWidgets import QFormLayout
-
 
 class EntryTab(OptionsTab):
 
     def initTab(self):
-        layout = QFormLayout()
+        layout = FixedFormLayout()
 
         layout.addRow("Font", OptionComboBox(self, self.config.main['entry'], 'font', getFixedWidthFonts()))
         layout.addRow("Font size", OptionComboBox(self, self.config.main['entry'], 'fontsize_pt', getFontSizes(), cast=int))

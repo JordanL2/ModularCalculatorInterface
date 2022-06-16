@@ -2,13 +2,11 @@
 
 from modularcalculatorinterface.gui.options.common import *
 
-from PyQt5.QtWidgets import QFormLayout
-
 
 class CalculatorTab(OptionsTab):
 
     def initTab(self):
-        layout = QFormLayout()
+        layout = FixedFormLayout()
 
         layout.addRow("Max number size before decimal point", OptionSpinBox(self, self.config.main['execution'], 'number_size', 1, 500))
         layout.addRow("Max number of decimal places", OptionSpinBox(self, self.config.main['execution'], 'precision', 1, 500))

@@ -2,15 +2,13 @@
 
 from modularcalculatorinterface.gui.options.common import *
 
-from PyQt5.QtWidgets import QFormLayout
-
 from inspect import signature, Parameter
 
 
 class DisplayTab(OptionsTab):
 
     def initTab(self):
-        layout = QFormLayout()
+        layout = FixedFormLayout()
 
         layout.addRow("Font", OptionComboBox(self, self.config.main['display'], 'font', getFixedWidthFonts()))
 
@@ -26,7 +24,7 @@ class DisplayTab(OptionsTab):
         layout.addRow("Fraction font size", OptionComboBox(self, self.config.main['display'], 'fraction_fontsize_pt', getFontSizes(), cast=int))
         layout.addRow("Fraction small font size", OptionComboBox(self, self.config.main['display'], 'fraction_small_fontsize_pt', getFontSizes(), cast=int))
         layout.addRow("Fraction font bold", OptionCheckbox(self, self.config.main['display'], 'fraction_bold'))
-        layout.addRow("Fraction maximum denominator digits", OptionSpinBox(self, self.config.main['display'], 'max_denominator_digits', 1, 50))
+        layout.addRow("Fraction max denominator digits", OptionSpinBox(self, self.config.main['display'], 'max_denominator_digits', 1, 50))
 
         self.addSpacerItem(layout)
         numberCasters = []

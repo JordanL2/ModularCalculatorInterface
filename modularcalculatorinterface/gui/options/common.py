@@ -3,7 +3,7 @@
 from modularcalculatorinterface.gui.guiwidgets import limitToScreen
 
 from PyQt5.QtCore import Qt, QStringListModel, QSize
-from PyQt5.QtWidgets import QWidget, QCheckBox, QComboBox, QSpinBox, QAbstractItemView, QListView, QGridLayout, QSpacerItem
+from PyQt5.QtWidgets import QWidget, QCheckBox, QComboBox, QSpinBox, QAbstractItemView, QListView, QGridLayout, QSpacerItem, QFormLayout, QLabel
 from PyQt5.QtGui import QFont, QFontDatabase
 
 
@@ -32,6 +32,19 @@ class OptionsTab(QWidget):
 
     def addSpacerItem(self, layout):
         layout.addItem(QSpacerItem(0, 10))
+
+
+class FixedFormLayout(QFormLayout):
+
+    def __init__(self):
+        super().__init__()
+        self.setFieldGrowthPolicy(QFormLayout.FieldsStayAtSizeHint)
+
+    def addRow(self, text, widget):
+        label = QLabel(text)
+        label.setFixedWidth(350)
+        label.setAlignment(Qt.AlignRight)
+        super().addRow(label, widget)
 
 
 class OptionCheckbox(QWidget):
