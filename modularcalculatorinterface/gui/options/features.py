@@ -246,7 +246,7 @@ class FeatureList(WidgetList):
         descriptionWidget = QLabel(description)
         widgets.append(descriptionWidget)
 
-        configButton = QPushButton(QIcon.fromTheme("preferences-other"), None, self)
+        configButton = QPushButton(QIcon.fromTheme('preferences-other-symbolic', QIcon.fromTheme('preferences-other')), None, self)
         nameWidget.setMinimumHeight(configButton.sizeHint().height())
         if hasConfig:
             configButton.clicked.connect(partial(self.configPressed, featureId))

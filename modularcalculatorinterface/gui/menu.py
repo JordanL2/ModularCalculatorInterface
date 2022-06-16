@@ -25,19 +25,19 @@ class CalculatorMenu():
     def initMenu(self):
         self.toolbar = self.interface.toolbar
 
-        self.fileOpen = QAction(QIcon.fromTheme('document-open'), 'Open', self.interface)
+        self.fileOpen = QAction(QIcon.fromTheme('document-open-symbolic', QIcon.fromTheme('document-open')), 'Open', self.interface)
         self.fileOpen.setToolTip('Open (Ctrl+O)')
         self.fileOpen.triggered.connect(self.interface.filemanager.open)
         self.fileOpen.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_O))
         self.toolbar.addAction(self.fileOpen)
 
-        self.fileSave = QAction(QIcon.fromTheme('document-save'), 'Save', self.interface)
+        self.fileSave = QAction(QIcon.fromTheme('document-save-symbolic', QIcon.fromTheme('document-save')), 'Save', self.interface)
         self.fileSave.setToolTip('Save (Ctrl+S)')
         self.fileSave.triggered.connect(self.interface.filemanager.save)
         self.fileSave.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_S))
         self.toolbar.addAction(self.fileSave)
 
-        self.fileSaveAs = QAction(QIcon.fromTheme('document-save-as'), 'Save As', self.interface)
+        self.fileSaveAs = QAction(QIcon.fromTheme('document-save-as-symbolic', QIcon.fromTheme('document-save-as')), 'Save As', self.interface)
         self.fileSaveAs.setToolTip('Save As (Ctrl+Shift+S)')
         self.fileSaveAs.triggered.connect(self.interface.filemanager.saveAs)
         self.fileSaveAs.setShortcut(QKeySequence(Qt.CTRL + Qt.SHIFT + Qt.Key_S))
@@ -48,7 +48,7 @@ class CalculatorMenu():
 
         self.insertButton = QToolButton(self.interface)
         self.insertButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        self.insertButton.setIcon(QIcon.fromTheme('insert-text'))
+        self.insertButton.setIcon(QIcon.fromTheme('insert-text-symbolic', QIcon.fromTheme('insert-text')))
         self.insertButton.setText('Insert')
         self.insertButton.setToolTip('Insert')
         self.insertButton.setPopupMode(QToolButton.InstantPopup)
@@ -94,19 +94,19 @@ class CalculatorMenu():
         self.toolbar.addSeparator()
 
 
-        self.executeAction = QAction(QIcon.fromTheme('media-playback-start'), 'Execute', self.interface)
+        self.executeAction = QAction(QIcon.fromTheme('media-playback-start-symbolic', QIcon.fromTheme('media-playback-start')), 'Execute', self.interface)
         self.executeAction.setToolTip('Execute (Ctrl+Enter)')
         self.executeAction.triggered.connect(self.interface.calculatormanager.calc)
         self.toolbar.addAction(self.executeAction)
         self.executeAction.setShortcuts([QKeySequence(Qt.CTRL + Qt.Key_Enter), QKeySequence(Qt.CTRL + Qt.Key_Return)])
 
-        self.viewClearOutput = QAction(QIcon.fromTheme('edit-clear'), 'Clear Output', self.interface)
+        self.viewClearOutput = QAction(QIcon.fromTheme('edit-clear-symbolic', QIcon.fromTheme('edit-clear')), 'Clear Output', self.interface)
         self.viewClearOutput.setToolTip('Clear Output (Ctrl+L)')
         self.viewClearOutput.triggered.connect(self.interface.display.clear)
         self.viewClearOutput.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_L))
         self.toolbar.addAction(self.viewClearOutput)
 
-        self.exportResults = QAction(QIcon.fromTheme('x-office-spreadsheet'), 'Export Results', self.interface)
+        self.exportResults = QAction(QIcon.fromTheme('x-office-spreadsheet-symbolic', QIcon.fromTheme('x-office-spreadsheet')), 'Export Results', self.interface)
         self.exportResults.setToolTip('Export Results (Ctrl+E)')
         self.exportResults.triggered.connect(self.doExportResults)
         self.exportResults.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_E))
@@ -115,7 +115,7 @@ class CalculatorMenu():
         self.toolbar.addSeparator()
 
 
-        self.viewOptions = QAction(QIcon.fromTheme('preferences-other'), 'Options', self.interface)
+        self.viewOptions = QAction(QIcon.fromTheme('preferences-other-symbolic', QIcon.fromTheme('preferences-other')), 'Options', self.interface)
         self.viewOptions.setToolTip('Options')
         self.viewOptions.triggered.connect(self.openOptions)
         self.toolbar.addAction(self.viewOptions)
@@ -123,7 +123,7 @@ class CalculatorMenu():
 
         self.helpButton = QToolButton(self.interface)
         self.helpButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        self.helpButton.setIcon(QIcon.fromTheme('help-about'))
+        self.helpButton.setIcon(QIcon.fromTheme('help-about-symbolic', QIcon.fromTheme('help-about')))
         self.helpButton.setText('Help')
         self.helpButton.setToolTip('Help')
         self.helpButton.setPopupMode(QToolButton.InstantPopup)
