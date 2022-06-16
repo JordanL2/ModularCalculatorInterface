@@ -7,20 +7,6 @@ from PyQt5.QtWidgets import QWidget, QCheckBox, QComboBox, QSpinBox, QAbstractIt
 from PyQt5.QtGui import QFont, QFontDatabase
 
 
-def getFixedWidthFonts():
-    fonts = []
-    for f in QFontDatabase().families():
-        font = QFont(f)
-        font.setFixedPitch(True)
-        if font.exactMatch():
-            fonts.append(f)
-    return fonts
-
-def getFontSizes():
-    return [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-            22, 24, 26, 28, 32, 48, 64, 72, 80, 96, 128]
-
-
 class OptionsTab(QWidget):
 
     def __init__(self, parent):
