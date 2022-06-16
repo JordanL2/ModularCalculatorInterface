@@ -10,7 +10,7 @@ from modularcalculatorinterface.services.htmlservice import *
 from modularcalculatorinterface.services.tabmanager import *
 
 from PyQt5.QtCore import Qt, QThreadPool, QTimer
-from PyQt5.QtGui import QKeySequence, QIcon, QGuiApplication
+from PyQt5.QtGui import QKeySequence, QIcon, QGuiApplication, QFontDatabase, QFontInfo
 from PyQt5.QtWidgets import QWidget, QGridLayout, QSplitter, QFileDialog, QShortcut, QMessageBox, QScrollArea, QSizePolicy, QToolBar
 
 import os.path
@@ -204,3 +204,10 @@ class ModularCalculatorInterface(StatefulApplication):
         self.display.refresh()
         self.menu.refresh()
         self.config.saveMainConfig()
+
+
+    def getDefaultFixedFont(self):
+        font = QFontDatabase().systemFont(QFontDatabase.FixedFont)
+        font.setFixedPitch(True)
+        fontInfo = QFontInfo(font)
+        return fontInfo.family()

@@ -4,7 +4,6 @@ from modularcalculatorinterface.gui.guiwidgets import limitToScreen
 
 from PyQt5.QtCore import Qt, QStringListModel, QSize
 from PyQt5.QtWidgets import QWidget, QCheckBox, QComboBox, QSpinBox, QAbstractItemView, QListView, QGridLayout, QSpacerItem, QFormLayout, QLabel
-from PyQt5.QtGui import QFont, QFontDatabase
 
 
 class OptionsTab(QWidget):
@@ -83,6 +82,8 @@ class OptionComboBox(QComboBox):
                     selected = i
         if selected is not None:
             self.setCurrentIndex(selected)
+        else:
+            print("ERROR: Option {} - Could not find selected option '{}'".format(self.config_secondlevel, self.config_toplevel[self.config_secondlevel]))
 
         self.currentTextChanged.connect(self.onStateChanged)
 

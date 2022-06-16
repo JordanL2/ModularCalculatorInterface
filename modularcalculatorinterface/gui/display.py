@@ -20,6 +20,9 @@ class CalculatorDisplay(QWidget):
 
         self.interface = interface
         self.config = self.interface.config
+        if 'font' not in self.config.main['display'] or not QFont(self.config.main['display']['font']).exactMatch():
+            self.config.main['display']['font'] = self.interface.getDefaultFixedFont()
+
         self.htmlservice = interface.htmlservice
 
         self.initStyling()

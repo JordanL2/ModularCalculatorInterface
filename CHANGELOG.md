@@ -11,6 +11,7 @@
 - Fixed bug causing glitching when editing earlier statements when later statements had an execution error.
 - Fixed bug when disabling arrays feature and we're already displaying results with arrays.
 - Fixed output background colour not being properly set on some platforms.
+- Fixed font defaulting to Hack, now gets system default fixed-witch font.
 - Syntax highlighting is now faster.
 - 'Show execution errors' syntax highlighting now done in a separate process.
 - Added modularcalculator repository into this repository as a submodule, to make manual installation easier.

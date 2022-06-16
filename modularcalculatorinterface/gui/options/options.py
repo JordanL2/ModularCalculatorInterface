@@ -9,6 +9,7 @@ from modularcalculatorinterface.gui.options.features import *
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog, QGridLayout, QListWidgetItem, QListWidget, QWidget
+from PyQt5.QtGui import QFont, QFontDatabase
 
 
 def getFixedWidthFonts():

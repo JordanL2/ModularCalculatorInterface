@@ -4,7 +4,7 @@ from modularcalculator.modularcalculator import *
 from modularcalculatorinterface.gui.options.common import *
 
 from PyQt5.QtCore import Qt, QTimer
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QFont, QFontDatabase
 from PyQt5.QtWidgets import QLabel, QGridLayout, QListWidget, QComboBox, QPushButton, QFileDialog, \
                             QMessageBox, QScrollArea, QCheckBox, QSizePolicy, QDialog, QLineEdit
 

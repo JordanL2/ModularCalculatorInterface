@@ -18,6 +18,9 @@ class CalculatorEntry(QTextEdit):
 
         self.interface = interface
         self.config = self.interface.config
+        if 'font' not in self.config.main['entry'] or not QFont(self.config.main['entry']['font']).exactMatch():
+            self.config.main['entry']['font'] = self.interface.getDefaultFixedFont()
+
         self.calculator = None
 
         self.htmlservice = interface.htmlservice
