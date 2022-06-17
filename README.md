@@ -19,6 +19,8 @@ For syntax and other topics, see the [modularcalculator wiki](https://github.com
 * or:
 	* Python 3.9+
 	* Qt 5.11+
+	* PyQt5
+	* libyaml
 
 
 # Installation
@@ -29,9 +31,13 @@ There is a flatpak available on [Flathub](https://flathub.org/apps/details/io.gi
 
 ## Manually
 
+Clone this repository, then run:
+
 ```
 sudo ./install
 ```
+
+If you download the source tarball, you'll also need to download the [modularcalculator](https://github.com/JordanL2/ModularCalculator) tarball and install it prior to running the above command.
 
 
 # Uninstallation
