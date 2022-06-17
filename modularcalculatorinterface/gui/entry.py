@@ -87,17 +87,24 @@ class CalculatorEntry(QTextEdit):
         menu.insertAction(oldRedoAction, self.redoAction)
         menu.removeAction(oldRedoAction)
 
+        for a in range (3, 7):
+            menu.actions()[a].triggered.connect(self.checkSyntax)
+
         menu.exec(e.globalPos())
+
+    def dropEvent(self, e):
+        super().dropEvent(e)
+        self.checkSyntax()
 
     def checkSyntax(self, force=False, undo=False):
         if self.calculator is not None and (force or undo or self.oldText is None or self.oldText != self.getContents()):
             expr = self.getContents()
 
-            if not undo and (self.oldText is None or self.oldText != self.getContents()):
-                self.undoStack.push(expr)
-
             if len(expr) > 0 and expr[-1] != "\n":
                 expr += "\n"
+
+            if not undo and (self.oldText is None or self.oldText != self.getContents()):
+                self.undoStack.push(expr)
 
             before = []
             after = []
@@ -132,6 +139,7 @@ class CalculatorEntry(QTextEdit):
 
             if self.config.main['entry']['show_execution_errors']:
                 self.syntaxservice.sendToProc(expr[i:], before, self.lastUuid)
+
 
     def doSyntaxHighlighting(self, statements, before, after, uuid):
         if self.lastUuid is None or uuid != self.lastUuid:
@@ -214,6 +222,8 @@ class CalculatorEntry(QTextEdit):
         return self.toPlainText()
 
     def setContents(self, text, undo=False):
+        if len(text) > 0 and text[-1] != "\n":
+            text += "\n"
         self.setPlainText(text)
         self.checkSyntax(False, undo)
 

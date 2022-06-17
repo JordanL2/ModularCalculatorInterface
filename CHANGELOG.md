@@ -3,6 +3,7 @@
 ## 1.4.1
 - Fixed not being able to select different option tabs with the keyboard.
 - Fixed installer and README instructions when downloading a source tarball.
+- Fixed cut/copy/paste/delete in context menu and drag+drop events not updating syntax highlighting or making an undo stage.
 
 ## 1.4.0
 - Replaced application menu with a toolbar. Can configure whether it shows icons, text, or both (default).
