@@ -8,7 +8,7 @@ if [ $# -lt 1 ]; then
 fi
 
 # Install ModularCalculator if found, otherwise assume it was installed separately
-if [[ -d "./ModularCalculator" ]]
+if [[ -f "./ModularCalculator/setup.py" ]]
 then
 	pip3 install --prefix=${PREFIX} ModularCalculator/
 fi
