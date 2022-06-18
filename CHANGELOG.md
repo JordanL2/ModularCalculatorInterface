@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.4.2
+- Darker theme: Tweaked to reduce and balance brightness, and separate hues from each other more.
+
 ## 1.4.1
 - Fixed not being able to select different option tabs with the keyboard.
 - Fixed installer and README instructions when downloading a source tarball.
