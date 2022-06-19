@@ -1,0 +1,26 @@
+name: Darkish
+style:
+  background: '#242424'
+  background_alt: '#2c2c2c'
+  error: "color: '#e03838'"
+  default: "color: '#e03030'"
+  literal: "color: '#f0f0f0'"
+  unit: "color: '#00b8b8'"
+  unitsystem: "color: '#00b8b8'"
+  op: "color: '#c04090'"
+  terminator: "color: '#c04090'"
+  inner_expr_start: "color: '#c04090'"
+  inner_expr_end: "color: '#c04090'"
+  function_name: "color: '#e07830'"
+  function_start: "color: '#c04090'"
+  function_param: "color: '#c04090'"
+  function_end: "color: '#c04090'"
+  array_start: "color: '#c04090'"
+  array_range: "color: '#c04090'"
+  array_step: "color: '#c04090'"
+  array_param: "color: '#c04090'"
+  array_end: "color: '#c04090'"
+  ext_function_name: "color: '#d87830'"
+  variable: "color: '#4890ff'"
+  constant: "color: '#a870e8'"
+  comment: "color: '#909090'"

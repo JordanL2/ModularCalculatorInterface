@@ -2,6 +2,7 @@
 
 ## 1.4.2
 - Darker theme: Tweaked to reduce and balance brightness, and separate hues from each other more.
+- Added "Darkish" theme, same as "Darker" but with a lighter background.
 - Added themes "Material Light" and "Material Dark", based on Google's Material Design.
 - Added "Dracula" dark theme.
 - Added "Github" light theme.
