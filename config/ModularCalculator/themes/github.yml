@@ -1,0 +1,26 @@
+name: Github
+style:
+  background: '#FFFFFF'
+  background_alt: '#ECECEC'
+  error: "color: '#F93232'"
+  default: "color: '#F93232'"
+  literal: "color: '#333333'"
+  unit: "color: '#009926'"
+  unitsystem: "color: '#009926'"
+  op: "color: '#A71D5D'"
+  terminator: "color: '#A71D5D'"
+  inner_expr_start: "color: '#A71D5D'"
+  inner_expr_end: "color: '#A71D5D'"
+  function_name: "color: '#DF5000'"
+  function_start: "color: '#A71D5D'"
+  function_param: "color: '#A71D5D'"
+  function_end: "color: '#A71D5D'"
+  array_start: "color: '#A71D5D'"
+  array_range: "color: '#A71D5D'"
+  array_step: "color: '#A71D5D'"
+  array_param: "color: '#A71D5D'"
+  array_end: "color: '#A71D5D'"
+  ext_function_name: "color: '#DF5000'"
+  variable: "color: '#183691'"
+  constant: "color: '#795DA3'"
+  comment: "color: '#969896'"
