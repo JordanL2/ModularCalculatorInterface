@@ -1,7 +1,6 @@
 version:
 - 1
 - 4
-- 1
-- 999
-lifecycle: snapshot
+- 2
+lifecycle: stable
 buildtype: native
