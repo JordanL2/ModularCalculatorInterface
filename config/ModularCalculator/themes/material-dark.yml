@@ -1,0 +1,26 @@
+name: Material Dark
+style:
+  background: '#202226'
+  background_alt: '#282a2e'
+  error: "color: '#e03838'"
+  default: "color: '#e03030'"
+  literal: "color: '#DDDDDD'"
+  unit: "color: '#009688'"
+  unitsystem: "color: '#009688'"
+  op: "color: '#7986CB'"
+  terminator: "color: '#7986CB'"
+  inner_expr_start: "color: '#7986CB'"
+  inner_expr_end: "color: '#7986CB'"
+  function_name: "color: '#F78C6A'"
+  function_start: "color: '#7986CB'"
+  function_param: "color: '#7986CB'"
+  function_end: "color: '#7986CB'"
+  array_start: "color: '#7986CB'"
+  array_range: "color: '#7986CB'"
+  array_step: "color: '#7986CB'"
+  array_param: "color: '#7986CB'"
+  array_end: "color: '#7986CB'"
+  ext_function_name: "color: '#F78C6A'"
+  variable: "color: '#4890ff'"
+  constant: "color: '#C792EA'"
+  comment: "color: '#B2CCD6'"

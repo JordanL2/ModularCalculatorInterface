@@ -1,0 +1,26 @@
+name: Material Light
+style:
+  background: '#FAFAFA'
+  background_alt: '#EAEAEA'
+  error: "color: '#E53935'"
+  default: "color: '#E53935'"
+  literal: "color: '#607D8B'"
+  unit: "color: '#91B859'"
+  unitsystem: "color: '#91B859'"
+  op: "color: '#009688'"
+  terminator: "color: '#009688'"
+  inner_expr_start: "color: '#009688'"
+  inner_expr_end: "color: '#009688'"
+  function_name: "color: '#C17E70'"
+  function_start: "color: '#009688'"
+  function_param: "color: '#009688'"
+  function_end: "color: '#009688'"
+  array_start: "color: '#009688'"
+  array_range: "color: '#009688'"
+  array_step: "color: '#009688'"
+  array_param: "color: '#009688'"
+  array_end: "color: '#009688'"
+  ext_function_name: "color: '#C17E70'"
+  variable: "color: '#39ADB5'"
+  constant: "color: '#7C4DFF'"
+  comment: "color: '#8796B0'"
