@@ -1,7 +1,7 @@
 name: Material Light
 style:
-  background: '#FAFAFA'
-  background_alt: '#EAEAEA'
+  background: '#FFFFFF'
+  background_alt: '#F0F0F0'
   error: "color: '#E53935'"
   default: "color: '#E53935'"
   literal: "color: '#607D8B'"
@@ -21,6 +21,6 @@ style:
   array_param: "color: '#009688'"
   array_end: "color: '#009688'"
   ext_function_name: "color: '#C17E70'"
-  variable: "color: '#39ADB5'"
+  variable: "color: '#6182B8'"
   constant: "color: '#7C4DFF'"
   comment: "color: '#8796B0'"

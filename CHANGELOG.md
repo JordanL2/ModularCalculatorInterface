@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.4.3
+- Tweaks to Material Dark and Light themes.
+
 ## 1.4.2
 - Darker theme: Tweaked to reduce and balance brightness, and separate hues from each other more.
 - Added "Darkish" theme, same as "Darker" but with a lighter background.
