@@ -2,6 +2,7 @@
 
 ## 1.4.3
 - Tweaks to Material Dark and Light themes.
+- Fixed show execution errors syntax highlighting not being triggered when switching tabs with keyboard.
 
 ## 1.4.2
 - Darker theme: Tweaked to reduce and balance brightness, and separate hues from each other more.
