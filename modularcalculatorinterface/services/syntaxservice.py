@@ -40,12 +40,8 @@ class SyntaxService():
             self.proc = None
 
     def sendToProc(self, expr, before, uuid):
-        state = None
-        if len(before) > 0:
-            state = before[-1].state
         self.queueIn.put({
             'expr': expr,
-            'state': state,
             'before': before,
             'uuid': uuid,
         })
@@ -76,10 +72,9 @@ class SyntaxService():
 
                 message = messages[-1]
                 expr = message['expr']
-                state = message['state']
                 before = message['before']
                 uuid = message['uuid']
-                statements = SyntaxService.doSyntaxParsing(calculator, highlighter, expr, False, state)
+                statements = SyntaxService.doSyntaxParsing(calculator, highlighter, expr, False)
                 queueOut.put({
                     'statements': statements,
                     'before': before,
@@ -88,16 +83,13 @@ class SyntaxService():
             else:
                 sleep(SyntaxService.POLL_MS / 1000)
 
-    def doSyntaxParsing(calculator, highlighter, expr, parseOnly, state=None):
+    def doSyntaxParsing(calculator, highlighter, expr, parseOnly):
         try:
-            if state is None:
-                calculator.vars = {}
-            else:
-                calculator.vars = state.copy()
-            response = calculator.calculate(expr, {'parse_only': parseOnly, 'include_state': True})
-            statements = [Statement(r.items, r.state) for r in response.results]
+            calculator.vars = {}
+            response = calculator.calculate(expr, {'parse_only': parseOnly})
+            statements = [Statement(r.items) for r in response.results]
         except CalculatingException as err:
-            statements = [Statement(r.items, r.state) for r in err.response.results]
+            statements = [Statement(r.items) for r in err.response.results]
             statements += [Statement(s) for s in err.statements[len(err.response.results):]]
             i = err.find_pos(expr)
             statements.append(Statement([ErrorItem(expr[i:])]))
@@ -165,9 +157,8 @@ class ErrorItem(Item):
 
 class Statement():
 
-    def __init__(self, items, state=None):
+    def __init__(self, items):
         self.items = items
-        self.state = state
         self.flatItems = None
         self.text = None
         self.length = None
