@@ -3,6 +3,7 @@
 ## 1.4.4
 - Fixed bug in show execution errors syntax highlighting when cutting and pasting mid-statement.
 - Fixed line highlighting with a statement has a comment on the end of its line.
+- Fixed lack of syntax highlighting when pasting the same text into the calculator as plaintext.
 
 ## 1.4.3
 - Tweaks to Material Dark and Light themes.

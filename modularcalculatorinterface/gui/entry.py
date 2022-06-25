@@ -26,7 +26,7 @@ class CalculatorEntry(QTextEdit):
         self.htmlservice = interface.htmlservice
         self.initStyling()
 
-        self.oldText = None
+        self.oldHtml = None
 
         self.cachedStatements = None
 
@@ -97,13 +97,13 @@ class CalculatorEntry(QTextEdit):
         self.checkSyntax()
 
     def checkSyntax(self, force=False, undo=False):
-        if self.calculator is not None and (force or undo or self.oldText is None or self.oldText != self.getContents()):
+        if self.calculator is not None and (force or undo or self.oldHtml is None or self.oldHtml != self.getContents()):
             expr = self.getContents()
 
             if len(expr) > 0 and expr[-1] != "\n":
                 expr += "\n"
 
-            if not undo and (self.oldText is None or self.oldText != self.getContents()):
+            if not undo and (self.oldHtml is None or self.oldHtml != self.getContents()):
                 self.undoStack.push(expr)
 
             before = []
@@ -138,10 +138,7 @@ class CalculatorEntry(QTextEdit):
             self.doSyntaxHighlighting(statements, before, after, self.lastUuid)
 
             if self.config.main['entry']['show_execution_errors']:
-                if len(before) > 0:
-                    i -= before[-1].length
-                    del before[-1]
-                self.syntaxservice.sendToProc(expr[i:], before, self.lastUuid)
+                self.syntaxservice.sendToProc(expr, [], self.lastUuid)
 
 
     def doSyntaxHighlighting(self, statements, before, after, uuid):
@@ -173,7 +170,7 @@ class CalculatorEntry(QTextEdit):
     def applySyntaxHighlighting(self, allStatements, html, highlightPositions):
         self.cachedStatements = allStatements
         self.updateHtml(html)
-        self.oldText = self.getContents()
+        self.oldHtml = self.toHtml()
         if self.config.main['entry']['view_line_highlighting']:
             self.highlightPositions = highlightPositions
             self.addLineHighlights()
@@ -241,11 +238,11 @@ class CalculatorEntry(QTextEdit):
 
     def setOriginal(self, original=None):
         if original is None:
-            original = self.getContents()
+            original = self.toHtml()
         self.original = original
 
     def isModified(self):
-        return self.getContents() != self.original
+        return self.toHtml() != self.original
 
     def saveState(self):
         return {
@@ -301,12 +298,12 @@ class CalculatorEntry(QTextEdit):
         self.undoStack.stateChanged(force=True)
 
         self.cached_response = None
-        self.oldText = None
+        self.oldHtml = None
 
         if refresh:
             self.refresh()
         else:
-            self.oldText = self.getContents()
+            self.oldHtml = self.toHtml()
 
 
 class CalculatorUndoStack(QObject):
@@ -358,9 +355,9 @@ class CalculatorUndoStack(QObject):
             self.historyPos -= 1
             (expr, cursorpos) = self.history[self.historyPos - 1]
             if self.historyPos > 1:
-                self.parent.oldText = self.history[self.historyPos - 2]
+                self.parent.oldHtml = self.history[self.historyPos - 2]
             else:
-                self.parent.oldText = None
+                self.parent.oldHtml = None
             self.parent.setContents(expr, True)
 
             if cursorpos is not None:
@@ -379,7 +376,7 @@ class CalculatorUndoStack(QObject):
 
             self.historyPos += 1
             (expr, cursorpos) = self.history[self.historyPos - 1]
-            self.parent.oldText = self.history[self.historyPos - 2]
+            self.parent.oldHtml = self.history[self.historyPos - 2]
             self.parent.setContents(expr, True)
 
             if cursorpos is not None:
