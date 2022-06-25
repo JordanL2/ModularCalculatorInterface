@@ -139,11 +139,14 @@ class SyntaxService():
         for si, statement in enumerate(compactedStatements):
             if si < len(compactedStatements) - 1:
                 lastFunctionalItem = max(statement.functionalItems())
-                nonEmptyItems = [i for i, item in enumerate(statement.items) if i > lastFunctionalItem and not item.functional() and item.text.strip() != '']
-                if len(nonEmptyItems) > 0:
-                    firstNonEmptyItem = min(nonEmptyItems)
-                    compactedStatements[si + 1].items = statement.items[firstNonEmptyItem:] + compactedStatements[si + 1].items
-                    statement.items = statement.items[0:firstNonEmptyItem]
+                firstNewLine = [i for i, item in enumerate(statement.items) if i > lastFunctionalItem and item.text == "\n"]
+                if len(firstNewLine) > 0:
+                    firstNewLine = min(firstNewLine)
+                    nonEmptyItems = [i for i, item in enumerate(statement.items) if i > firstNewLine and not item.functional() and item.text.strip() != '']
+                    if len(nonEmptyItems) > 0:
+                        firstNonEmptyItem = min(nonEmptyItems)
+                        compactedStatements[si + 1].items = statement.items[firstNonEmptyItem:] + compactedStatements[si + 1].items
+                        statement.items = statement.items[0:firstNonEmptyItem]
 
         return compactedStatements
 
