@@ -138,6 +138,9 @@ class CalculatorEntry(QTextEdit):
             self.doSyntaxHighlighting(statements, before, after, self.lastUuid)
 
             if self.config.main['entry']['show_execution_errors']:
+                if len(before) > 0:
+                    i -= before[-1].length
+                    del before[-1]
                 self.syntaxservice.sendToProc(expr[i:], before, self.lastUuid)
 
 
