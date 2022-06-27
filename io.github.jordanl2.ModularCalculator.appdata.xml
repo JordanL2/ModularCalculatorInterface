@@ -59,6 +59,6 @@
   </provides>
 
   <releases>
-    <release version="1.4.4" date="2022-06-26"/>
+    <release version="1.4.4.999" date="2022-06-27"/>
   </releases>
 </component>
