@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.4.5
+- Line highlighting now follows the same patten in Input as Output (even numbers are highlighted).
+
 ## 1.4.4
 - Fixed bug in show execution errors syntax highlighting when cutting and pasting mid-statement.
 - Fixed line highlighting with a statement has a comment on the end of its line.

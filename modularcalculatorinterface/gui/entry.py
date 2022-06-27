@@ -161,7 +161,7 @@ class CalculatorEntry(QTextEdit):
         if self.config.main['entry']['view_line_highlighting']:
             p = 0
             for i, statement in enumerate(allStatements):
-                if i % 2 == 0:
+                if i % 2 == 1:
                     highlightPositions.append((p, p + statement.length))
                 p += statement.length
 
