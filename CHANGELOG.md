@@ -3,6 +3,12 @@
 ## 1.4.5
 - Line highlighting now follows the same patten in Input as Output (even numbers are highlighted).
 - Fixed application crashing on start if there was an error restoring state.
+### Using modularcalculator calculator engine version 1.3.1:
+- Fixed displaying units - divisor in brackets now used closed bracket properly.
+- Fixed potential infinite loop when simplifying units. This has slightly reduced the kind of simplification that can be done.
+- Unit powers can now be non-integers.
+- Assignment operators (e.g. +=) now return the new value of the variable.
+- Number power operator is now more accurate when given negative powers.
 
 ## 1.4.4
 - Fixed bug in show execution errors syntax highlighting when cutting and pasting mid-statement.
