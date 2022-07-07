@@ -258,52 +258,55 @@ class CalculatorEntry(QTextEdit):
         }
 
     def restoreState(self, state, refresh=True):
-        self.lastUuid = None
-        if 'html' in state:
-            self.setHtml(state['html'])
-            if 'highlightPositions' in state:
-                self.highlightPositions = state['highlightPositions']
-                self.addLineHighlights()
-        else:
-            refresh = True
-            if 'text' in state:
-                self.setPlainText(state['text'])
+        try:
+            self.lastUuid = None
+            if 'html' in state:
+                self.setHtml(state['html'])
+                if 'highlightPositions' in state:
+                    self.highlightPositions = state['highlightPositions']
+                    self.addLineHighlights()
             else:
-                self.setPlainText('')
-        if 'original' in state:
-            self.setOriginal(state['original'])
-        else:
-            self.setOriginal()
-
-        if 'cursorSelectionStart' in state:
-            cursor = self.textCursor()
-            cursor.setPosition(state['cursorSelectionStart'], QTextCursor.MoveAnchor)
-            if 'cursorSelectionEnd' in state:
-                cursor.setPosition(state['cursorSelectionEnd'], QTextCursor.KeepAnchor)
-            self.setTextCursor(cursor)
-
-        if 'sliderPosition' in state:
-            self.verticalScrollBar().setSliderPosition(state['sliderPosition'])
-
-        if 'history' in state:
-            self.undoStack.history = state['history']
-            if 'historyPos' in state:
-                self.undoStack.historyPos = state['historyPos']
+                refresh = True
+                if 'text' in state:
+                    self.setPlainText(state['text'])
+                else:
+                    self.setPlainText('')
+            if 'original' in state:
+                self.setOriginal(state['original'])
             else:
-                raise Exception('history is in state but historyPos isn\'t')
-        else:
-            self.undoStack.history = []
-            self.undoStack.historyPos = 0
+                self.setOriginal()
 
-        self.undoStack.stateChanged(force=True)
+            if 'cursorSelectionStart' in state:
+                cursor = self.textCursor()
+                cursor.setPosition(state['cursorSelectionStart'], QTextCursor.MoveAnchor)
+                if 'cursorSelectionEnd' in state:
+                    cursor.setPosition(state['cursorSelectionEnd'], QTextCursor.KeepAnchor)
+                self.setTextCursor(cursor)
 
-        self.cached_response = None
-        self.oldHtml = None
+            if 'sliderPosition' in state:
+                self.verticalScrollBar().setSliderPosition(state['sliderPosition'])
 
-        if refresh:
-            self.refresh()
-        else:
-            self.oldHtml = self.toHtml()
+            if 'history' in state:
+                self.undoStack.history = state['history']
+                if 'historyPos' in state:
+                    self.undoStack.historyPos = state['historyPos']
+                else:
+                    raise Exception('history is in state but historyPos isn\'t')
+            else:
+                self.undoStack.history = []
+                self.undoStack.historyPos = 0
+
+            self.undoStack.stateChanged(force=True)
+
+            self.cached_response = None
+            self.oldHtml = None
+
+            if refresh:
+                self.refresh()
+            else:
+                self.oldHtml = self.toHtml()
+        except Exception as e:
+            self.interface.printError()
 
 
 class CalculatorUndoStack(QObject):

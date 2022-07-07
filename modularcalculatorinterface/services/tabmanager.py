@@ -23,28 +23,32 @@ class TabManager():
         self.interface.tabbar.tabMoved.connect(self.moveTab)
 
     def restoreState(self, state):
-        self.clearState()
-        self.interface.defaultState(state, {
-                "tabs": [],
-                "selectedTab": None,
-            })
+        try:
+            self.clearState()
+            self.interface.defaultState(state, {
+                    "tabs": [],
+                    "selectedTab": None,
+                })
 
-        self.tabs = state["tabs"]
-        if len(self.tabs) > 0:
-            for tab in self.tabs:
-                tabfile = self.getTabName(tab['currentFile'], tab['currentFileModified'])
-                self.tabbar.addTab(tabfile)
-            self.selectedTab = state["selectedTab"]
-            if self.selectedTab is None:
-                self.loadTab(0)
+            self.tabs = state["tabs"]
+            if len(self.tabs) > 0:
+                for tab in self.tabs:
+                    tabfile = self.getTabName(tab['currentFile'], tab['currentFileModified'])
+                    self.tabbar.addTab(tabfile)
+                self.selectedTab = state["selectedTab"]
+                if self.selectedTab is None:
+                    self.loadTab(0)
+                else:
+                    self.loadTab(self.selectedTab)
             else:
-                self.loadTab(self.selectedTab)
-        else:
-            self.addTab()
-            self.loadTab(0)
-        self.interface.tabbar.currentChanged.connect(self.selectTab)
-        self.interface.tabbar.tabCloseRequested.connect(self.closeTab)
-        self.interface.tabbar.tabMoved.connect(self.moveTab)
+                self.addTab()
+                self.loadTab(0)
+            self.interface.tabbar.currentChanged.connect(self.selectTab)
+            self.interface.tabbar.tabCloseRequested.connect(self.closeTab)
+            self.interface.tabbar.tabMoved.connect(self.moveTab)
+        except Exception as e:
+            self.interface.printError()
+            self.initEmptyState()
 
     def clearState(self):
         for t in range(0, self.tabbar.count()):

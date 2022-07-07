@@ -115,10 +115,15 @@ class CalculatorDisplay(QWidget):
         self.interface.entry.setFocus()
 
     def restoreState(self, state):
-        if isinstance(state, dict):
-            if 'rawOutput' in state.keys():
-                self.rawOutput = state['rawOutput']
-        self.refresh()
+        try:
+            if isinstance(state, dict):
+                if 'rawOutput' in state.keys():
+                    self.rawOutput = state['rawOutput']
+            self.refresh()
+        except Exception as e:
+            self.interface.printError()
+            self.initOutput()
+            self.refresh()
 
     def saveState(self):
         return {'rawOutput': self.rawOutput}

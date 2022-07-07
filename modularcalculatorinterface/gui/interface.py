@@ -14,6 +14,7 @@ from PyQt5.QtGui import QKeySequence, QIcon, QGuiApplication, QFontDatabase, QFo
 from PyQt5.QtWidgets import QWidget, QGridLayout, QSplitter, QFileDialog, QShortcut, QMessageBox, QScrollArea, QSizePolicy, QToolBar
 
 import os.path
+import sys
 import traceback
 
 
@@ -56,11 +57,11 @@ class ModularCalculatorInterface(StatefulApplication):
                 self.entry.refresh()
                 break
             except Exception as e:
-                print(traceback.format_exc())
                 if not restoreState:
                     raise e
                 else:
-                    print("Error occurred when restoring state. Will try starting with a clean state...")
+                    self.printError()
+                    self.printError("Error occurred when restoring state. Will try starting with a clean state...")
 
         self.initShortcuts()
         self.entry.setFocus()
@@ -149,8 +150,8 @@ class ModularCalculatorInterface(StatefulApplication):
 
             self.tabmanager.restoreState(self.fetchStateMap("tabManager"))
         except Exception as e:
-            print("Exception when trying to restore state")
-            print(traceback.format_exc())
+            self.printError("Exception when trying to restore state")
+            self.printError()
 
     def storeAllState(self):
         mainWindowGeometry = self.saveGeometry()
@@ -211,3 +212,9 @@ class ModularCalculatorInterface(StatefulApplication):
         font.setFixedPitch(True)
         fontInfo = QFontInfo(font)
         return fontInfo.family()
+
+    def printError(self, e=None):
+        if e is None:
+            print(traceback.format_exc(), file=sys.stderr)
+        else:
+            print(str(e), file=sys.stderr)
