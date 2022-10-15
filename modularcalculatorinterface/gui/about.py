@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QDialog, QLabel, QPushButton, QVBoxLayout
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QDialog, QLabel, QPushButton, QVBoxLayout
 
 
 class AboutDialog(QDialog):
@@ -12,7 +12,7 @@ class AboutDialog(QDialog):
         self.interface = interface
 
         self.layout = QVBoxLayout()
-        self.layout.setAlignment(Qt.AlignHCenter)
+        self.layout.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         self.initContent()
 
         button = QPushButton("OK", self)
@@ -30,7 +30,7 @@ class AboutDialog(QDialog):
             "Modular Calculator",
             20,
             True,
-            Qt.AlignHCenter,
+            Qt.AlignmentFlag.AlignHCenter,
             100, 50, 100, 50
         ))
 
@@ -40,7 +40,7 @@ class AboutDialog(QDialog):
             "Version {} {} ({})".format('.'.join([str(v) for v in version['version']]), version['lifecycle'], version['buildtype']),
             10,
             False,
-            Qt.AlignHCenter,
+            Qt.AlignmentFlag.AlignHCenter,
             100, 0, 100, 20
         ))
 
@@ -49,7 +49,7 @@ class AboutDialog(QDialog):
             "A powerful, scriptable, modular calculator aimed at scientific, engineering or computing work.",
             10,
             False,
-            Qt.AlignHCenter,
+            Qt.AlignmentFlag.AlignHCenter,
             0, 0, 0, 0
         ))
 
@@ -59,7 +59,7 @@ class AboutDialog(QDialog):
             "https://github.com/JordanL2/ModularCalculatorInterface",
             10,
             False,
-            Qt.AlignHCenter,
+            Qt.AlignmentFlag.AlignHCenter,
             0, 0, 0, 0
         ))
 
@@ -68,7 +68,7 @@ class AboutDialog(QDialog):
             "\u00a9 2018-2022 Jordan Leppert",
             10,
             False,
-            Qt.AlignHCenter,
+            Qt.AlignmentFlag.AlignHCenter,
             0, 0, 0, 0
         ))
 
@@ -78,7 +78,7 @@ class AboutDialog(QDialog):
             "https://www.gnu.org/licenses/gpl-3.0.html",
             10,
             False,
-            Qt.AlignHCenter,
+            Qt.AlignmentFlag.AlignHCenter,
             0, 0, 0, 50
         ))
 
@@ -109,4 +109,4 @@ class UrlFormattedLabel(FormattedLabel):
         super().__init__(content, fontSize, fontBold, alignment, marginsLeft, marginsTop, marginsRight, marginsBottom)
 
         self.setOpenExternalLinks(True)
-        self.setTextInteractionFlags(Qt.LinksAccessibleByMouse)
+        self.setTextInteractionFlags(Qt.TextInteractionFlag.LinksAccessibleByMouse)

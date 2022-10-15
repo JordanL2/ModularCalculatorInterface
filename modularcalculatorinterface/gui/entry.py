@@ -3,9 +3,9 @@
 from modularcalculatorinterface.services.htmlservice import *
 from modularcalculatorinterface.services.syntaxservice import *
 
-from PyQt5.QtCore import Qt, QObject, pyqtSignal
-from PyQt5.QtWidgets import QTextEdit, QAction
-from PyQt5.QtGui import QFont, QTextCursor, QTextFormat, QKeySequence, QPalette
+from PyQt6.QtCore import Qt, QObject, pyqtSignal
+from PyQt6.QtWidgets import QTextEdit
+from PyQt6.QtGui import QFont, QTextCursor, QTextFormat, QKeySequence, QPalette, QAction
 
 import time
 import uuid
@@ -45,7 +45,7 @@ class CalculatorEntry(QTextEdit):
 
         self.colours = self.htmlservice.background
         palette = self.palette()
-        palette.setColor(QPalette.Base, self.colours[0])
+        palette.setColor(QPalette.ColorRole.Base, self.colours[0])
         self.setPalette(palette)
 
     def setCalculator(self, calculator):
@@ -53,12 +53,12 @@ class CalculatorEntry(QTextEdit):
 
     def keyPressEvent(self, e):
         self.undoStack.keyPressed()
-        if e.key() == Qt.Key_Tab:
+        if e.key() == Qt.Key.Key_Tab:
             spaces = self.tabSpaces - (self.textCursor().columnNumber() % self.tabSpaces)
             self.insert(' ' * spaces)
-        elif e.key() == Qt.Key_Z and e.modifiers() & Qt.CTRL and not e.modifiers() & Qt.SHIFT:
+        elif e.key() == Qt.Key.Key_Z and e.modifiers() & Qt.KeyboardModifier.ControlModifier and not e.modifiers() & Qt.KeyboardModifier.ShiftModifier:
             self.undo()
-        elif e.key() == Qt.Key_Z and e.modifiers() & Qt.CTRL and e.modifiers() & Qt.SHIFT:
+        elif e.key() == Qt.Key.Key_Z and e.modifiers() & Qt.KeyboardModifier.ControlModifier and e.modifiers() & Qt.KeyboardModifier.ShiftModifier:
             self.redo()
         else:
             super().keyPressEvent(e)
@@ -73,7 +73,7 @@ class CalculatorEntry(QTextEdit):
 
         self.undoAction = QAction('Undo', self)
         self.undoAction.triggered.connect(self.undo)
-        self.undoAction.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_Z))
+        self.undoAction.setShortcut(QKeySequence("Ctrl+z"))
         self.undoAction.setEnabled(self.undoStack.canUndo())
         oldUndoAction = menu.actions()[0]
         menu.insertAction(oldUndoAction, self.undoAction)
@@ -81,7 +81,7 @@ class CalculatorEntry(QTextEdit):
 
         self.redoAction = QAction('Redo', self)
         self.redoAction.triggered.connect(self.redo)
-        self.redoAction.setShortcut(QKeySequence(Qt.CTRL + Qt.SHIFT + Qt.Key_Z))
+        self.redoAction.setShortcut(QKeySequence("Ctrl+Shift+z"))
         self.redoAction.setEnabled(self.undoStack.canRedo())
         oldRedoAction = menu.actions()[1]
         menu.insertAction(oldRedoAction, self.redoAction)
@@ -187,11 +187,11 @@ class CalculatorEntry(QTextEdit):
 
             selection.cursor = QTextCursor(self.document())
             selection.cursor.setPosition(pos[0])
-            selection.cursor.setPosition(pos[1], QTextCursor.KeepAnchor)
+            selection.cursor.setPosition(pos[1], QTextCursor.MoveMode.KeepAnchor)
 
             background = self.colours[1]
             selection.format.setBackground(background)
-            selection.format.setProperty(QTextFormat.FullWidthSelection, True)
+            selection.format.setProperty(QTextFormat.Property.FullWidthSelection, True)
 
             extraSelections.append(selection)
         self.setExtraSelections(extraSelections)
@@ -208,7 +208,7 @@ class CalculatorEntry(QTextEdit):
         cursor = self.textCursor()
         if cursoranc != cursorpos:
             cursor.setPosition(cursoranc)
-            cursor.setPosition(cursorpos, QTextCursor.KeepAnchor)
+            cursor.setPosition(cursorpos, QTextCursor.MoveMode.KeepAnchor)
         else:
             cursor.setPosition(cursorpos)
         self.setTextCursor(cursor)
@@ -278,9 +278,9 @@ class CalculatorEntry(QTextEdit):
 
             if 'cursorSelectionStart' in state:
                 cursor = self.textCursor()
-                cursor.setPosition(state['cursorSelectionStart'], QTextCursor.MoveAnchor)
+                cursor.setPosition(state['cursorSelectionStart'], QTextCursor.MoveMode.MoveAnchor)
                 if 'cursorSelectionEnd' in state:
-                    cursor.setPosition(state['cursorSelectionEnd'], QTextCursor.KeepAnchor)
+                    cursor.setPosition(state['cursorSelectionEnd'], QTextCursor.MoveMode.KeepAnchor)
                 self.setTextCursor(cursor)
 
             if 'sliderPosition' in state:

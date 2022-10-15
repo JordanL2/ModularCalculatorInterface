@@ -7,14 +7,14 @@ from modularcalculatorinterface.gui.options.display import *
 from modularcalculatorinterface.gui.options.entry import *
 from modularcalculatorinterface.gui.options.features import *
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QDialog, QGridLayout, QListWidgetItem, QListWidget, QWidget
-from PyQt5.QtGui import QFont, QFontDatabase
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QDialog, QGridLayout, QListWidgetItem, QListWidget, QWidget
+from PyQt6.QtGui import QFont, QFontDatabase
 
 
 def getFixedWidthFonts():
     fonts = []
-    for f in QFontDatabase().families():
+    for f in QFontDatabase.families():
         font = QFont(f)
         font.setFixedPitch(True)
         if font.exactMatch():
@@ -49,25 +49,25 @@ class OptionsDialog(QDialog):
         self.setVisible(True)
 
     def sizeHint(self):
-        return limitToScreen(900, 700)
+        return limitToScreen(self, 900, 700)
 
     def initMenu(self):
         self.optionMenu = QListWidget(self)
 
         item = QListWidgetItem("Appearance", self.optionMenu)
-        item.setData(Qt.UserRole, "appearance")
+        item.setData(Qt.ItemDataRole.UserRole, "appearance")
 
         item = QListWidgetItem("Input", self.optionMenu)
-        item.setData(Qt.UserRole, "entry")
+        item.setData(Qt.ItemDataRole.UserRole, "entry")
 
         item = QListWidgetItem("Output", self.optionMenu)
-        item.setData(Qt.UserRole, "display")
+        item.setData(Qt.ItemDataRole.UserRole, "display")
 
         item = QListWidgetItem("Calculator", self.optionMenu)
-        item.setData(Qt.UserRole, "calculator")
+        item.setData(Qt.ItemDataRole.UserRole, "calculator")
 
         item = QListWidgetItem("Features", self.optionMenu)
-        item.setData(Qt.UserRole, "features")
+        item.setData(Qt.ItemDataRole.UserRole, "features")
 
         menuWidget = QWidget(self)
         menuGrid = QGridLayout()
@@ -79,7 +79,7 @@ class OptionsDialog(QDialog):
         self.grid.addWidget(menuWidget, 0, 0, 1, 1)
 
     def selectTab(self, item):
-        tab = item.data(Qt.UserRole)
+        tab = item.data(Qt.ItemDataRole.UserRole)
         if tab == "appearance":
             newTab = AppearanceTab(self)
         elif tab == "entry":

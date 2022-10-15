@@ -3,9 +3,9 @@
 from modularcalculatorinterface.gui.guiwidgets import *
 from modularcalculatorinterface.services.htmlservice import *
 
-from PyQt5.QtCore import Qt, QPointF
-from PyQt5.QtGui import QPalette, QFont, QTextOption
-from PyQt5.QtWidgets import QTextEdit, QWidget, QGridLayout, QVBoxLayout, QSizePolicy, QSpacerItem, QFrame
+from PyQt6.QtCore import Qt, QPointF
+from PyQt6.QtGui import QPalette, QFont, QTextOption
+from PyQt6.QtWidgets import QTextEdit, QWidget, QGridLayout, QVBoxLayout, QSizePolicy, QSpacerItem, QFrame
 
 import math
 
@@ -32,10 +32,10 @@ class CalculatorDisplay(QWidget):
     def initStyling(self):
         self.colours = self.htmlservice.background
         displayScrollPalette = self.interface.displayScroll.palette()
-        displayScrollPalette.setColor(QPalette.Base, self.colours[0])
+        displayScrollPalette.setColor(QPalette.ColorRole.Base, self.colours[0])
         self.interface.displayScroll.setPalette(displayScrollPalette)
         self.interface.displayScroll.setAutoFillBackground(True)
-        self.interface.displayScroll.setBackgroundRole(QPalette.Base)
+        self.interface.displayScroll.setBackgroundRole(QPalette.ColorRole.Base)
 
     def initOutput(self):
         self.rawOutput = []
@@ -58,8 +58,8 @@ class CalculatorDisplay(QWidget):
             questionWidget, answerWidget = self.renderAnswer(row, n)
             self.layout.addPair(n, questionWidget, answerWidget)
 
-        verticalSpacer = QSpacerItem(0, 0, QSizePolicy.Ignored, QSizePolicy.Expanding)
-        self.layout.addItem(verticalSpacer, len(self.rawOutput), 0, 1, 2, Qt.AlignTop)
+        verticalSpacer = QSpacerItem(0, 0, QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Expanding)
+        self.layout.addItem(verticalSpacer, len(self.rawOutput), 0, 1, 2, Qt.AlignmentFlag.AlignTop)
 
         self.layout.update()
 
@@ -183,15 +183,15 @@ class DisplayLayout(QGridLayout):
         for pair in self.displayWidgets:
             height0 = pair[0].optimumHeight(force=force)
             if height0 >= self.maxHeight:
-                pair[0].setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+                pair[0].setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
             else:
-                pair[0].setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+                pair[0].setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
 
             height1 = pair[1].optimumHeight(force=force)
             if height1 >= self.maxHeight:
-                pair[1].setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+                pair[1].setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
             else:
-                pair[1].setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+                pair[1].setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
 
             pairHeight = int(math.ceil(min(max(height0, height1), self.maxHeight)))
             pair[0].setFixedHeight(pairHeight)
@@ -234,23 +234,23 @@ class DisplayLabel(QTextEdit):
         self.insertText = insertText
 
         self.setReadOnly(True)
-        self.setTextInteractionFlags(Qt.TextSelectableByMouse | Qt.TextSelectableByKeyboard)
+        self.setTextInteractionFlags(Qt.TextInteractionFlag.TextSelectableByMouse | Qt.TextInteractionFlag.TextSelectableByKeyboard)
 
-        self.setWordWrapMode(QTextOption.WrapAnywhere)
-        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.setWordWrapMode(QTextOption.WrapMode.WrapAnywhere)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
 
         backgroundColor = display.colours[n % 2]
         palette = self.palette()
-        palette.setColor(QPalette.Base, backgroundColor)
+        palette.setColor(QPalette.ColorRole.Base, backgroundColor)
         self.setPalette(palette)
 
-        self.setFrameStyle(QFrame.NoFrame)
+        self.setFrameStyle(QFrame.Shape.NoFrame)
         self.setLineWidth(0)
 
         self.cachedOptimumHeight = None
 
     def mouseReleaseEvent(self, e):
-        if self.middleClickFunction is not None and e.button() == Qt.MiddleButton:
+        if self.middleClickFunction is not None and e.button() == Qt.MouseButton.MiddleButton:
             self.middleClickFunction(self.display, self, e)
         else:
             super().mouseReleaseEvent(e)

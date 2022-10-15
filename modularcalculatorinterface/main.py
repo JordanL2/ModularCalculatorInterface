@@ -3,7 +3,7 @@
 from modularcalculatorinterface.config import Config
 from modularcalculatorinterface.gui.interface import ModularCalculatorInterface
 
-from PyQt5.QtWidgets import QApplication
+from PyQt6.QtWidgets import QApplication
 
 import argparse
 import sys
@@ -17,7 +17,7 @@ def main():
     config = Config(sys.argv)
     app = QApplication(sys.argv)
     calc = ModularCalculatorInterface(args, config)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
 
 
 if __name__ == '__main__':

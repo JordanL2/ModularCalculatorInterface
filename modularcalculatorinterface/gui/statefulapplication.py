@@ -5,8 +5,8 @@ from modularcalculator.objects.number import *
 from modularcalculator.objects.units import UnitPowerList
 from modularcalculatorinterface.gui.display import CalculatorDisplayAnswer, CalculatorDisplayError
 
-from PyQt5.QtCore import QSettings
-from PyQt5.QtWidgets import QMainWindow
+from PyQt6.QtCore import QSettings
+from PyQt6.QtWidgets import QMainWindow
 
 import json
 import pickle

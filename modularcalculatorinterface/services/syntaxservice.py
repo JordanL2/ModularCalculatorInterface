@@ -4,7 +4,7 @@ from modularcalculator.objects.exceptions import CalculatingException, Calculato
 from modularcalculator.services.syntaxhighlighter import *
 from modularcalculatorinterface.services.calculatormanager import *
 
-from PyQt5.QtCore import QTimer
+from PyQt6.QtCore import QTimer
 
 from queue import Empty
 import multiprocessing

@@ -18,8 +18,8 @@ For syntax and other topics, see the [modularcalculator wiki](https://github.com
 	* Flatpak
 * or:
 	* Python 3.9+
-	* Qt 5.11+
-	* PyQt5
+	* Qt 6.3+
+	* PyQt6
 	* libyaml
 
 

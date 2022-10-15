@@ -3,9 +3,9 @@
 from modularcalculator.modularcalculator import *
 from modularcalculatorinterface.gui.options.common import *
 
-from PyQt5.QtCore import Qt, QTimer
-from PyQt5.QtGui import QIcon, QFont, QFontDatabase
-from PyQt5.QtWidgets import QLabel, QGridLayout, QListWidget, QComboBox, QPushButton, QFileDialog, \
+from PyQt6.QtCore import Qt, QTimer
+from PyQt6.QtGui import QIcon, QFont, QFontDatabase
+from PyQt6.QtWidgets import QLabel, QGridLayout, QListWidget, QComboBox, QPushButton, QFileDialog, \
                             QMessageBox, QScrollArea, QCheckBox, QSizePolicy, QDialog, QLineEdit
 
 from functools import partial
@@ -40,10 +40,10 @@ class FeaturesTab(OptionsTab):
         grid.setRowStretch(1, 1)
 
         importedFileLabel = QLabel("External Feature Files")
-        importedFileLabelFont = QFontDatabase.systemFont(QFontDatabase.TitleFont)
+        importedFileLabelFont = QFontDatabase.systemFont(QFontDatabase.SystemFont.TitleFont)
         importedFileLabelFont.setBold(True)
         importedFileLabel.setFont(importedFileLabelFont)
-        importedFileLabel.setAlignment(Qt.AlignHCenter)
+        importedFileLabel.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         grid.addWidget(importedFileLabel, 2, 0, 1, 2)
 
         addFileButton = QPushButton("Add", self)
@@ -147,7 +147,7 @@ class ScrollableWidgetList(QScrollArea):
         super().__init__()
         self.setWidgetResizable(True)
         self.setWidget(widget)
-        self.widget().setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Maximum)
+        self.widget().setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Maximum)
         scrollBar = self.verticalScrollBar()
 
 
@@ -162,7 +162,7 @@ class WidgetList(QWidget):
     def addHeader(self, header):
         i = self.grid.rowCount()
         widget = QLabel(header)
-        font = QFontDatabase.systemFont(QFontDatabase.TitleFont)
+        font = QFontDatabase.systemFont(QFontDatabase.SystemFont.TitleFont)
         font.setBold(True)
         widget.setFont(font)
         self.grid.addWidget(widget, i, 0, 1, self.columns)
@@ -235,7 +235,7 @@ class FeatureList(WidgetList):
         widgets = []
 
         checkBox = QCheckBox(self)
-        checkBox.setCheckState(checked * 2)
+        checkBox.setCheckState(Qt.CheckState.Checked if checked else Qt.CheckState.Unchecked)
         checkBox.stateChanged.connect(partial(self.checked, featureId, checkBox))
         self.checkBoxes[featureId] = checkBox
         widgets.append(checkBox)
@@ -270,7 +270,7 @@ class FeatureList(WidgetList):
 
     def setChecked(self, featureId, checked):
         self.checkBoxes[featureId].blockSignals(True)
-        self.checkBoxes[featureId].setCheckState(checked * 2)
+        self.checkBoxes[featureId].setCheckState(Qt.CheckState.Checked if checked else Qt.CheckState.Unchecked)
         self.checkBoxes[featureId].blockSignals(False)
         if featureId in self.configButtons:
             self.configButtons[featureId].setVisible(checked)

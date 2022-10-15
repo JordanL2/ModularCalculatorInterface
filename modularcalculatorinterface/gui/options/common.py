@@ -2,8 +2,8 @@
 
 from modularcalculatorinterface.gui.guiwidgets import limitToScreen
 
-from PyQt5.QtCore import Qt, QStringListModel, QSize
-from PyQt5.QtWidgets import QWidget, QCheckBox, QComboBox, QSpinBox, QAbstractItemView, QListView, QGridLayout, QSpacerItem, QFormLayout, QLabel
+from PyQt6.QtCore import Qt, QStringListModel, QSize
+from PyQt6.QtWidgets import QWidget, QCheckBox, QComboBox, QSpinBox, QAbstractItemView, QListView, QGridLayout, QSpacerItem, QFormLayout, QLabel
 
 
 class OptionsTab(QWidget):
@@ -23,12 +23,12 @@ class FixedFormLayout(QFormLayout):
 
     def __init__(self):
         super().__init__()
-        self.setFieldGrowthPolicy(QFormLayout.FieldsStayAtSizeHint)
+        self.setFieldGrowthPolicy(QFormLayout.FieldGrowthPolicy.FieldsStayAtSizeHint)
 
     def addRow(self, text, widget):
         label = QLabel(text)
         label.setFixedWidth(350)
-        label.setAlignment(Qt.AlignRight)
+        label.setAlignment(Qt.AlignmentFlag.AlignRight)
         super().addRow(label, widget)
 
 
@@ -46,7 +46,7 @@ class OptionCheckbox(QWidget):
         self.interface = parent.interface
         self.config_toplevel = config_toplevel
         self.config_secondlevel = config_secondlevel
-        self.checkBox.setCheckState(self.config_toplevel[self.config_secondlevel] * 2)
+        self.checkBox.setCheckState(Qt.CheckState.Checked if self.config_toplevel[self.config_secondlevel] else Qt.CheckState.Unchecked)
         self.checkBox.stateChanged.connect(self.onStateChanged)
 
     def onStateChanged(self, state):
@@ -117,7 +117,7 @@ class SortableListModel(QStringListModel):
 
     def flags(self, index):
         if index.isValid():
-            return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsDragEnabled
+            return Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsDragEnabled
         return super().flags(index)
 
 
@@ -133,7 +133,7 @@ class OptionSortableList(QListView):
         self.stringModel = SortableListModel()
         self.stringModel.setStringList(items)
         self.setModel(self.stringModel)
-        self.setDragDropMode(QAbstractItemView.InternalMove)
+        self.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove)
 
     def dropEvent(self, e):
         super().dropEvent(e)

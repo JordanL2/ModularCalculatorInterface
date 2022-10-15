@@ -4,7 +4,7 @@ from modularcalculator.objects.items import *
 from modularcalculator.objects.units import *
 from modularcalculatorinterface.services.syntaxservice import *
 
-from PyQt5.QtGui import QColor, QPalette, QGuiApplication
+from PyQt6.QtGui import QColor, QPalette, QGuiApplication
 
 import html
 
@@ -25,8 +25,8 @@ class HtmlService():
 
     def initStyling(self):
         self.background = [
-            QGuiApplication.palette().color(QPalette.Base),
-            QGuiApplication.palette().color(QPalette.AlternateBase),
+            QGuiApplication.palette().base(),
+            QGuiApplication.palette().alternateBase(),
         ]
         self.css = "<style>"
         for itemtype, css in self.syntax[self.config.main['appearance']['theme']].items():

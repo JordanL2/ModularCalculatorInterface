@@ -9,9 +9,9 @@ from modularcalculatorinterface.services.filemanager import *
 from modularcalculatorinterface.services.htmlservice import *
 from modularcalculatorinterface.services.tabmanager import *
 
-from PyQt5.QtCore import Qt, QThreadPool, QTimer
-from PyQt5.QtGui import QKeySequence, QIcon, QGuiApplication, QFontDatabase, QFontInfo
-from PyQt5.QtWidgets import QWidget, QGridLayout, QSplitter, QFileDialog, QShortcut, QMessageBox, QScrollArea, QSizePolicy, QToolBar
+from PyQt6.QtCore import Qt, QThreadPool, QTimer
+from PyQt6.QtGui import QKeySequence, QIcon, QGuiApplication, QFontDatabase, QFontInfo, QShortcut
+from PyQt6.QtWidgets import QWidget, QGridLayout, QSplitter, QFileDialog, QMessageBox, QScrollArea, QSizePolicy, QToolBar
 
 import os.path
 import sys
@@ -72,6 +72,10 @@ class ModularCalculatorInterface(StatefulApplication):
         self.saveStateTimer.start(15000)
         self.saveStateTimer.timeout.connect(self.storeAllState)
 
+        # Hack for Qt6 to make tabbar appear on start
+        self.tabbar.addTab("")
+        self.tabbar.removeTab(self.tabbar.count() - 1)
+
     def setIcon(self):
         places = [
             '/usr/share/icons/hicolor/256x256/apps/io.github.jordanl2.ModularCalculator.png',
@@ -96,12 +100,12 @@ class ModularCalculatorInterface(StatefulApplication):
 
         self.displayScroll.setWidgetResizable(True)
         self.displayScroll.setWidget(self.display)
-        self.displayScroll.widget().setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Maximum)
+        self.displayScroll.widget().setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Maximum)
         scrollBar = self.displayScroll.verticalScrollBar()
         scrollBar.rangeChanged.connect(lambda: scrollBar.setValue(scrollBar.maximum()))
 
         self.splitter = QSplitter()
-        self.splitter.setOrientation(Qt.Horizontal)
+        self.splitter.setOrientation(Qt.Orientation.Horizontal)
         self.splitter.addWidget(self.makeSection(self.entry, 'Input'))
         self.splitter.addWidget(self.makeSection(self.displayScroll, 'Output'))
 
@@ -121,8 +125,8 @@ class ModularCalculatorInterface(StatefulApplication):
 
     def makeSection(self, widget, labelText):
         label = QLabel(labelText)
-        label.setAlignment(Qt.AlignHCenter)
-        font = QFontDatabase.systemFont(QFontDatabase.TitleFont)
+        label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+        font = QFontDatabase.systemFont(QFontDatabase.SystemFont.TitleFont)
         font.setBold(True)
         label.setFont(font)
         layout = QGridLayout()
@@ -133,9 +137,9 @@ class ModularCalculatorInterface(StatefulApplication):
         return widget
 
     def initShortcuts(self):
-        previousTab = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_PageUp), self)
+        previousTab = QShortcut(QKeySequence("Ctrl+PgUp"), self)
         previousTab.activated.connect(self.tabmanager.previousTab)
-        nextTab = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_PageDown), self)
+        nextTab = QShortcut(QKeySequence("Ctrl+PgDown"), self)
         nextTab.activated.connect(self.tabmanager.nextTab)
 
 
@@ -188,10 +192,14 @@ class ModularCalculatorInterface(StatefulApplication):
         return filePath
 
     def questionYesNoCancel(self, title, question):
-        response = QMessageBox.question(self, title, question, QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel, QMessageBox.Cancel)
-        if response == QMessageBox.Yes:
+        response = QMessageBox.question(self,
+            title,
+            question,
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No | QMessageBox.StandardButton.Cancel,
+            QMessageBox.StandardButton.Cancel)
+        if response == QMessageBox.StandardButton.Yes:
             return True
-        elif response == QMessageBox.No:
+        elif response == QMessageBox.StandardButton.No:
             return False
         return None
 
@@ -208,7 +216,7 @@ class ModularCalculatorInterface(StatefulApplication):
 
 
     def getDefaultFixedFont(self):
-        font = QFontDatabase().systemFont(QFontDatabase.FixedFont)
+        font = QFontDatabase.systemFont(QFontDatabase.SystemFont.FixedFont)
         font.setFixedPitch(True)
         fontInfo = QFontInfo(font)
         return fontInfo.family()

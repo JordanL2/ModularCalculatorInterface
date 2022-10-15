@@ -22,7 +22,7 @@ setuptools.setup(
     packages=setuptools.find_packages() + setuptools.find_namespace_packages(include=['modularcalculatorinterface.*']),
     install_requires=[
         'modularcalculator>=1.3.0',
-        'PyQt5',
+        'PyQt6',
         'pyyaml',
     ],
     classifiers=[
@@ -30,6 +30,6 @@ setuptools.setup(
         "License :: OSI Approved :: GPL-3.0 License",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.4',
+    python_requires='>=3.9',
     entry_points = {'console_scripts': ['modularcalculator = modularcalculatorinterface.main:main',], },
 )

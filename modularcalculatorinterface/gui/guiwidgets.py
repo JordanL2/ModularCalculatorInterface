@@ -1,17 +1,18 @@
 #!/usr/bin/python3
 
-from PyQt5.QtCore import Qt, QSize
-from PyQt5.QtGui import QKeySequence
-from PyQt5.QtWidgets import QApplication, QListWidget, QListWidgetItem, QLabel, QVBoxLayout, \
+from PyQt6.QtCore import Qt, QSize
+from PyQt6.QtGui import QKeySequence, QGuiApplication
+from PyQt6.QtWidgets import QListWidget, QListWidgetItem, QLabel, QVBoxLayout, \
                             QDialog, QPushButton, QCalendarWidget, QTimeEdit, QComboBox, QTabBar, \
                             QWidget, QGridLayout
 
 
-def limitToScreen(width, height):
-    if width > QApplication.desktop().screenGeometry().width():
-        width = int(round(QApplication.desktop().screenGeometry().width()))
-    if height > QApplication.desktop().screenGeometry().height():
-        height = int(round(QApplication.desktop().screenGeometry().height()))
+def limitToScreen(widget, width, height):
+    screen = widget.windowHandle().screen()
+    if width > screen.geometry().width():
+        width = int(round(screen.geometry().width()))
+    if height > screen.geometry().height():
+        height = int(round(screen.geometry().height()))
     return QSize(width, height)
 
 
@@ -31,11 +32,11 @@ class SelectionDialog(QDialog):
         if isinstance(items, list):
             for itemText in items:
                 item = QListWidgetItem(itemText, self.list)
-                item.setData(Qt.UserRole, itemText)
+                item.setData(Qt.ItemDataRole.UserRole, itemText)
         elif isinstance(items, dict):
             for itemId, itemText in items.items():
                 item = QListWidgetItem(itemText, self.list)
-                item.setData(Qt.UserRole, itemId)
+                item.setData(Qt.ItemDataRole.UserRole, itemId)
         else:
             raise Exception("Invalid type of items")
         self.list.itemDoubleClicked.connect(self.ok)
@@ -50,11 +51,11 @@ class SelectionDialog(QDialog):
         self.setVisible(True)
 
     def ok(self):
-        self.okFunction(self.list.currentItem().data(Qt.UserRole))
+        self.okFunction(self.list.currentItem().data(Qt.ItemDataRole.UserRole))
         self.close()
 
     def sizeHint(self):
-        return limitToScreen(300, 600)
+        return limitToScreen(self, 300, 600)
 
 
 class CategorisedSelectionDialog(QDialog):
@@ -117,7 +118,7 @@ class CategorisedSelectionDialog(QDialog):
             self.close()
 
     def sizeHint(self):
-        return limitToScreen(300, 600)
+        return limitToScreen(self, 300, 600)
 
 
 class DatePicker(QDialog):
@@ -179,7 +180,7 @@ class TabBarWithPlus(QWidget):
 
         self.fileNew = NewTabButton('+', self.tabbar)
         self.fileNew.setToolTip('New (Ctrl+N)')
-        self.fileNew.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_N))
+        self.fileNew.setShortcut(QKeySequence("Ctrl+n"))
         layout.addWidget(self.fileNew, 0, 1, 1, 1)
         layout.setColumnStretch(1, 0)
 
@@ -207,7 +208,7 @@ class MiddleClickCloseableTabBar(QTabBar):
         self.setMovable(True)
 
     def mouseReleaseEvent(self, event):
-        if event.button() == Qt.MidButton:
+        if event.button() == Qt.MouseButton.MiddleButton:
             self.tabCloseRequested.emit(self.tabAt(event.pos()))
         else:
             super().mouseReleaseEvent(event)
