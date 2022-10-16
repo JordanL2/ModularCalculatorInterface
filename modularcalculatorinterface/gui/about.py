@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QT_VERSION_STR, PYQT_VERSION_STR
 from PyQt6.QtWidgets import QDialog, QLabel, QPushButton, QVBoxLayout
 
 
@@ -41,7 +41,25 @@ class AboutDialog(QDialog):
             10,
             False,
             Qt.AlignmentFlag.AlignHCenter,
-            100, 0, 100, 20
+            100, 0, 100, 0
+        ))
+
+        # Qt Version
+        self.layout.addWidget(FormattedLabel(
+            "Qt version {}".format(QT_VERSION_STR),
+            10,
+            False,
+            Qt.AlignmentFlag.AlignHCenter,
+            0, 0, 0, 0
+        ))
+
+        # PyQt Version
+        self.layout.addWidget(FormattedLabel(
+            "PyQt version {}".format(PYQT_VERSION_STR),
+            10,
+            False,
+            Qt.AlignmentFlag.AlignHCenter,
+            0, 0, 0, 20
         ))
 
         # Description
