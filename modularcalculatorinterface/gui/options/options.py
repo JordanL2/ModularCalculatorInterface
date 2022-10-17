@@ -8,7 +8,7 @@ from modularcalculatorinterface.gui.options.entry import *
 from modularcalculatorinterface.gui.options.features import *
 
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QDialog, QGridLayout, QListWidgetItem, QListWidget, QWidget
+from PyQt6.QtWidgets import QDialog, QGridLayout, QWidget, QPushButton
 from PyQt6.QtGui import QFont, QFontDatabase
 
 
@@ -26,6 +26,20 @@ def getFontSizes():
             22, 24, 26, 28, 32, 48, 64, 72, 80, 96, 128]
 
 
+class OptionTab(QPushButton):
+
+    def __init__(self, optionsDialog, text, name):
+        super().__init__(text)
+        self.optionsDialog = optionsDialog
+        self.name = name
+        self.clicked.connect(self.doClick)
+        self.setCheckable(True)
+        self.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+
+    def doClick(self):
+        self.optionsDialog.selectTab(self.name)
+
+
 class OptionsDialog(QDialog):
 
     def __init__(self, interface):
@@ -39,9 +53,10 @@ class OptionsDialog(QDialog):
 
         self.grid = QGridLayout()
         self.grid.setContentsMargins(0, 0, 0, 0)
+        self.buttons = {}
         self.initMenu()
         self.activeTab = None
-        self.selectTab(self.optionMenu.item(0))
+        self.selectTab("appearance")
         self.setLayout(self.grid)
 
         self.setWindowTitle('Options')
@@ -52,34 +67,27 @@ class OptionsDialog(QDialog):
         return limitToScreen(self, 900, 700)
 
     def initMenu(self):
-        self.optionMenu = QListWidget(self)
-
-        item = QListWidgetItem("Appearance", self.optionMenu)
-        item.setData(Qt.ItemDataRole.UserRole, "appearance")
-
-        item = QListWidgetItem("Input", self.optionMenu)
-        item.setData(Qt.ItemDataRole.UserRole, "entry")
-
-        item = QListWidgetItem("Output", self.optionMenu)
-        item.setData(Qt.ItemDataRole.UserRole, "display")
-
-        item = QListWidgetItem("Calculator", self.optionMenu)
-        item.setData(Qt.ItemDataRole.UserRole, "calculator")
-
-        item = QListWidgetItem("Features", self.optionMenu)
-        item.setData(Qt.ItemDataRole.UserRole, "features")
-
         menuWidget = QWidget(self)
-        menuGrid = QGridLayout()
-        menuGrid.addWidget(self.optionMenu, 0, 0, 1, 1)
-        menuWidget.setLayout(menuGrid)
-        menuWidget.setFixedWidth(self.optionMenu.sizeHintForColumn(0) + 20)
+        self.menuGrid = QGridLayout()
+        self.addTab("Appearance", "appearance")
+        self.addTab("Input", "entry")
+        self.addTab("Output", "display")
+        self.addTab("Calculator", "calculator")
+        self.addTab("Features", "features")
+        self.menuGrid.setRowStretch(self.menuGrid.rowCount(), 1)
+        menuWidget.setLayout(self.menuGrid)
+        menuWidget.setFixedWidth(self.menuGrid.sizeHint().width() + 20)
 
-        self.optionMenu.currentItemChanged.connect(self.selectTab)
         self.grid.addWidget(menuWidget, 0, 0, 1, 1)
 
-    def selectTab(self, item):
-        tab = item.data(Qt.ItemDataRole.UserRole)
+    def addTab(self, title, name):
+        tabButton = OptionTab(self, title, name)
+        self.buttons[name] = tabButton
+        i = self.menuGrid.rowCount()
+        self.menuGrid.addWidget(tabButton, i, 0, 1, 1)
+        self.menuGrid.setRowStretch(i, 0)
+
+    def selectTab(self, tab):
         if tab == "appearance":
             newTab = AppearanceTab(self)
         elif tab == "entry":
@@ -98,6 +106,12 @@ class OptionsDialog(QDialog):
         else:
             self.activeTab = newTab
             self.grid.addWidget(self.activeTab, 0, 1, 1, 1)
+        for name in self.buttons:
+            button = self.buttons[name]
+            if tab == name:
+                button.setChecked(True)
+            else:
+                button.setChecked(False)
 
     def closeEvent(self, e):
         self.interface.applyConfig()
