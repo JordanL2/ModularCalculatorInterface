@@ -193,12 +193,6 @@ class NewTabButton(QPushButton):
         super().__init__(text)
         self.tabbar = tabbar
 
-    def sizeHint(self):
-        mySize = super().sizeHint()
-        tabSize = self.tabbar.sizeHint()
-        mySize.setHeight(tabSize.height())
-        return mySize
-
 
 class MiddleClickCloseableTabBar(QTabBar):
 
