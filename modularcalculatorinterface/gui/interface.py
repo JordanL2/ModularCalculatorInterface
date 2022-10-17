@@ -9,7 +9,7 @@ from modularcalculatorinterface.services.filemanager import *
 from modularcalculatorinterface.services.htmlservice import *
 from modularcalculatorinterface.services.tabmanager import *
 
-from PyQt6.QtCore import Qt, QThreadPool, QTimer
+from PyQt6.QtCore import Qt, QThreadPool, QTimer, QSize
 from PyQt6.QtGui import QKeySequence, QIcon, QGuiApplication, QFontDatabase, QFontInfo, QShortcut
 from PyQt6.QtWidgets import QWidget, QGridLayout, QSplitter, QFileDialog, QMessageBox, QScrollArea, QSizePolicy, QToolBar
 
@@ -89,6 +89,7 @@ class ModularCalculatorInterface(StatefulApplication):
 
     def initUI(self):
         self.toolbar = QToolBar(self)
+        self.toolbar.setIconSize(QSize(20, 20))
 
         self.tabbarWidget = TabBarWithPlus(self)
         self.tabbar = self.tabbarWidget.tabbar
