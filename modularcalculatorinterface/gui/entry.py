@@ -96,6 +96,10 @@ class CalculatorEntry(QTextEdit):
         super().dropEvent(e)
         self.checkSyntax()
 
+    def insertFromMimeData(self, source):
+        if source.hasText():
+            self.insert(source.text())
+
     def checkSyntax(self, force=False, undo=False):
         if self.calculator is not None and (force or undo or self.oldHtml is None or self.oldHtml != self.getContents()):
             expr = self.getContents()
