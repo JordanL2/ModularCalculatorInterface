@@ -74,7 +74,9 @@ class CategorisedSelectionDialog(QDialog):
         layout.addWidget(labelWidget)
 
         self.category = QComboBox(self)
-        self.category.addItems(sorted(self.items.keys(), key=str))
+        self.items['All'] = [vv for v in self.items.values() for vv in v]
+        self.category.addItems(['All'])
+        self.category.addItems(sorted([k for k in self.items.keys() if k != 'All'], key=str))
         layout.addWidget(self.category)
 
         self.list = QListWidget(self)
