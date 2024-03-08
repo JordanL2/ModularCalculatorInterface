@@ -16,4 +16,16 @@ class EntryTab(OptionsTab):
         layout.addRow("Show execution errors", OptionCheckbox(self, self.config.main['entry'], 'show_execution_errors'))
         layout.addRow("Line highlighting", OptionCheckbox(self, self.config.main['entry'], 'view_line_highlighting'))
 
+        self.addSpacerItem(layout)
+        self.autoExecute = OptionCheckbox(self, self.config.main['entry'], 'autoexecute')
+        layout.addRow("Auto-execute", self.autoExecute)
+        self.autoExecuteDelay = OptionSpinBox(self, self.config.main['entry'], 'autoexecute_timeout', 0, 60)
+        layout.addRow("Auto-execute delay", self.autoExecuteDelay)
+        if self.autoExecute.checkBox.checkState() == Qt.CheckState.Unchecked:
+            self.autoExecuteDelay.setDisabled(True)
+        self.autoExecute.checkBox.stateChanged.connect(self.onAutoExecuteStateChanged)
+
         self.setLayout(layout)
+
+    def onAutoExecuteStateChanged(self, state):
+        self.autoExecuteDelay.setDisabled(self.autoExecute.checkBox.checkState() == Qt.CheckState.Unchecked)

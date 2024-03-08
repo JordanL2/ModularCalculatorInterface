@@ -21,10 +21,12 @@ class CalculatorEntry(QTextEdit):
         if 'font' not in self.config.main['entry'] or not QFont(self.config.main['entry']['font']).exactMatch():
             self.config.main['entry']['font'] = self.interface.getDefaultFixedFont()
 
+
         self.calculator = None
 
         self.htmlservice = interface.htmlservice
         self.initStyling()
+        self.applyConfig()
 
         self.oldHtml = None
 
@@ -48,6 +50,15 @@ class CalculatorEntry(QTextEdit):
         palette.setColor(QPalette.ColorRole.Base, self.colours[0])
         self.setPalette(palette)
 
+    def applyConfig(self):
+        if 'autoexecute' not in self.config.main['entry']:
+            self.config.main['entry']['autoexecute'] = False
+            self.config.main['entry']['autoexecute_timeout'] = 1
+        self.autoexecute = None
+        if self.config.main['entry']['autoexecute']:
+            self.autoexecute = self.config.main['entry']['autoexecute_timeout']
+        self.autoExecuteTimer = None
+
     def setCalculator(self, calculator):
         self.calculator = calculator
 
@@ -63,6 +74,13 @@ class CalculatorEntry(QTextEdit):
         else:
             super().keyPressEvent(e)
         self.checkSyntax()
+        if self.autoexecute is not None:
+            if self.autoExecuteTimer is None:
+                self.autoExecuteTimer = QTimer(self.interface)
+                self.autoExecuteTimer.setSingleShot(True)
+                self.autoExecuteTimer.timeout.connect(self.interface.calculatormanager.calc)
+            self.autoExecuteTimer.start(self.autoexecute * 1000)
+
 
     def mouseReleaseEvent(self, e):
         super().mouseReleaseEvent(e)
@@ -202,6 +220,7 @@ class CalculatorEntry(QTextEdit):
 
     def refresh(self):
         self.initStyling()
+        self.applyConfig()
         self.checkSyntax(True)
 
     def updateHtml(self, html):
