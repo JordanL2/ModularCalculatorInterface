@@ -21,7 +21,7 @@ setuptools.setup(
     url="https://github.com/JordanL2/ModularCalculator",
     packages=setuptools.find_packages() + setuptools.find_namespace_packages(include=['modularcalculatorinterface.*']),
     install_requires=[
-        'modularcalculator>=1.3.0',
+        'modularcalculator>=1.3.999',
         'PyQt6',
         'pyyaml',
     ],
