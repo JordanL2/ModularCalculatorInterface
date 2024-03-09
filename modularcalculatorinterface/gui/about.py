@@ -83,7 +83,7 @@ class AboutDialog(QDialog):
 
         # Copyright + developer name
         self.layout.addWidget(FormattedLabel(
-            "\u00a9 2018-2022 Jordan Leppert",
+            "\u00a9 2018-2024 Jordan Leppert",
             10,
             False,
             Qt.AlignmentFlag.AlignHCenter,
