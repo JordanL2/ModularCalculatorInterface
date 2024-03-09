@@ -64,7 +64,7 @@ class OptionsDialog(QDialog):
         self.setVisible(True)
 
     def sizeHint(self):
-        return limitToScreen(self, 900, 700)
+        return QSize(1000, 700)
 
     def initMenu(self):
         menuWidget = QWidget(self)

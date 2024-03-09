@@ -7,15 +7,6 @@ from PyQt6.QtWidgets import QListWidget, QListWidgetItem, QLabel, QVBoxLayout, \
                             QWidget, QGridLayout, QLineEdit
 
 
-def limitToScreen(widget, width, height):
-    screen = widget.windowHandle().screen()
-    if width > screen.geometry().width():
-        width = int(round(screen.geometry().width()))
-    if height > screen.geometry().height():
-        height = int(round(screen.geometry().height()))
-    return QSize(width, height)
-
-
 class SelectionDialog(QDialog):
 
     def __init__(self, parent, title, label, items, okFunction):
@@ -55,7 +46,7 @@ class SelectionDialog(QDialog):
         self.close()
 
     def sizeHint(self):
-        return limitToScreen(self, 300, 600)
+        return QSize(400, 400)
 
 
 class CategorisedSelectionDialog(QDialog):
@@ -125,7 +116,7 @@ class CategorisedSelectionDialog(QDialog):
             self.close()
 
     def sizeHint(self):
-        return limitToScreen(self, 300, 600)
+        return QSize(1000, 700)
 
     def keyPressEvent(self, e):
         if e.key() == Qt.Key.Key_Down and self.search.hasFocus():

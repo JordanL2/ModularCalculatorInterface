@@ -1,7 +1,5 @@
 #!/usr/bin/python3
 
-from modularcalculatorinterface.gui.guiwidgets import limitToScreen
-
 from PyQt6.QtCore import Qt, QStringListModel, QSize
 from PyQt6.QtWidgets import QWidget, QCheckBox, QComboBox, QSpinBox, QAbstractItemView, QListView, QGridLayout, QSpacerItem, QFormLayout, QLabel
 
