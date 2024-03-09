@@ -4,7 +4,7 @@ from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QKeySequence, QGuiApplication
 from PyQt6.QtWidgets import QListWidget, QListWidgetItem, QLabel, QVBoxLayout, \
                             QDialog, QPushButton, QCalendarWidget, QTimeEdit, QComboBox, QTabBar, \
-                            QWidget, QGridLayout
+                            QWidget, QGridLayout, QLineEdit
 
 
 def limitToScreen(widget, width, height):
@@ -79,6 +79,10 @@ class CategorisedSelectionDialog(QDialog):
         self.category.addItems(sorted([k for k in self.items.keys() if k != 'All'], key=str))
         layout.addWidget(self.category)
 
+        self.search = QLineEdit()
+        self.search.textChanged.connect(self.setList)
+        layout.addWidget(self.search)
+
         self.list = QListWidget(self)
         self.list.itemDoubleClicked.connect(self.ok)
         layout.addWidget(self.list)
@@ -97,9 +101,13 @@ class CategorisedSelectionDialog(QDialog):
         self.setLayout(layout)
         self.setWindowTitle(title)
         self.setVisible(True)
+        self.search.setFocus(Qt.FocusReason.PopupFocusReason)
 
     def setList(self):
         listItems = sorted(self.items[self.category.currentText()], key=lambda u: str(u).lower())
+        searchText = self.search.text()
+        if searchText != '':
+            listItems = [l for l in listItems if searchText in l]
         self.list.clear()
         self.list.addItems(listItems)
 
