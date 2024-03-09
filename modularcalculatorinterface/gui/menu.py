@@ -182,7 +182,7 @@ class CalculatorMenu():
 
     def insertFunction(self):
         funcs, descriptions = self.getAllFunctions()
-        CategorisedSelectionDialog(self.interface, 'Insert Function', 'Select function to insert', funcs, descriptions, self.selectFunction)
+        CategorisedSelectionDialog(self.interface, 'Insert Function', funcs, descriptions, self.selectFunction)
 
     def selectFunction(self, func):
         funcInfo = self.interface.calculatormanager.calculator.funcs[func]
@@ -218,7 +218,7 @@ class CalculatorMenu():
                     operators[category] = []
                 operators[category].append(op)
                 descriptions[op] = "{}\n{}".format(opInfo.description, ' '.join(opInfo.syntax))
-        CategorisedSelectionDialog(self.interface, 'Insert Operator', 'Select operator to insert', operators, descriptions, self.selectOperator)
+        CategorisedSelectionDialog(self.interface, 'Insert Operator', operators, descriptions, self.selectOperator)
 
     def selectOperator(self, operator):
         self.interface.entry.insert(operator)
@@ -242,7 +242,7 @@ class CalculatorMenu():
                 else:
                     unitsystem = self.interface.calculatormanager.calculator.unit_normaliser.systems[self.interface.calculatormanager.calculator.unit_normaliser.get_preferred_system(unit.systems)].name
                 descriptions[unitName] = "{}.\nAlternative names: {}".format(unitsystem, altnames)
-        CategorisedSelectionDialog(self.interface, 'Insert Unit', 'Select unit to insert', units, descriptions, self.selectUnit)
+        CategorisedSelectionDialog(self.interface, 'Insert Unit', units, descriptions, self.selectUnit)
 
     def selectUnit(self, unit):
         self.interface.entry.insert(unit)

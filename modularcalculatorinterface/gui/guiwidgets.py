@@ -60,7 +60,7 @@ class SelectionDialog(QDialog):
 
 class CategorisedSelectionDialog(QDialog):
 
-    def __init__(self, parent, title, label, items, descriptions, okFunction):
+    def __init__(self, parent, title, items, descriptions, okFunction):
         super().__init__(parent)
 
         self.okFunction = okFunction
@@ -69,9 +69,6 @@ class CategorisedSelectionDialog(QDialog):
         self.descriptions = descriptions
 
         layout = QVBoxLayout()
-
-        labelWidget = QLabel(label)
-        layout.addWidget(labelWidget)
 
         self.category = QComboBox(self)
         self.items['All'] = [vv for v in self.items.values() for vv in v]
