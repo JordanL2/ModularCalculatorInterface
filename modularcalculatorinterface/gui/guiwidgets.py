@@ -127,6 +127,14 @@ class CategorisedSelectionDialog(QDialog):
     def sizeHint(self):
         return limitToScreen(self, 300, 600)
 
+    def keyPressEvent(self, e):
+        if e.key() == Qt.Key.Key_Down and self.search.hasFocus():
+            self.list.setFocus(Qt.FocusReason.OtherFocusReason)
+        elif e.key() == Qt.Key.Key_Up and self.list.hasFocus() and self.list.currentRow() == 0:
+            self.search.setFocus(Qt.FocusReason.OtherFocusReason)
+        else:
+            super().keyPressEvent(e)
+
 
 class DatePicker(QDialog):
 
