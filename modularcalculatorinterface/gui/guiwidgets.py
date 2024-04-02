@@ -121,6 +121,7 @@ class CategorisedSelectionDialog(QDialog):
     def keyPressEvent(self, e):
         if e.key() == Qt.Key.Key_Down and self.search.hasFocus():
             self.list.setFocus(Qt.FocusReason.OtherFocusReason)
+            self.list.setCurrentRow(0)
         elif e.key() == Qt.Key.Key_Up and self.list.hasFocus() and self.list.currentRow() == 0:
             self.search.setFocus(Qt.FocusReason.OtherFocusReason)
         else:
