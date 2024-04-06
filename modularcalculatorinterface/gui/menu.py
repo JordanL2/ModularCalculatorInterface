@@ -76,6 +76,11 @@ class CalculatorMenu():
         self.insertUnitSystemAction.setShortcut(QKeySequence("Ctrl+Shift+y"))
         self.insertMenu.addAction(self.insertUnitSystemAction)
 
+        self.insertNumericalRepresentationAction = QAction('Numerical Representation', self.interface)
+        self.insertNumericalRepresentationAction.triggered.connect(self.insertNumericalRepresentation)
+        self.insertNumericalRepresentationAction.setShortcut(QKeySequence("Ctrl+Shift+r"))
+        self.insertMenu.addAction(self.insertNumericalRepresentationAction)
+
         self.insertOperatorAction = QAction('Operator', self.interface)
         self.insertOperatorAction.triggered.connect(self.insertOperator)
         self.insertOperatorAction.setShortcut(QKeySequence("Ctrl+Shift+o"))
@@ -251,8 +256,15 @@ class CalculatorMenu():
         systems = dict([(s, v.name) for s, v in sorted(self.interface.calculatormanager.calculator.unit_normaliser.systems.items(), key=lambda x: x[1].name.lower())])
         SelectionDialog(self.interface, 'Insert Unit System', 'Select unit system to insert', systems, self.selectUnitSystem)
 
-    def selectUnitSystem(self, operator):
-        self.interface.entry.insert(operator)
+    def selectUnitSystem(self, system):
+        self.interface.entry.insert(system)
+
+    def insertNumericalRepresentation(self):
+        numreps = dict([(c.name(), c.desc()) for c in sorted(self.interface.calculatormanager.calculator.number_casters, key=lambda x: x.desc().lower()) if hasattr(c, 'convert_to')])
+        SelectionDialog(self.interface, 'Insert Numerical Representation', 'Select numerical representations to insert', numreps, self.selectNumericalRepresentation)
+
+    def selectNumericalRepresentation(self, numrep):
+        self.interface.entry.insert(numrep)
 
     def doExportResults(self):
         filename = self.interface.getSaveFileName("Export Results as CSV", "Text CSV files (*.csv)")
