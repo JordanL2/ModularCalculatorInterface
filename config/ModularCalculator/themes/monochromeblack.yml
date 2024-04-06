@@ -7,6 +7,7 @@ style:
   literal: "color: '#ffffff'"
   unit: "color: '#ffffff'"
   unitsystem: "color: '#ffffff'"
+  numericalrepresentation: "color: '#ffffff'"
   op: "color: '#ffffff'"
   terminator: "color: '#ffffff'"
   inner_expr_start: "color: '#ffffff'"
