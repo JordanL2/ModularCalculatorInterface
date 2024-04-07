@@ -1,11 +1,16 @@
 #!/usr/bin/python3
 
+from modularcalculator.modularcalculator import *
+import modularcalculator.features.presets
+
 from pathlib import PosixPath
 import os
 import yaml
 
 
 class Config:
+
+    LATEST_CONFIG_VERSION = '1.5.0'
 
     def __init__(self, args):
         initDir = PosixPath(args[0]).parent
@@ -64,9 +69,12 @@ class Config:
                                 if top_level_id not in loaded[file_id]:
                                     loaded[file_id][top_level_id] = {}
                                 if top_level is not None:
-                                    for second_level_id, second_level in top_level.items():
-                                        if second_level_id not in loaded[file_id][top_level_id] and second_level is not None:
-                                            loaded[file_id][top_level_id][second_level_id] = second_level
+                                    if type(top_level) != dict:
+                                        loaded[file_id][top_level_id] = top_level
+                                    else:
+                                        for second_level_id, second_level in top_level.items():
+                                            if second_level_id not in loaded[file_id][top_level_id] and second_level is not None:
+                                                loaded[file_id][top_level_id][second_level_id] = second_level
             else:
                 with open(file_path, 'r') as fh:
                     loaded[file_id] = yaml.load(fh, Loader=yaml.CLoader)
@@ -78,8 +86,10 @@ class Config:
             self.main = list(main.values())[0]
         else:
             self.main = None
+        self.doConfigUpgrade()
 
     def saveMainConfig(self):
+        self.main['version'] = Config.LATEST_CONFIG_VERSION
         found = self.find('config.yml', allowSystem=False)
         if len(found) > 0:
             try:
@@ -95,6 +105,37 @@ class Config:
             file_path.parent.mkdir(mode=0o755, parents=True)
         with open(file_path, 'w') as fh:
             yaml.dump(self.main, fh)
+
+    def doConfigUpgrade(self):
+        upgraded = False
+        configVersion = None
+        if 'version' in self.main:
+            configVersion = self.main['version']
+        if configVersion is None:
+            # Upgrade from < 1.5.0 to 1.5.0
+            self.autoSelectNewFeatures(
+                ['numerical.numericalrepresentation', 'numerical.percentagenumbers', 'numerical.specialfunctions'],
+                ['unitdefinitions.allunitdefinitions'])
+            upgraded = True
+            configVersion = '1.5.0'
+        if upgraded:
+            self.saveMainConfig()
+
+    def autoSelectNewFeatures(self, newFeatures, ignoreFeatures):
+        if 'features' in self.main and 'installed' in self.main['features']:
+            # Compare selected features with Computing preset.
+            # If only difference is new features are missing,
+            # then select the new features.
+            features = set(self.main['features']['installed'])
+            features  = features.union(newFeatures)
+
+            computingCalculator = ModularCalculator('Computing')
+            computingFeatures = computingCalculator.installed_features
+            for ignoreFeature in ignoreFeatures:
+                computingFeatures.discard(ignoreFeature)
+
+            if computingFeatures <= features:
+                self.main['features']['installed'] = list(features)
 
 
     def loadThemes(self):
