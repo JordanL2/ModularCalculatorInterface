@@ -80,7 +80,10 @@ class FeaturesTab(OptionsTab):
             toSelect = self.calculator.preset_list[text]
         if toSelect is not None:
             for featureId in self.featureList.selected().keys():
-                self.featureList.setChecked(featureId, featureId in toSelect)
+                if featureId not in toSelect:
+                    self.featureList.setChecked(featureId, False)
+            for featureId in toSelect:
+                self.featureList.setChecked(featureId, True)
         self.presetList.setCurrentIndex(0)
 
     def addFile(self):
