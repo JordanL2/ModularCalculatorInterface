@@ -74,7 +74,7 @@ class CalculatorMenu():
 
         self.insertNumericalRepresentationAction = QAction('Number Type', self.interface)
         self.insertNumericalRepresentationAction.triggered.connect(self.insertNumericalRepresentation)
-        self.insertNumericalRepresentationAction.setShortcut(QKeySequence("Ctrl+Shift+r"))
+        self.insertNumericalRepresentationAction.setShortcut(QKeySequence("Ctrl+Shift+t"))
         self.insertMenu.addAction(self.insertNumericalRepresentationAction)
 
         self.insertOperatorAction = QAction('Operator', self.interface)
