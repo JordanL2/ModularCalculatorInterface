@@ -67,15 +67,10 @@ class CalculatorMenu():
         self.insertDateAction.setShortcut(QKeySequence("Ctrl+Shift+d"))
         self.insertMenu.addAction(self.insertDateAction)
 
-        self.insertUnitAction = QAction('Unit', self.interface)
-        self.insertUnitAction.triggered.connect(self.insertUnit)
-        self.insertUnitAction.setShortcut(QKeySequence("Ctrl+Shift+u"))
-        self.insertMenu.addAction(self.insertUnitAction)
-
-        self.insertUnitSystemAction = QAction('Unit System', self.interface)
-        self.insertUnitSystemAction.triggered.connect(self.insertUnitSystem)
-        self.insertUnitSystemAction.setShortcut(QKeySequence("Ctrl+Shift+y"))
-        self.insertMenu.addAction(self.insertUnitSystemAction)
+        self.insertFunctionAction = QAction('Function', self.interface)
+        self.insertFunctionAction.triggered.connect(self.insertFunction)
+        self.insertFunctionAction.setShortcut(QKeySequence("Ctrl+Shift+f"))
+        self.insertMenu.addAction(self.insertFunctionAction)
 
         self.insertNumericalRepresentationAction = QAction('Number Type', self.interface)
         self.insertNumericalRepresentationAction.triggered.connect(self.insertNumericalRepresentation)
@@ -87,10 +82,15 @@ class CalculatorMenu():
         self.insertOperatorAction.setShortcut(QKeySequence("Ctrl+Shift+o"))
         self.insertMenu.addAction(self.insertOperatorAction)
 
-        self.insertFunctionAction = QAction('Function', self.interface)
-        self.insertFunctionAction.triggered.connect(self.insertFunction)
-        self.insertFunctionAction.setShortcut(QKeySequence("Ctrl+Shift+f"))
-        self.insertMenu.addAction(self.insertFunctionAction)
+        self.insertUnitAction = QAction('Unit', self.interface)
+        self.insertUnitAction.triggered.connect(self.insertUnit)
+        self.insertUnitAction.setShortcut(QKeySequence("Ctrl+Shift+u"))
+        self.insertMenu.addAction(self.insertUnitAction)
+
+        self.insertUnitSystemAction = QAction('Unit System', self.interface)
+        self.insertUnitSystemAction.triggered.connect(self.insertUnitSystem)
+        self.insertUnitSystemAction.setShortcut(QKeySequence("Ctrl+Shift+y"))
+        self.insertMenu.addAction(self.insertUnitSystemAction)
 
         self.insertUserDefinedFunctionAction = QAction('User-Defined Function', self.interface)
         self.insertUserDefinedFunctionAction.triggered.connect(self.insertUserDefinedFunction)
@@ -141,13 +141,13 @@ class CalculatorMenu():
         self.helpHelpAction.triggered.connect(self.openHelp)
         self.helpMenu.addAction(self.helpHelpAction)
 
-        self.helpAboutAction = QAction('About', self.interface)
-        self.helpAboutAction.triggered.connect(self.openHelpAbout)
-        self.helpMenu.addAction(self.helpAboutAction)
-
         self.helpWhatsNewAction = QAction('What\'s New', self.interface)
         self.helpWhatsNewAction.triggered.connect(self.openWhatsNew)
         self.helpMenu.addAction(self.helpWhatsNewAction)
+
+        self.helpAboutAction = QAction('About', self.interface)
+        self.helpAboutAction.triggered.connect(self.openHelpAbout)
+        self.helpMenu.addAction(self.helpAboutAction)
 
     def refresh(self):
         buttonConfig = self.config.main['appearance']['button_style']
