@@ -194,7 +194,7 @@ class HtmlService():
             fractionHtml += self.makeSpan('/', 'op', fractionStyle)
             fractionHtml += self.makeSpan(abs(fraction[2]), 'literal', fractionStyle)
         else:
-            fractionHtml += self.makeSpan(abs(fraction[1]), 'literal')
+            fractionHtml += self.makeSpan(fraction[1], 'literal')
             fractionHtml += self.makeSpan('/', 'op')
             fractionHtml += self.makeSpan(abs(fraction[2]), 'literal')
         if unit is not None:
