@@ -27,13 +27,13 @@ class DisplayTab(OptionsTab):
         layout.addRow("Fraction max denominator digits", OptionSpinBox(self, self.config.main['display'], 'max_denominator_digits', 1, 50))
 
         self.addSpacerItem(layout)
-        numberCasters = []
-        for caster in self.interface.calculatormanager.calculator.number_casters:
-            if hasattr(caster, 'convert_to'):
-                numberCasters.append(caster)
-        numberCasters = sorted(numberCasters, key=lambda c: c.desc().lower())
-        numberFormats = ['Default'] + [c.desc() for c in numberCasters]
-        numberFormatIds = ['Default'] + [c.name() for c in numberCasters]
+        numberTypes = []
+        for numberType in self.interface.calculatormanager.calculator.number_types:
+            if hasattr(numberType, 'convert_to'):
+                numberTypes.append(numberType)
+        numberTypes = sorted(numberTypes, key=lambda c: c.desc().lower())
+        numberFormats = ['Default'] + [c.desc() for c in numberTypes]
+        numberFormatIds = ['Default'] + [c.name() for c in numberTypes]
         layout.addRow("Number format", OptionComboBox(self, self.config.main['display'], 'number_format', numberFormats, ids=numberFormatIds))
 
         layout.addRow("Units in short form", OptionCheckbox(self, self.config.main['display'], 'short_units'))

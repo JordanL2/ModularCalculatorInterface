@@ -227,7 +227,7 @@ class HtmlService():
             calculator = self.interface.calculatormanager.calculator
             if options['number_format'] != 'Default':
                 number = calculator.number(answer)
-                formatter = calculator.number_casters_dict[options['number_format']]
+                formatter = calculator.number_types_dict[options['number_format']]
                 if formatter is not None:
                     return formatter.convert_to(calculator, number).to_string(calculator)
                 return number.to_string(calculator)

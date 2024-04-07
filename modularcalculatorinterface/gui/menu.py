@@ -260,8 +260,8 @@ class CalculatorMenu():
         self.interface.entry.insert(system)
 
     def insertNumericalRepresentation(self):
-        numreps = dict([(c.name(), c.desc()) for c in sorted(self.interface.calculatormanager.calculator.number_casters, key=lambda x: x.desc().lower()) if hasattr(c, 'convert_to')])
-        SelectionDialog(self.interface, 'Insert Numerical Representation', 'Select numerical representations to insert', numreps, self.selectNumericalRepresentation)
+        numberTypes = dict([(c.name(), c.desc()) for c in sorted(self.interface.calculatormanager.calculator.number_types, key=lambda x: x.desc().lower()) if hasattr(c, 'convert_to')])
+        SelectionDialog(self.interface, 'Insert Numerical Representation', 'Select numerical representations to insert', numberTypes, self.selectNumericalRepresentation)
 
     def selectNumericalRepresentation(self, numrep):
         self.interface.entry.insert(numrep)
