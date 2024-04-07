@@ -1,0 +1,6 @@
+1.5.0:
+- "New functions: lcm, gcd, and many special functions"
+- "New option to auto-execute input after a specified number of seconds"
+- "New 'as' operator to change a number's type, e.g. to binary"
+- "Insert Number Type menu to insert a number type, used with 'as' operator"
+- "New Percentage number type, e.g. '67%'"

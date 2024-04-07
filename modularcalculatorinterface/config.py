@@ -35,6 +35,7 @@ class Config:
         self.loadMainConfig()
         self.loadThemes()
         self.loadVersion()
+        self.loadWhatsNew()
 
     def find(self, glob, allowUser=True, allowSystem=True, mergeAll=False):
         found = {}
@@ -107,7 +108,7 @@ class Config:
             yaml.dump(self.main, fh)
 
     def doConfigUpgrade(self):
-        upgraded = False
+        upgradesDone = []
         configVersion = None
         if 'version' in self.main:
             configVersion = self.main['version']
@@ -116,10 +117,11 @@ class Config:
             self.autoSelectNewFeatures(
                 ['numerical.numericalrepresentation', 'numerical.percentagenumbers', 'numerical.specialfunctions'],
                 ['unitdefinitions.allunitdefinitions'])
-            upgraded = True
+            upgradesDone.append('1.5.0')
             configVersion = '1.5.0'
-        if upgraded:
+        if len(upgradesDone):
             self.saveMainConfig()
+        self.upgradesDone = upgradesDone
 
     def autoSelectNewFeatures(self, newFeatures, ignoreFeatures):
         if 'features' in self.main and 'installed' in self.main['features']:
@@ -143,3 +145,7 @@ class Config:
 
     def loadVersion(self):
         self.version = list(self.load('version.yml', allowUser=False).values())[0]
+
+    def loadWhatsNew(self):
+        self.whatsnew = list(self.load('whatsnew.yml', allowUser=False).values())[0]
+        self.versions = ['1.5.0']

@@ -4,6 +4,7 @@ from modularcalculatorinterface.gui.display import *
 from modularcalculatorinterface.gui.entry import *
 from modularcalculatorinterface.gui.menu import *
 from modularcalculatorinterface.gui.statefulapplication import *
+from modularcalculatorinterface.gui.whatsnew import *
 from modularcalculatorinterface.services.calculatormanager import *
 from modularcalculatorinterface.services.filemanager import *
 from modularcalculatorinterface.services.htmlservice import *
@@ -75,6 +76,8 @@ class ModularCalculatorInterface(StatefulApplication):
         # Hack for Qt6 to make tabbar appear on start
         self.tabbar.addTab("")
         self.tabbar.removeTab(self.tabbar.count() - 1)
+
+        self.displayWhatsNew()
 
     def setIcon(self):
         places = [
@@ -215,6 +218,11 @@ class ModularCalculatorInterface(StatefulApplication):
         self.menu.refresh()
         self.config.saveMainConfig()
 
+
+    def displayWhatsNew(self):
+        newVersions = self.config.upgradesDone
+        if len(newVersions) > 0:
+            WhatsNewDialog(self, newVersions)
 
     def getDefaultFixedFont(self):
         font = QFontDatabase.systemFont(QFontDatabase.SystemFont.FixedFont)

@@ -6,6 +6,7 @@
 - Categorised selection dialogs now have a search box.
 - Added option to auto-execute input after a specified number of seconds.
 - Added insert menu for numerical types (used with 'as' operator).
+- Added "What's New" dialog on start after app upgrade, accessible via an option in the Help menu.
 - Improved buttons in Options menu.
 - Added Qt and PyQt version to About dialog.
 - Themes are reworked to have far fewer elements.

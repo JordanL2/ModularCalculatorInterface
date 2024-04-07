@@ -4,6 +4,7 @@ from modularcalculatorinterface.gui.about import *
 from modularcalculatorinterface.gui.display import CalculatorDisplayAnswer, CalculatorDisplayError
 from modularcalculatorinterface.gui.guiwidgets import *
 from modularcalculatorinterface.gui.options.options import *
+from modularcalculatorinterface.gui.whatsnew import *
 
 from PyQt6.QtCore import Qt, QUrl
 from PyQt6.QtGui import QKeySequence, QDesktopServices, QIcon, QAction
@@ -76,7 +77,7 @@ class CalculatorMenu():
         self.insertUnitSystemAction.setShortcut(QKeySequence("Ctrl+Shift+y"))
         self.insertMenu.addAction(self.insertUnitSystemAction)
 
-        self.insertNumericalRepresentationAction = QAction('Numerical Representation', self.interface)
+        self.insertNumericalRepresentationAction = QAction('Number Type', self.interface)
         self.insertNumericalRepresentationAction.triggered.connect(self.insertNumericalRepresentation)
         self.insertNumericalRepresentationAction.setShortcut(QKeySequence("Ctrl+Shift+r"))
         self.insertMenu.addAction(self.insertNumericalRepresentationAction)
@@ -143,6 +144,10 @@ class CalculatorMenu():
         self.helpAboutAction = QAction('About', self.interface)
         self.helpAboutAction.triggered.connect(self.openHelpAbout)
         self.helpMenu.addAction(self.helpAboutAction)
+
+        self.helpWhatsNewAction = QAction('What\'s New', self.interface)
+        self.helpWhatsNewAction.triggered.connect(self.openWhatsNew)
+        self.helpMenu.addAction(self.helpWhatsNewAction)
 
     def refresh(self):
         buttonConfig = self.config.main['appearance']['button_style']
@@ -261,7 +266,7 @@ class CalculatorMenu():
 
     def insertNumericalRepresentation(self):
         numberTypes = dict([(c.name(), c.desc()) for c in sorted(self.interface.calculatormanager.calculator.number_types.values(), key=lambda x: x.desc().lower()) if hasattr(c, 'convert_to')])
-        SelectionDialog(self.interface, 'Insert Numerical Representation', 'Select numerical representations to insert', numberTypes, self.selectNumericalRepresentation)
+        SelectionDialog(self.interface, 'Insert Number Type', 'Select number type to insert', numberTypes, self.selectNumericalRepresentation)
 
     def selectNumericalRepresentation(self, numrep):
         self.interface.entry.insert(numrep)
@@ -288,3 +293,8 @@ class CalculatorMenu():
 
     def openHelpAbout(self):
         AboutDialog(self.interface)
+
+    def openWhatsNew(self):
+        print(repr(self.interface.config.versions))
+        lastVersion = self.interface.config.versions[-1]
+        WhatsNewDialog(self.interface, [lastVersion])
