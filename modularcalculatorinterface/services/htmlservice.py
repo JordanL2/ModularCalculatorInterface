@@ -144,16 +144,16 @@ class HtmlService():
                 return ('', '')
             answerHtml += self.makeSpan(
                 self.interface.calculatormanager.calculator.feature_options['arrays.arrays']['Open'],
-                'array_start')
+                'structural')
             answerHtml += "{}{}".format(
                     self.makeSpan(
                         self.interface.calculatormanager.calculator.feature_options['arrays.arrays']['Param'],
-                        'array_param'),
+                        'structural'),
                     self.makeSpan(' ', 'space')
                 ).join([self.createAnswerHtml(r.value, r.unit, options) for r in row.answer])
             answerHtml += self.makeSpan(
                 self.interface.calculatormanager.calculator.feature_options['arrays.arrays']['Close'],
-                'array_end')
+                'structural')
         else:
             answerHtml += self.createAnswerHtml(row.answer, row.unit, options)
 
@@ -191,11 +191,11 @@ class HtmlService():
             fractionHtml += self.makeSpan("{}".format(fraction[0]), "literal")
             fractionHtml += self.makeSpan(' ', "space")
             fractionHtml += self.makeSpan(abs(fraction[1]), 'literal', fractionStyle)
-            fractionHtml += self.makeSpan('/', 'op', fractionStyle)
+            fractionHtml += self.makeSpan('/', 'structural', fractionStyle)
             fractionHtml += self.makeSpan(abs(fraction[2]), 'literal', fractionStyle)
         else:
             fractionHtml += self.makeSpan(fraction[1], 'literal')
-            fractionHtml += self.makeSpan('/', 'op')
+            fractionHtml += self.makeSpan('/', 'structural')
             fractionHtml += self.makeSpan(abs(fraction[2]), 'literal')
         if unit is not None:
             unit = self.createUnitHtml(Number(fraction[0] + fraction[1] / fraction[2]), unit, options)

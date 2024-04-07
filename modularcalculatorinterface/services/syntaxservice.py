@@ -154,6 +154,9 @@ class ErrorItem(Item):
     def desc(self):
         return 'error'
 
+    def category(self):
+        return 'error'
+
 
 class Statement():
 
