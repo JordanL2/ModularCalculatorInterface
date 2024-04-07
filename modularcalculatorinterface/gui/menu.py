@@ -297,4 +297,4 @@ class CalculatorMenu():
     def openWhatsNew(self):
         print(repr(self.interface.config.versions))
         lastVersion = self.interface.config.versions[-1]
-        WhatsNewDialog(self.interface, [lastVersion])
+        WhatsNewDialog(self.interface, lastVersion)

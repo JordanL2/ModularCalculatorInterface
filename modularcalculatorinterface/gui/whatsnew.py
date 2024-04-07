@@ -6,7 +6,7 @@ from PyQt6.QtWidgets import QDialog, QLabel, QPushButton, QVBoxLayout
 
 class WhatsNewDialog(QDialog):
 
-    def __init__(self, interface, newVersions):
+    def __init__(self, interface, newVersion):
         super().__init__(interface)
 
         self.interface = interface
@@ -15,7 +15,7 @@ class WhatsNewDialog(QDialog):
         self.layout.setAlignment(Qt.AlignmentFlag.AlignHCenter)
 
         self.changes = self.interface.config.whatsnew
-        self.initContent(newVersions)
+        self.initContent(newVersion)
 
         button = QPushButton("OK", self)
         button.clicked.connect(self.ok)
@@ -26,12 +26,10 @@ class WhatsNewDialog(QDialog):
         self.setModal(True)
         self.setVisible(True)
 
-    def initContent(self, newVersions):
-        self.layout.addWidget(TopHeaderLabel("Changes"))
-        for version in newVersions:
-            self.layout.addWidget(HeaderLabel(version))
-            for change in self.changes[version]:
-                self.layout.addWidget(ChangeLabel("- " + change))
+    def initContent(self, newVersion):
+        self.layout.addWidget(TopHeaderLabel("Changes in {}".format(newVersion)))
+        for change in self.changes[newVersion]:
+            self.layout.addWidget(ChangeLabel("- {}".format(change)))
         self.layout.addWidget(FooterLabel("To ensure you're using the latest features, go to Options > Features\nand choose 'Select All' in the Presets dropdown."))
 
     def ok(self):
@@ -47,21 +45,9 @@ class TopHeaderLabel(QLabel):
         font.setPointSize(14)
         font.setBold(True)
         self.setFont(font)
+        self.setAlignment(Qt.AlignmentFlag.AlignHCenter)
 
-        self.setContentsMargins(50, 25, 50, 0)
-
-
-class HeaderLabel(QLabel):
-
-    def __init__(self, content):
-        super().__init__(content)
-
-        font = self.font()
-        font.setPointSize(12)
-        font.setBold(True)
-        self.setFont(font)
-
-        self.setContentsMargins(50, 20, 50, 0)
+        self.setContentsMargins(50, 25, 50, 25)
 
 
 class ChangeLabel(QLabel):
@@ -82,4 +68,4 @@ class FooterLabel(QLabel):
         font.setBold(True)
         self.setFont(font)
 
-        self.setContentsMargins(50, 20, 50, 25)
+        self.setContentsMargins(50, 20, 50, 30)

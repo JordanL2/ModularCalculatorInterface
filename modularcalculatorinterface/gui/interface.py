@@ -222,7 +222,7 @@ class ModularCalculatorInterface(StatefulApplication):
     def displayWhatsNew(self):
         newVersions = self.config.upgradesDone
         if len(newVersions) > 0:
-            WhatsNewDialog(self, newVersions)
+            WhatsNewDialog(self, newVersions[-1])
 
     def getDefaultFixedFont(self):
         font = QFontDatabase.systemFont(QFontDatabase.SystemFont.FixedFont)
