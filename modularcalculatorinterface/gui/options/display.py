@@ -28,7 +28,7 @@ class DisplayTab(OptionsTab):
 
         self.addSpacerItem(layout)
         numberTypes = []
-        for numberType in self.interface.calculatormanager.calculator.number_types:
+        for numberType in self.interface.calculatormanager.calculator.number_types.values():
             if hasattr(numberType, 'convert_to'):
                 numberTypes.append(numberType)
         numberTypes = sorted(numberTypes, key=lambda c: c.desc().lower())
