@@ -61,10 +61,8 @@ class OptionsDialog(QDialog):
 
         self.setWindowTitle('Options')
         self.setModal(True)
+        self.setMinimumSize(QSize(1000, 700))
         self.setVisible(True)
-
-    def sizeHint(self):
-        return QSize(1000, 700)
 
     def initMenu(self):
         menuWidget = QWidget(self)
