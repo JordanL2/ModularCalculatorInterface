@@ -31,6 +31,7 @@ class SelectionDialog(QDialog):
         else:
             raise Exception("Invalid type of items")
         self.list.itemDoubleClicked.connect(self.ok)
+        self.list.setCurrentRow(0)
         layout.addWidget(self.list)
 
         button = QPushButton("OK", self)
