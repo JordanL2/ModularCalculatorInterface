@@ -72,6 +72,7 @@ class CalculatorManager():
             response = err.response
         if response is not None:
             self.display.clear()
+            nonfunctionalExpressions = ""
             for i, result in enumerate(response.results):
                 if result.has_result():
                     try:
@@ -79,11 +80,15 @@ class CalculatorManager():
                         result_fraction = None
                         if isinstance(result.value, Number):
                             result_fraction = result_value.as_fraction()
-                        self.display.addAnswer(result.expression, result_value, result_fraction, result.unit)
+                        expression = nonfunctionalExpressions + result.expression
+                        self.display.addAnswer(expression, result_value, result_fraction, result.unit)
                     except InvalidOperation as e:
                         self.display.addError("Number is too large", None, result.expression)
                     except Exception as e:
                         self.display.addError(str(e), None, result.expression)
+                    nonfunctionalExpressions = ""
+                else:
+                    nonfunctionalExpressions += result.expression
         if err is not None:
             self.display.addError(err, pos, question)
         self.display.refresh()
