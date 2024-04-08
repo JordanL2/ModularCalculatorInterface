@@ -88,7 +88,16 @@ class CalculatorManager():
                         self.display.addError(str(e), None, result.expression)
                     nonfunctionalExpressions = ""
                 else:
-                    nonfunctionalExpressions += result.expression
+                    # Combine all comments into the next functional statement
+                    if i == 0:
+                        # If this is the first statement, check if first line starts with "#INPUT"
+                        # and if so remove it
+                        lines = result.expression.split("\n")
+                        if lines[0].startswith("#INPUT "):
+                            lines.pop(0)
+                        nonfunctionalExpressions += "\n".join(lines)
+                    else:
+                        nonfunctionalExpressions += result.expression
         if err is not None:
             self.display.addError(err, pos, question)
         self.display.refresh()
