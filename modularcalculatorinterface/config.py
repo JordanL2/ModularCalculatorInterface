@@ -115,15 +115,14 @@ class Config:
         if configVersion is None:
             # Upgrade from < 1.5.0 to 1.5.0
             self.autoSelectNewFeatures(
-                ['numerical.numericalrepresentation', 'numerical.percentagenumbers', 'numerical.specialfunctions'],
-                ['unitdefinitions.allunitdefinitions'])
+                ['numerical.numericalrepresentation', 'numerical.percentagenumbers', 'numerical.specialfunctions'])
             upgradesDone.append('1.5.0')
             configVersion = '1.5.0'
         if len(upgradesDone):
             self.saveMainConfig()
         self.upgradesDone = upgradesDone
 
-    def autoSelectNewFeatures(self, newFeatures, ignoreFeatures):
+    def autoSelectNewFeatures(self, newFeatures):
         if 'features' in self.main and 'installed' in self.main['features']:
             # Compare selected features with Computing preset.
             # If only difference is new features are missing,
@@ -131,14 +130,18 @@ class Config:
             features = set(self.main['features']['installed'])
             features  = features.union(newFeatures)
 
+            # Get a list of the installed features when using Computing preset,
+            # removing MetaFeatures as selecting them just selects their sub-features
             computingCalculator = ModularCalculator('Computing')
             computingFeatures = computingCalculator.installed_features
-            for ignoreFeature in ignoreFeatures:
-                computingFeatures.discard(ignoreFeature)
+            for feature in set(computingFeatures):
+                if isinstance(computingCalculator.feature_list[feature], MetaFeature):
+                    computingFeatures.discard(feature)
 
+            # If they have at least Computing features selected,
+            # auto-select the new features for them
             if computingFeatures <= features:
                 self.main['features']['installed'] = list(features)
-
 
     def loadThemes(self):
         self.themes = self.load('themes/*.yml')
