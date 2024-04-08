@@ -39,14 +39,12 @@ class SelectionDialog(QDialog):
 
         self.setLayout(layout)
         self.setWindowTitle(title)
+        self.setMinimumSize(QSize(400, 400))
         self.setVisible(True)
 
     def ok(self):
         self.okFunction(self.list.currentItem().data(Qt.ItemDataRole.UserRole))
         self.close()
-
-    def sizeHint(self):
-        return QSize(400, 400)
 
 
 class CategorisedSelectionDialog(QDialog):
@@ -88,6 +86,7 @@ class CategorisedSelectionDialog(QDialog):
 
         self.setLayout(layout)
         self.setWindowTitle(title)
+        self.setMinimumSize(QSize(1000, 700))
         self.setVisible(True)
         self.search.setFocus(Qt.FocusReason.PopupFocusReason)
 
@@ -114,9 +113,6 @@ class CategorisedSelectionDialog(QDialog):
         if self.list.currentItem() is not None:
             self.okFunction(self.currentItem())
             self.close()
-
-    def sizeHint(self):
-        return QSize(1000, 700)
 
     def keyPressEvent(self, e):
         if e.key() == Qt.Key.Key_Down and self.search.hasFocus():
