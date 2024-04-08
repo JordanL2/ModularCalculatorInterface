@@ -135,7 +135,7 @@ class Config:
             computingCalculator = ModularCalculator('Computing')
             computingFeatures = computingCalculator.installed_features
             for feature in set(computingFeatures):
-                if isinstance(computingCalculator.feature_list[feature], MetaFeature):
+                if issubclass(computingCalculator.feature_list[feature], MetaFeature):
                     computingFeatures.discard(feature)
 
             # If they have at least Computing features selected,
