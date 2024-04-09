@@ -115,7 +115,7 @@ class Config:
         if configVersion is None:
             # Upgrade from < 1.5.0 to 1.5.0
             self.autoSelectNewFeatures(
-                ['numerical.numericalrepresentation', 'numerical.percentagenumbers', 'numerical.specialfunctions'])
+                ['numerical.numericalrepresentation', 'numerical.percentagenumbers', 'numerical.specialfunctions', 'structure.functionpointers', 'structure.inlinefunctions'])
             upgradesDone.append('1.5.0')
             configVersion = '1.5.0'
         if len(upgradesDone):

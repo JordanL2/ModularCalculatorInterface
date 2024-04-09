@@ -1,4 +1,5 @@
 1.5.0:
+- "New inline functions feature"
 - "New functions: lcm, gcd, and many special functions"
 - "New option to auto-execute input after a specified number of seconds"
 - "New 'as' operator to change a number's type, e.g. to binary"
