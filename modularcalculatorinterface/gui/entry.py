@@ -71,6 +71,18 @@ class CalculatorEntry(QTextEdit):
             self.undo()
         elif e.key() == Qt.Key.Key_Z and e.modifiers() & Qt.KeyboardModifier.ControlModifier and e.modifiers() & Qt.KeyboardModifier.ShiftModifier:
             self.redo()
+        elif (e.key() == Qt.Key.Key_Enter or e.key() == Qt.Key.Key_Return) and e.modifiers() == Qt.KeyboardModifier.NoModifier:
+            text = self.toPlainText()[0: self.textCursor().position()]
+            pos = text.rfind("\n")
+            if pos > -1:
+                line = (text[pos + 1:])
+            else:
+                line = text
+            spaces = 0
+            while spaces < len(line) and line[spaces] == ' ':
+                spaces += 1
+            super().keyPressEvent(e)
+            self.insert(' ' * spaces)
         else:
             super().keyPressEvent(e)
         self.checkSyntax()
