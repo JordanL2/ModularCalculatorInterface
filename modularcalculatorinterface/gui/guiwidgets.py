@@ -210,3 +210,29 @@ class MiddleClickCloseableTabBar(QTabBar):
             self.tabCloseRequested.emit(self.tabAt(event.pos()))
         else:
             super().mouseReleaseEvent(event)
+
+
+class FormattedLabel(QLabel):
+
+    def __init__(self, content, fontSize, fontBold, alignment, marginsLeft, marginsTop, marginsRight, marginsBottom):
+        super().__init__(content)
+
+        font = self.font()
+        font.setPointSize(fontSize)
+        font.setBold(fontBold)
+        self.setFont(font)
+
+        self.setAlignment(alignment)
+
+        self.setContentsMargins(marginsLeft, marginsTop, marginsRight, marginsBottom)
+
+
+class UrlFormattedLabel(FormattedLabel):
+
+    def __init__(self, content, url, fontSize, fontBold, alignment, marginsLeft, marginsTop, marginsRight, marginsBottom):
+        if url is not None:
+            content = "<a href=\"{0}\">{1}</a>".format(url, content)
+        super().__init__(content, fontSize, fontBold, alignment, marginsLeft, marginsTop, marginsRight, marginsBottom)
+
+        self.setOpenExternalLinks(True)
+        self.setTextInteractionFlags(Qt.TextInteractionFlag.LinksAccessibleByMouse)

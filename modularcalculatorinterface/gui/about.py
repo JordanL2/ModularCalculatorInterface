@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 
+from modularcalculatorinterface.gui.guiwidgets import FormattedLabel, UrlFormattedLabel
+
 from PyQt6.QtCore import Qt, QT_VERSION_STR, PYQT_VERSION_STR
 from PyQt6.QtWidgets import QDialog, QLabel, QPushButton, QVBoxLayout
 
@@ -102,29 +104,3 @@ class AboutDialog(QDialog):
 
     def ok(self):
         self.close()
-
-
-class FormattedLabel(QLabel):
-
-    def __init__(self, content, fontSize, fontBold, alignment, marginsLeft, marginsTop, marginsRight, marginsBottom):
-        super().__init__(content)
-
-        font = self.font()
-        font.setPointSize(fontSize)
-        font.setBold(fontBold)
-        self.setFont(font)
-
-        self.setAlignment(alignment)
-
-        self.setContentsMargins(marginsLeft, marginsTop, marginsRight, marginsBottom)
-
-
-class UrlFormattedLabel(FormattedLabel):
-
-    def __init__(self, content, url, fontSize, fontBold, alignment, marginsLeft, marginsTop, marginsRight, marginsBottom):
-        if url is not None:
-            content = "<a href=\"{0}\">{1}</a>".format(url, content)
-        super().__init__(content, fontSize, fontBold, alignment, marginsLeft, marginsTop, marginsRight, marginsBottom)
-
-        self.setOpenExternalLinks(True)
-        self.setTextInteractionFlags(Qt.TextInteractionFlag.LinksAccessibleByMouse)
