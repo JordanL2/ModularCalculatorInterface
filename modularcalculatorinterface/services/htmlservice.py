@@ -112,7 +112,7 @@ class HtmlService():
                     self.makeSpan(
                         self.interface.calculatormanager.calculator.feature_options['arrays.arrays']['Param'],
                         'structural'),
-                    self.makeSpan(' ', 'space')
+                    self.makeSpan(' ', 'whitespace')
                 ).join([self.createAnswerHtml(r, options) for r in answer])
             answerHtml += self.makeSpan(
                 self.interface.calculatormanager.calculator.feature_options['arrays.arrays']['Close'],
@@ -141,7 +141,7 @@ class HtmlService():
         if fraction[0] != 0:
             fractionStyle = "font-size: {}pt".format(options['fraction_small_fontsize_pt'])
             fractionHtml += self.makeSpan("{}".format(fraction[0]), "literal")
-            fractionHtml += self.makeSpan(' ', "space")
+            fractionHtml += self.makeSpan(' ', 'whitespace')
             fractionHtml += self.makeSpan(abs(fraction[1]), 'literal', fractionStyle)
             fractionHtml += self.makeSpan('/', 'structural', fractionStyle)
             fractionHtml += self.makeSpan(abs(fraction[2]), 'literal', fractionStyle)
@@ -159,7 +159,7 @@ class HtmlService():
             unit_parts = unit.symbol(False)
         else:
             unit_parts = unit.get_name(answer, False)
-            unit_parts = [(' ', 'space')] + unit_parts
+            unit_parts = [(' ', 'whitespace')] + unit_parts
         return ''.join([self.makeSpan(self.htmlSafe(u[0]), u[1]) for u in unit_parts])
 
     def createErrorHtml(self, error):
