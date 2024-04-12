@@ -68,7 +68,8 @@ class CalculatorDisplay(QWidget):
             question = row.question.strip()
             questionHtml = self.htmlservice.createQuestionHtml(question, self.config.main['display'])
             (answerHtml, fractionHtml) = self.htmlservice.createAnswerFractionHtml(row, self.config.main['display'])
-            (answerText, fractionText) = self.htmlservice.createAnswerFractionText(row, self.config.main['display'])
+            answerText = self.htmlservice.htmlToText(answerHtml)
+            fractionText = self.htmlservice.htmlToText(fractionHtml)
 
         elif isinstance(row, CalculatorDisplayError):
             if type(row.err) == str:

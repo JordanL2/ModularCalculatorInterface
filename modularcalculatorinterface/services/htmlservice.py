@@ -7,6 +7,7 @@ from modularcalculatorinterface.services.syntaxservice import *
 from PyQt6.QtGui import QColor, QPalette, QGuiApplication
 
 import html
+from html.parser import HTMLParser
 
 
 class HtmlService():
@@ -65,63 +66,12 @@ class HtmlService():
 
         return newhtml
 
-    def createAnswerFractionText(self, row, options):
-        answerText = self.createAnswerListText(row.answer, row.unit, options)
-
-        fractionText = None
-        if row.fraction is not None and row.fraction[1] != 0 and row.fraction[2] < 10**options['max_denominator_digits']:
-            fractionText = self.createFractionText(row.fraction, row.unit, options)
-
-        return (answerText, fractionText)
-
-    def createAnswerListText(self, answer, unit, options):
-        if type(answer) == list:
-            if 'arrays.arrays' not in self.interface.calculatormanager.calculator.feature_options:
-                return ('', '')
-            answerText = self.interface.calculatormanager.calculator.feature_options['arrays.arrays']['Open']
-            answerText += (
-                self.interface.calculatormanager.calculator.feature_options['arrays.arrays']['Param'] + ' '
-            ).join([self.createAnswerText(r.value, r.unit, options) for r in answer])
-            answerText += self.interface.calculatormanager.calculator.feature_options['arrays.arrays']['Close']
-        else:
-            answerText = self.createAnswerText(answer, unit, options)
-        return answerText
-
-    def createAnswerText(self, answer, unit, options):
-        if isinstance(answer, UnitPowerList):
-            if options['short_units'] and answer.has_symbols():
-                unit_parts = answer.symbol(False)
-            else:
-                unit_parts = answer.singular(False, False)
-            answerText = ''.join([u[0] for u in unit_parts])
-        else:
-            answerText = self.formatNumber(answer, options)
-        if unit is not None:
-            unit = self.createUnitText(answer, unit, options)
-            answerText += unit
-        return answerText
-
-    def createFractionText(self, fraction, unit, options):
-        if fraction[0] != 0:
-            fractionText = "{} + {} / {}".format(fraction[0], fraction[1], fraction[2])
-        else:
-            fractionText = "{} / {}".format(fraction[1], fraction[2])
-        if unit is not None:
-            unit = self.createUnitText(Number(fraction[0] + fraction[1] / fraction[2]), unit, options)
-            fractionText = "({}){}".format(fractionText, unit)
-        return fractionText
-
-    def createUnitText(self, answer, unit, options):
-        if options['short_units'] and unit.has_symbols():
-            unit_parts = unit.symbol(False)
-        else:
-            try:
-                number = self.interface.calculatormanager.calculator.number(answer)
-            except CalculatorException:
-                number = Number(1)
-            unit_parts = unit.get_name(number, False)
-            unit_parts = [(' ', 'space')] + unit_parts
-        return ''.join([u[0] for u in unit_parts])
+    def htmlToText(self, html):
+        if html is None:
+            return None
+        f = HTMLFilter()
+        f.feed(html)
+        return f.text
 
     def createQuestionErrorText(self, row):
         questionStatements = [row.err.statements[-1].copy()]
@@ -139,7 +89,20 @@ class HtmlService():
 
     def createAnswerFractionHtml(self, row, options):
         answerHtml = self.css
-        if type(row.answer) == list:
+        answerHtml += self.createAnswerHtml(row, options)
+
+        fractionHtml = None
+        if row.fraction is not None and row.fraction[1] != 0 and row.fraction[2] < 10**options['max_denominator_digits']:
+            fractionHtml = self.css
+            fractionHtml += self.createFractionHtml(row.fraction, row.unit, options)
+
+        return (answerHtml, fractionHtml)
+
+    def createAnswerHtml(self, row, options):
+        answer = row.value if isinstance(row, OperandResult) else row.answer
+        unit = row.unit
+        answerHtml = ''
+        if type(answer) == list:
             if 'arrays.arrays' not in self.interface.calculatormanager.calculator.feature_options:
                 return ('', '')
             answerHtml += self.makeSpan(
@@ -150,38 +113,27 @@ class HtmlService():
                         self.interface.calculatormanager.calculator.feature_options['arrays.arrays']['Param'],
                         'structural'),
                     self.makeSpan(' ', 'space')
-                ).join([self.createAnswerHtml(r.value, r.unit, options) for r in row.answer])
+                ).join([self.createAnswerHtml(r, options) for r in answer])
             answerHtml += self.makeSpan(
                 self.interface.calculatormanager.calculator.feature_options['arrays.arrays']['Close'],
                 'structural')
         else:
-            answerHtml += self.createAnswerHtml(row.answer, row.unit, options)
-
-        fractionHtml = None
-        if row.fraction is not None and row.fraction[1] != 0 and row.fraction[2] < 10**options['max_denominator_digits']:
-            fractionHtml = self.css
-            fractionHtml += self.createFractionHtml(row.fraction, row.unit, options)
-
-        return (answerHtml, fractionHtml)
-
-    def createAnswerHtml(self, answer, unit, options):
-        answerHtml = None
-        if isinstance(answer, UnitPowerList):
-            if options['short_units'] and answer.has_symbols():
-                unit_parts = answer.symbol(False)
+            if isinstance(answer, UnitPowerList):
+                if options['short_units'] and answer.has_symbols():
+                    unit_parts = answer.symbol(False)
+                else:
+                    unit_parts = answer.singular(False, False)
+                answerHtml += ''.join([self.makeSpan(self.htmlSafe(u[0]), u[1]) for u in unit_parts])
             else:
-                unit_parts = answer.singular(False, False)
-            answerHtml = ''.join([self.makeSpan(self.htmlSafe(u[0]), u[1]) for u in unit_parts])
-        else:
-            answerFormatted = self.formatNumber(answer, options)
-            answerHtml = self.makeSpan(self.htmlSafe(answerFormatted), 'literal')
-        if unit is not None:
-            try:
-                number = self.interface.calculatormanager.calculator.number(answer)
-            except CalculatorException:
-                number = Number(1)
-            unit = self.createUnitHtml(number, unit, options)
-            answerHtml += unit
+                answerFormatted = self.formatNumber(answer, options)
+                answerHtml += self.makeSpan(self.htmlSafe(answerFormatted), 'literal')
+            if unit is not None:
+                try:
+                    number = self.interface.calculatormanager.calculator.number(answer)
+                except CalculatorException:
+                    number = Number(1)
+                unitHtml = self.createUnitHtml(number, unit, options)
+                answerHtml += unitHtml
         return answerHtml
 
     def createFractionHtml(self, fraction, unit, options):
@@ -234,3 +186,21 @@ class HtmlService():
             return answer.to_string(calculator)
         except CalculatorException:
             return answer
+
+
+class HTMLFilter(HTMLParser):
+    text = ""
+    inside_tags = 0
+    ignore_tags = ['style']
+
+    def handle_starttag(self, tag, attrs):
+        if tag in self.ignore_tags:
+            self.inside_tags += 1
+
+    def handle_endtag(self, tag):
+        if tag in self.ignore_tags:
+            self.inside_tags -= 1
+
+    def handle_data(self, data):
+        if self.inside_tags == 0:
+            self.text += data
