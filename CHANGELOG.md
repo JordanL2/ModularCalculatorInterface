@@ -21,6 +21,7 @@
 - Added 'as' operator that can convert a value's numerical type (e.g. convert to binary).
 - Added percentage numerical type.
 - Added inline functions.
+- Nested arrays are now possible.
 - Function names can now contain, but not start with, a number.
 - Fixed a unit assignment not having higher precedence than multiply.
 

@@ -5,4 +5,5 @@
 - "New 'as' operator to change a number's type, e.g. to binary"
 - "Insert Number Type dialog to insert a number type, used with 'as' operator"
 - "New Percentage number type, e.g. '67%'"
+- "Nested arrays are now supported"
 - "Comments are now displayed in output panel"
