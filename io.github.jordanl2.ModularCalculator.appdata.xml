@@ -32,7 +32,7 @@
   <launchable type="desktop-id">io.github.jordanl2.ModularCalculator.desktop</launchable>
 
   <screenshots>
-    <screenshot>
+    <screenshot type="default">
       <caption>Complex, multi-stage calculations can be performed</caption>
       <image>https://raw.githubusercontent.com/JordanL2/ModularCalculatorInterface/master/screenshots/minecraft.png</image>
     </screenshot>
@@ -53,10 +53,6 @@
       <image>https://raw.githubusercontent.com/JordanL2/ModularCalculatorInterface/master/screenshots/features.png</image>
     </screenshot>
   </screenshots>
-
-  <provides>
-    <id>io.github.jordanl2.ModularCalculator</id>
-  </provides>
 
   <releases>
     <release version="1.4.999" date="2022-10-17"/>
