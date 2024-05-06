@@ -1,6 +1,10 @@
 # Changelog
 
-## 1.5.0
+## 1.5.1 (TBC)
+### Interface changes
+- Added Help Menu link to report an issue
+
+## 1.5.0 (27 April 2024)
 ### Interface changes
 - Ported to Qt6.
 - Categorised selection dialogs now have an 'All' category that is selected by default.

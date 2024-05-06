@@ -137,9 +137,13 @@ class CalculatorMenu():
         self.helpButton.setMenu(self.helpMenu)
         self.toolbar.addWidget(self.helpButton)
 
-        self.helpHelpAction = QAction('Calculator Reference', self.interface)
+        self.helpHelpAction = QAction('Wiki', self.interface)
         self.helpHelpAction.triggered.connect(self.openHelp)
         self.helpMenu.addAction(self.helpHelpAction)
+
+        self.helpIssuesAction = QAction('Report an Issue', self.interface)
+        self.helpIssuesAction.triggered.connect(self.openReportAnIssue)
+        self.helpMenu.addAction(self.helpIssuesAction)
 
         self.helpWhatsNewAction = QAction('What\'s New', self.interface)
         self.helpWhatsNewAction.triggered.connect(self.openWhatsNew)
@@ -290,6 +294,9 @@ class CalculatorMenu():
 
     def openHelp(self):
         QDesktopServices.openUrl(QUrl('https://github.com/JordanL2/ModularCalculator/wiki'))
+
+    def openReportAnIssue(self):
+        QDesktopServices.openUrl(QUrl('https://github.com/JordanL2/ModularCalculatorInterface/issues/wiki'))
 
     def openHelpAbout(self):
         AboutDialog(self.interface)
