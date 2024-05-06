@@ -181,7 +181,10 @@ class HtmlService():
                 number = calculator.number(answer)
                 formatter = calculator.number_types[options['number_format']]
                 if formatter is not None:
-                    return formatter.convert_to(calculator, number).to_string(calculator)
+                    res = formatter.convert_to(calculator, number)
+                    if isinstance(res, Number):
+                        res = res.to_string(calculator)
+                    return res
                 return number.to_string(calculator)
             return answer.to_string(calculator)
         except CalculatorException:
