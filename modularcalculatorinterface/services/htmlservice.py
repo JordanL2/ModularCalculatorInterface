@@ -124,6 +124,8 @@ class HtmlService():
                 else:
                     unit_parts = answer.singular(False, False)
                 answerHtml += ''.join([self.makeSpan(self.htmlSafe(u[0]), u[1]) for u in unit_parts])
+            elif type(answer) == str:
+                answerHtml += self.makeSpan(self.htmlSafe("'{}'".format(answer)), 'literal')
             else:
                 answerFormatted = self.formatNumber(answer, options)
                 answerHtml += self.makeSpan(self.htmlSafe(answerFormatted), 'literal')

@@ -3,6 +3,7 @@
 ## 1.5.1 (TBC)
 ### Interface changes
 - Added Help Menu link to report an issue
+- Fixed displaying strings in answer panel, now wrapped in single quotes
 
 ## 1.5.0 (27 April 2024)
 ### Interface changes
