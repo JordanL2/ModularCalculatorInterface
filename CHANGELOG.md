@@ -1,9 +1,13 @@
 # Changelog
 
-## 1.5.1 (TBC)
+## 1.5.1 (11 May 2024)
 ### Interface changes
 - Added Help Menu link to report an issue
 - Fixed displaying strings in answer panel, now wrapped in single quotes
+### ModularCalculator engine version 1.4.1
+- Fixed floor and ceil functions when passing the places parameter
+- Fixed round, floor and ceil functions with percentage numbers
+- Fixed boolean conditional operators returning value with unit, when inputs have units
 
 ## 1.5.0 (27 April 2024)
 ### Interface changes
