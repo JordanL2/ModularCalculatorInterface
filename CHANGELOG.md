@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.5.2 (17 July 2024)
+### ModularCalculator engine version 1.4.2
+- Fixed trigonometry functions not returning Number instances
+
 ## 1.5.1 (11 May 2024)
 ### Interface changes
 - Added Help Menu link to report an issue
