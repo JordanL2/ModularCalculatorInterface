@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.5.3 (19 July 2024)
+### ModularCalculator engine version  1.4.3
+- Fixed log function behaviour when base is non-integer, zero, or negative
+- Refactored operator/function error messages to make them more helpful and consistent
+- Fixed crash when fetching an element from an array that is an exception
+
 ## 1.5.2 (17 July 2024)
 ### ModularCalculator engine version 1.4.2
 - Fixed trigonometry functions not returning Number instances
