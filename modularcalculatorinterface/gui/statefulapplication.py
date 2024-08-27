@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from modularcalculator.objects.items import OperandResult, OperandItem
+from modularcalculator.objects.items import OperandResult, OperandItem, ObjectValue
 from modularcalculator.objects.number import *
 from modularcalculator.objects.units import UnitPowerList
 from modularcalculatorinterface.gui.display import CalculatorDisplayAnswer, CalculatorDisplayError
@@ -129,6 +129,10 @@ class SetEncoder(json.JSONEncoder):
 				'str': repr(obj),
 			}
 		if issubclass(obj.__class__, OperandItem):
+			return {
+				'str': repr(obj),
+			}
+		if isinstance(obj, ObjectValue):
 			return {
 				'str': repr(obj),
 			}

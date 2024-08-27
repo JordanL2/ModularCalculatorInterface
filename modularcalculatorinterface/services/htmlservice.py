@@ -118,7 +118,9 @@ class HtmlService():
                 self.interface.calculatormanager.calculator.feature_options['arrays.arrays']['Close'],
                 'structural')
         else:
-            if isinstance(answer, UnitPowerList):
+            if isinstance(answer, ObjectValue):
+                answerHtml += self.makeSpan(answer.name(), answer.category())
+            elif isinstance(answer, UnitPowerList):
                 if options['short_units'] and answer.has_symbols():
                     unit_parts = answer.symbol(False)
                 else:
