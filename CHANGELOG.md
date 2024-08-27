@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.5.6 (TBC)
+- Number Types and Unit Systems are displayed as objects in the output, rather than strings
+### ModularCalculator engine version 1.5.0
+- Number Types and Unit Systems are actual objects, rather than strings
+- Additional input number type checks (e.g. positivity, integers) for operations that need them
+
 ## 1.5.5 (16 September 2024)
 ### ModularCalculator engine version 1.4.5
 - Fixed crash for operation exceptions with non-decimal numbers
