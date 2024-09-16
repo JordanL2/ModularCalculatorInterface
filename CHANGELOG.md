@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.5.5 (16 September 2024)
+### ModularCalculator engine version 1.4.5
+- Fixed crash for operation exceptions with non-decimal numbers
+
 ## 1.5.4 (23 August 2024)
 ### ModularCalculator engine version 1.4.4
 - Fixed 'as' operator dropping value's unit
