@@ -3,6 +3,7 @@
 ## 1.5.6 (TBC)
 - Number Types and Unit Systems are displayed as objects in the output, rather than strings
 - Insert selection dialog search is now case insensitive
+- Fixed tab bar sometimes not appearing on start
 ### ModularCalculator engine version 1.5.0
 - sp_sph_harm has been removed for now as it's deprecated in scipy
 - Number Types and Unit Systems are actual objects, rather than strings

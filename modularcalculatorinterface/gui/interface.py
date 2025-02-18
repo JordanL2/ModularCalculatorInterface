@@ -73,6 +73,10 @@ class ModularCalculatorInterface(StatefulApplication):
         self.saveStateTimer.start(15000)
         self.saveStateTimer.timeout.connect(self.storeAllState)
 
+        # Hack for Qt6 to make tabbar appear on start
+        self.tabbar.addTab("")
+        self.tabbar.removeTab(self.tabbar.count() - 1)
+
         self.displayWhatsNew()
 
     def setIcon(self):
