@@ -2,9 +2,13 @@
 
 ## 1.5.6 (TBC)
 - Number Types and Unit Systems are displayed as objects in the output, rather than strings
+- Insert selection dialog search is now case insensitive
 ### ModularCalculator engine version 1.5.0
+- sp_sph_harm has been removed for now as it's deprecated in scipy
 - Number Types and Unit Systems are actual objects, rather than strings
 - Additional input number type checks (e.g. positivity, integers) for operations that need them
+- Fixed the number type of an operation never being decimal, even when the first parameter is decimal
+- Fixed it being possible to set the number of decimal places equal to or more than the total size of the number, causing a crash
 
 ## 1.5.5 (16 September 2024)
 ### ModularCalculator engine version 1.4.5
