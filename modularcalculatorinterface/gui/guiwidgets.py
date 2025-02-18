@@ -95,7 +95,7 @@ class CategorisedSelectionDialog(QDialog):
         listItems = sorted(self.items[self.category.currentText()], key=lambda u: str(u).lower())
         searchText = self.search.text()
         if searchText != '':
-            listItems = [l for l in listItems if searchText in l]
+            listItems = [l for l in listItems if searchText.lower() in l.lower()]
         self.list.clear()
         self.list.addItems(listItems)
 
