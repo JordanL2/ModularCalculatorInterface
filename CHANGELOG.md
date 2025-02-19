@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.5.6 (TBC)
+## 1.5.6 (19 February 2025)
 - Number Types and Unit Systems are displayed as objects in the output, rather than strings
 - Insert selection dialog search is now case insensitive
 - Minimum number of decimal places is now 0, not 1
