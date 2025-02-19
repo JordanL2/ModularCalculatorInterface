@@ -129,8 +129,11 @@ class HtmlService():
             elif type(answer) == str:
                 answerHtml += self.makeSpan(self.htmlSafe("'{}'".format(answer)), 'literal')
             else:
-                answerFormatted = self.formatNumber(answer, options)
-                answerHtml += self.makeSpan(self.htmlSafe(answerFormatted), 'literal')
+                try:
+                    answerFormatted = self.formatNumber(answer, options)
+                    answerHtml += self.makeSpan(self.htmlSafe(answerFormatted), 'literal')
+                except NumberTooBigException:
+                    answerHtml += self.makeSpan(self.htmlSafe("Too Big"), 'error')
             if unit is not None:
                 try:
                     number = self.interface.calculatormanager.calculator.number(answer)

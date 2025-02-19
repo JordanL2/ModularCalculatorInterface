@@ -20,8 +20,8 @@ class CalculatorManager():
     def createCalculator(config):
         calculator = ModularCalculator()
         calculator.enable_units()
-        calculator.number_size_set(config['execution']['number_size'])
-        calculator.number_prec_set(config['execution']['precision'])
+        calculator.number_size_before_decimal_point_set(config['execution']['number_size'])
+        calculator.number_size_after_decimal_point_set(config['execution']['precision'])
         calculator.number_set_rounding(config['execution']['rounding'])
         calculator.unit_simplification_set(config['execution']['simplify_units'])
 

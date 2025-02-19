@@ -3,11 +3,14 @@
 ## 1.5.6 (TBC)
 - Number Types and Unit Systems are displayed as objects in the output, rather than strings
 - Insert selection dialog search is now case insensitive
+- Minimum number of decimal places is now 0, not 1
 - Fixed tab bar sometimes not appearing on start
+- Fixed crash when trying to render a number too big for the calculator maximum size/prec, now shows an error
 ### ModularCalculator engine version 1.5.0
 - sp_sph_harm has been removed for now as it's deprecated in scipy
 - Number Types and Unit Systems are actual objects, rather than strings
 - Additional input number type checks (e.g. positivity, integers) for operations that need them
+- Raise a NumberTooBigException when trying to render a number that is too big for the maximum Number size/prec
 - Fixed the number type of an operation never being decimal, even when the first parameter is decimal
 - Fixed setting the number of decimal places before decimal point, correctly sets the total precision so we don't have more decimal places than total size
 
