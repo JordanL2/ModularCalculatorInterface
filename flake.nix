@@ -59,14 +59,7 @@
             version = "1.5.6";  # Update this when a new version is released
             pyproject = true;
 
-            src = pkgs.fetchFromGitHub {
-                owner = "JordanL2";
-                repo = "ModularCalculatorInterface";
-                tag = version;
-                sha256 = "11rjnwknh12mgjv5vkyxa1kvw57z6akyh3jz4rmb6gh31kl3hxlm";
-                # Use the following command to get the sha256 hash when updating:
-                # nix-prefetch-url --unpack https://github.com/JordanL2/ModularCalculatorInterface/archive/refs/tags/<version>.tar.gz
-            };
+            src = ./.;
 
             buildInputs = [ pkgs.qt6.qtwayland ];
 
