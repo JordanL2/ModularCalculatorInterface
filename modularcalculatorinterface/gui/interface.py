@@ -6,6 +6,7 @@ from modularcalculatorinterface.gui.menu import *
 from modularcalculatorinterface.gui.statefulapplication import *
 from modularcalculatorinterface.gui.whatsnew import *
 from modularcalculatorinterface.services.calculatormanager import *
+from modularcalculatorinterface.services.exportmanager import *
 from modularcalculatorinterface.services.filemanager import *
 from modularcalculatorinterface.services.htmlservice import *
 from modularcalculatorinterface.services.tabmanager import *
@@ -36,6 +37,7 @@ class ModularCalculatorInterface(StatefulApplication):
         self.initUI()
 
         self.calculatormanager = CalculatorManager(self)
+        self.exportmanager = ExportManager(self.htmlservice)
         self.filemanager = FileManager(self)
         self.tabmanager = TabManager(self)
         self.filemanager.tabmanager = self.tabmanager

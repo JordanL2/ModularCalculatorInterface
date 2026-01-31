@@ -10,7 +10,6 @@ from PyQt6.QtCore import Qt, QUrl
 from PyQt6.QtGui import QKeySequence, QDesktopServices, QIcon, QAction
 from PyQt6.QtWidgets import QFileDialog, QToolButton, QMenu
 
-import csv
 import os.path
 import string
 
@@ -277,20 +276,7 @@ class CalculatorMenu():
 
     def doExportResults(self):
         filename = self.interface.getSaveFileName("Export Results as CSV", "Text CSV files (*.csv)")
-        if filename is not None and filename != '':
-            with open(filename, 'w') as csvfile:
-                writer = csv.writer(csvfile)
-                for row in self.interface.display.rawOutput:
-                    if isinstance(row, CalculatorDisplayAnswer):
-                        thisRow = [row.question.strip()]
-                        options = self.config.main['display']
-                        thisRow.append(self.interface.htmlservice.createAnswerListText(row.answer, None, options))
-                        if row.unit is not None:
-                            thisRow.append(self.interface.htmlservice.createUnitText(row.answer, row.unit, options).strip())
-                    elif isinstance(row, CalculatorDisplayError):
-                        thisRow = [self.interface.htmlservice.createQuestionErrorText(row)]
-                        thisRow.append(row.err)
-                    writer.writerow(thisRow)
+        self.interface.exportmanager.exportResults(filename, self.interface.display.rawOutput, self.config.main['display'])
 
     def openHelp(self):
         QDesktopServices.openUrl(QUrl('https://github.com/JordanL2/ModularCalculator/wiki'))

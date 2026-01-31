@@ -118,29 +118,34 @@ class HtmlService():
                 self.interface.calculatormanager.calculator.feature_options['arrays.arrays']['Close'],
                 'structural')
         else:
-            if isinstance(answer, ObjectValue):
-                answerHtml += self.makeSpan(answer.name(), answer.category())
-            elif isinstance(answer, UnitPowerList):
-                if options['short_units'] and answer.has_symbols():
-                    unit_parts = answer.symbol(False)
-                else:
-                    unit_parts = answer.singular(False, False)
-                answerHtml += ''.join([self.makeSpan(self.htmlSafe(u[0]), u[1]) for u in unit_parts])
-            elif type(answer) == str:
-                answerHtml += self.makeSpan(self.htmlSafe("'{}'".format(answer)), 'literal')
+            answerHtml += self.createSingleAnswerHtml(answer, unit, options)
+        return answerHtml
+
+    def createSingleAnswerHtml(self, answer, unit, options):
+        answerHtml = ''
+        if isinstance(answer, ObjectValue):
+            answerHtml += self.makeSpan(answer.name(), answer.category())
+        elif isinstance(answer, UnitPowerList):
+            if options['short_units'] and answer.has_symbols():
+                unit_parts = answer.symbol(False)
             else:
-                try:
-                    answerFormatted = self.formatNumber(answer, options)
-                    answerHtml += self.makeSpan(self.htmlSafe(answerFormatted), 'literal')
-                except NumberTooBigException:
-                    answerHtml += self.makeSpan(self.htmlSafe("Too Big"), 'error')
-            if unit is not None:
-                try:
-                    number = self.interface.calculatormanager.calculator.number(answer)
-                except CalculatorException:
-                    number = Number(1)
-                unitHtml = self.createUnitHtml(number, unit, options)
-                answerHtml += unitHtml
+                unit_parts = answer.singular(False, False)
+            answerHtml += ''.join([self.makeSpan(self.htmlSafe(u[0]), u[1]) for u in unit_parts])
+        elif type(answer) == str:
+            answerHtml += self.makeSpan(self.htmlSafe("'{}'".format(answer)), 'literal')
+        else:
+            try:
+                answerFormatted = self.formatNumber(answer, options)
+                answerHtml += self.makeSpan(self.htmlSafe(answerFormatted), 'literal')
+            except NumberTooBigException:
+                answerHtml += self.makeSpan(self.htmlSafe("Too Big"), 'error')
+        if unit is not None:
+            try:
+                number = self.interface.calculatormanager.calculator.number(answer)
+            except CalculatorException:
+                number = Number(1)
+            unitHtml = self.createUnitHtml(number, unit, options)
+            answerHtml += unitHtml
         return answerHtml
 
     def createFractionHtml(self, fraction, unit, options):
