@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.5.7 (31 January 2026)
+- Fixed Export Results, also now handles arrays (and nested arrays) much better
+
 ## 1.5.6 (19 February 2025)
 - Number Types and Unit Systems are displayed as objects in the output, rather than strings
 - Insert selection dialog search is now case insensitive
