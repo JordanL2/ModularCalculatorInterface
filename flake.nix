@@ -56,7 +56,7 @@
         python = modularcalculator;
         default = pkgs.python3Packages.buildPythonApplication rec {
             pname = "modularcalculator-qt";
-            version = "1.5.6";  # Update this when a new version is released
+            version = "1.5.7";  # Update this when a new version is released
             pyproject = true;
 
             src = ./.;
