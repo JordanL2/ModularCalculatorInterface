@@ -13,36 +13,36 @@
     lib = pkgs.lib;
     modularcalculator = pkgs.python3Packages.buildPythonPackage rec {
         pname = "modularcalculator";
-        version = "1.5.0";  # Update this when a new version is released
+        version = "1.5.1";  # Update this when a new version is released
         pyproject = true;
 
         src = pkgs.fetchFromGitHub {
             owner = "JordanL2";
             repo = "ModularCalculator";
             tag = version;
-            sha256 = "1zzik9mz87637m54hb8x0nxs7fhiij4q9d8bvvr8l74cc1ankf3j";
+            sha256 = "09c0p0ar3yfpppqgcplkcr7vci41c5x7dy4ia1dkj7jjfcdrdanf";
             # Use the following command to get the sha256 hash when updating:
             # nix-prefetch-url --unpack https://github.com/JordanL2/ModularCalculator/archive/refs/tags/<version>.tar.gz
         };
-        
+
         nativeBuildInputs = with pkgs.python3Packages; [
             setuptools
         ];
-        
+
         dependencies = with pkgs.python3Packages; [
             pyyaml
             scipy
             strct
         ];
-        
+
         postPatch = ''
             sed -i 's/unittest.main(exit=False)/unittest.main(exit=True)/g' tests/testrunner.py
         '';
-        
+
         #checkPhase = ''
         #  PYTHONPATH=$PYTHONPATH:$PWD ${pkgs.python3.interpreter} tests/tests.py
         #'';
-        
+
         meta = {
             description = "Powerful modular calculator engine";
             homepage = "https://github.com/JordanL2/ModularCalculator";
@@ -56,7 +56,7 @@
         python = modularcalculator;
         default = pkgs.python3Packages.buildPythonApplication rec {
             pname = "modularcalculator-qt";
-            version = "1.5.7";  # Update this when a new version is released
+            version = "1.5.8";  # Update this when a new version is released
             pyproject = true;
 
             src = ./.;

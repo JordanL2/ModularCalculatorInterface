@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.5.8 (18 April 2026)
+### ModularCalculator engine version 1.5.1
+- Power operand now evaluates right-to-left
+- Fixed tests for Special Functions for usage with SciPy 1.17
+
 ## 1.5.7 (31 January 2026)
 - Fixed Export Results, also now handles arrays (and nested arrays) much better
 

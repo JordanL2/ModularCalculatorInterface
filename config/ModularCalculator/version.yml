@@ -1,6 +1,6 @@
 version:
 - 1
 - 5
-- 7
+- 8
 lifecycle: stable
 buildtype: native
